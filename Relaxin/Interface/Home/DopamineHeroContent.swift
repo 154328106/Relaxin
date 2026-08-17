@@ -11,6 +11,13 @@ import SwiftUI
 /// Used for the idle "home" screen in both the pre-jailbreak (`HomeView`) and
 /// post-jailbreak (`PostJailbreakHomeView`) flows; everything reachable from the original
 /// terminal-driven home menu remains reachable here.
+///
+/// Deliberately built from only the small set of primitives already confirmed (by
+/// on-device screenshots) to render correctly in this app: plain ZStack/VStack, a single
+/// unconstrained Spacer, SF Symbols, and Text -- no GeometryReader, no safeAreaInset, no
+/// custom vector asset in the header, no shadow modifier. Earlier attempts combining
+/// those produced broken/blank layouts on-device for reasons that weren't isolated;
+/// this version lets the VStack respect the safe area normally instead of fighting it.
 struct DopamineHeroContent: View {
     struct MenuRow: Identifiable {
         let id: String
@@ -31,63 +38,37 @@ struct DopamineHeroContent: View {
     let onPrimaryAction: () -> Void
 
     var body: some View {
-        // This is the exact GeometryReader/ZStack/VStack structure confirmed (by
-        // on-device screenshot) to render the header and menu-card text correctly.
-        // Only primaryButton was moved out, into .safeAreaInset below, since leaving
-        // it inside this VStack let a Spacer push it below the visible viewport. A
-        // prior attempt to restructure this whole hierarchy fixed the button position
-        // but made the header/menu text render blank on-device for reasons that
-        // weren't isolated, so everything else here is left untouched on purpose.
-        GeometryReader { proxy in
-            ZStack {
-                backgroundPhoto(in: proxy)
+        ZStack {
+            Image("HeroBackground")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .overlay(SwiftUI.Color.black.opacity(0.18))
+                .ignoresSafeArea()
 
-                VStack(alignment: .leading, spacing: 0) {
-                    header
-                    Spacer(minLength: 24)
-                    if !menuRows.isEmpty {
-                        menuCard
-                    }
+            VStack(alignment: .leading, spacing: 0) {
+                header
+                Spacer()
+                if !menuRows.isEmpty {
+                    menuCard
+                    Spacer().frame(height: 16)
                 }
-                .padding(.horizontal, 30)
-                .padding(.top, proxy.safeAreaInsets.top + 24)
-                .padding(.bottom, 24)
+                primaryButton
             }
-            .frame(width: proxy.size.width, height: proxy.size.height)
-            .clipped()
+            .padding(.horizontal, 30)
+            .padding(.vertical, 24)
         }
-        .safeAreaInset(edge: .bottom) {
-            primaryButton
-                .padding(.horizontal, 30)
-                .padding(.bottom, 16)
-        }
-        .ignoresSafeArea()
-    }
-
-    private func backgroundPhoto(in proxy: GeometryProxy) -> some View {
-        Image("HeroBackground")
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(width: proxy.size.width, height: proxy.size.height + 200)
-            .clipped()
-            .overlay(SwiftUI.Color.black.opacity(0.18))
-            .ignoresSafeArea()
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
-                Image("BootLogoMark")
-                    .resizable()
-                    .renderingMode(.original)
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 30, height: 30)
-                    .environment(\.colorScheme, .dark)
+                Image(systemName: "lock.open.fill")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(.white)
                 Text(headerTitle)
                     .font(.system(size: 24, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
             }
-            .shadow(color: .black.opacity(0.3), radius: 12)
 
             Text(headerSubtitle)
                 .font(.system(size: 14, weight: .medium))
