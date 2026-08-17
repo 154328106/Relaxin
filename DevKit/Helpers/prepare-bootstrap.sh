@@ -52,24 +52,24 @@ while IFS= read -r -d '' binary_path; do
 			&& "$(plutil -extract 'platform-application' \
 				raw -o - "$entitlements_path" 2>/dev/null)" == "true" ]]; then
 		if plutil -extract 'com\.apple\.private\.set-exception-port' \
-				raw -o /dev/null "$entitlements_path" 2>/dev/null; then
+				raw -o /dev/null "$entitlements_path" >/dev/null 2>&1; then
 			plutil -replace 'com\.apple\.private\.set-exception-port' \
-				-bool true "$entitlements_path"
+				-bool true "$entitlements_path" >/dev/null 2>&1
 		else
 			plutil -insert 'com\.apple\.private\.set-exception-port' \
-				-bool true "$entitlements_path"
+				-bool true "$entitlements_path" >/dev/null 2>&1
 		fi
 		use_explicit_entitlements=true
 	fi
 
 	if [[ "$relative_path" == "usr/bin/uicache" ]]; then
 		if plutil -extract 'com\.apple\.CommCenter\.fine-grained' \
-				raw -o /dev/null "$entitlements_path" 2>/dev/null; then
+				raw -o /dev/null "$entitlements_path" >/dev/null 2>&1; then
 			plutil -replace 'com\.apple\.CommCenter\.fine-grained' \
-				-json "$uicache_policy" "$entitlements_path"
+				-json "$uicache_policy" "$entitlements_path" >/dev/null 2>&1
 		else
 			plutil -insert 'com\.apple\.CommCenter\.fine-grained' \
-				-json "$uicache_policy" "$entitlements_path"
+				-json "$uicache_policy" "$entitlements_path" >/dev/null 2>&1
 		fi
 		use_explicit_entitlements=true
 	fi
