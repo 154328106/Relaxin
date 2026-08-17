@@ -51,6 +51,13 @@ BASEBIN_RESOURCE_DIRECTORY := $(ROOT_DIR)/build/BaseBinResources
 XCODEBUILD_WRAPPER := $(ROOT_DIR)/DevKit/Helpers/run-xcodebuild.sh
 TOOL_CHECKER       := $(ROOT_DIR)/DevKit/Helpers/check-tools.sh
 
+# ASSETCATALOG_COMPILER_APPICON_NAME is overridable: the repo ships an
+# AppIcon.icon (Xcode 26 Icon Composer format) that older Xcode toolchains
+# (e.g. Xcode 16 on GitHub's macos runners) cannot compile. Pass
+# APPICON_NAME= (empty) to build without an app icon on those toolchains.
+# Restored to a Dopamine-style traditional .appiconset during the UI rework.
+APPICON_NAME ?= AppIcon
+
 XCODEBUILD := $(XCODEBUILD_WRAPPER) \
     -project "$(PROJECT)" \
     -derivedDataPath "$(DERIVED_DATA)" \
@@ -58,7 +65,8 @@ XCODEBUILD := $(XCODEBUILD_WRAPPER) \
     -skipPackagePluginValidation \
     CODE_SIGNING_ALLOWED=NO \
     CODE_SIGNING_REQUIRED=NO \
-    CODE_SIGN_IDENTITY=""
+    CODE_SIGN_IDENTITY="" \
+    ASSETCATALOG_COMPILER_APPICON_NAME="$(APPICON_NAME)"
 
 .PHONY: all help print-version \
         build build-ios lite-deb tipa ipa bootstrap-resources scan-license check test-host \
