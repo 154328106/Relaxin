@@ -56,12 +56,12 @@ struct DopamineHeroContent: View {
             .frame(width: proxy.size.width, height: proxy.size.height)
             .clipped()
         }
-        .ignoresSafeArea()
         .safeAreaInset(edge: .bottom) {
             primaryButton
                 .padding(.horizontal, 30)
                 .padding(.bottom, 16)
         }
+        .ignoresSafeArea()
     }
 
     private func backgroundPhoto(in proxy: GeometryProxy) -> some View {
