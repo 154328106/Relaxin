@@ -76,7 +76,14 @@ struct HomeContent<Action: Hashable>: View {
         .padding(Theme.pagePadding)
         .background {
             ZStack {
-                Theme.background
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        SwiftUI.Color(red: 0.12, green: 0.23, blue: 0.53),
+                        SwiftUI.Color(red: 0.10, green: 0.18, blue: 0.40)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
 
                 TerminalCharacterBackground(
                     rendersActively: rendersTerminalBackgroundActively
