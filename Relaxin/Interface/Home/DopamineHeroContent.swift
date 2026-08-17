@@ -31,43 +31,31 @@ struct DopamineHeroContent: View {
     let onPrimaryAction: () -> Void
 
     var body: some View {
-        GeometryReader { proxy in
-            ZStack {
-                backgroundPhoto(in: proxy)
+        ZStack(alignment: .topLeading) {
+            Image("HeroBackground")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .overlay(SwiftUI.Color.black.opacity(0.18))
+                .ignoresSafeArea()
 
-                VStack(alignment: .leading, spacing: 0) {
-                    header
-                    Spacer(minLength: 24)
-                    if !menuRows.isEmpty {
-                        menuCard
-                        Spacer(minLength: 16)
-                    }
-                    primaryButton
+            VStack(alignment: .leading, spacing: 24) {
+                header
+                if !menuRows.isEmpty {
+                    menuCard
                 }
-                .padding(.horizontal, 30)
-                .padding(.top, proxy.safeAreaInsets.top + 24)
-                .padding(.bottom, 40)
             }
-            // The background photo is deliberately taller than the screen (see
-            // backgroundPhoto) so it can bleed past the edges. Without this frame,
-            // ZStack sizes itself to its largest child -- the oversized photo -- and
-            // proposes that inflated height to the foreground VStack too, so its
-            // Spacers over-expand and push primaryButton below the visible screen.
-            // Pin the ZStack back to the true screen size and clip the overflow.
-            .frame(width: proxy.size.width, height: proxy.size.height)
-            .clipped()
+            .padding(.horizontal, 30)
+            .padding(.top, 24)
         }
-        .ignoresSafeArea()
-    }
-
-    private func backgroundPhoto(in proxy: GeometryProxy) -> some View {
-        Image("HeroBackground")
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(width: proxy.size.width, height: proxy.size.height + 200)
-            .clipped()
-            .overlay(SwiftUI.Color.black.opacity(0.18))
-            .ignoresSafeArea()
+        // Docks the button to the bottom of the screen unconditionally, regardless of
+        // how much (or how little) content is above it -- avoids relying on Spacer
+        // math inside a ZStack, which previously let the button be laid out below the
+        // visible viewport.
+        .safeAreaInset(edge: .bottom) {
+            primaryButton
+                .padding(.horizontal, 30)
+                .padding(.bottom, 16)
+        }
     }
 
     private var header: some View {
