@@ -48,6 +48,14 @@ struct DopamineHeroContent: View {
                 .padding(.top, proxy.safeAreaInsets.top + 24)
                 .padding(.bottom, 40)
             }
+            // The background photo is deliberately taller than the screen (see
+            // backgroundPhoto) so it can bleed past the edges. Without this frame,
+            // ZStack sizes itself to its largest child -- the oversized photo -- and
+            // proposes that inflated height to the foreground VStack too, so its
+            // Spacers over-expand and push primaryButton below the visible screen.
+            // Pin the ZStack back to the true screen size and clip the overflow.
+            .frame(width: proxy.size.width, height: proxy.size.height)
+            .clipped()
         }
         .ignoresSafeArea()
     }
