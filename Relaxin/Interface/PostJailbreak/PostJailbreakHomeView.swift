@@ -104,7 +104,48 @@ struct PostJailbreakHomeView: View {
         )
     }
 
-    var body: some View {
+    private var homeStatusSubtitle: String {
+        "\(DeviceInfo.modelIdentifier) \u{2022} \(DeviceInfo.os)"
+    }
+
+    @ViewBuilder private var homeContent: some View {
+        DopamineHeroContent(
+            statusTitle: String(localized: "Jailbroken", bundle: environment.resourceBundle),
+            statusSubtitle: homeStatusSubtitle,
+            primaryButtonTitle: String(
+                localized: "Restart SpringBoard",
+                bundle: environment.resourceBundle
+            ),
+            isPrimaryButtonEnabled: !session.isPerformingAction,
+            isPrimaryButtonProminent: true,
+            secondaryActions: [
+                .init(
+                    String(localized: "Restart Userspace", bundle: environment.resourceBundle),
+                    id: "restartUserspace"
+                ) {
+                    screen = .confirmation(.restartUserspace)
+                },
+                .init(String(localized: "Credits", bundle: environment.resourceBundle), id: "credits") {
+                    screen = .credits
+                },
+            ],
+            onPrimaryAction: { screen = .confirmation(.restartSpringBoard) },
+            onSettings: {
+                session.refreshRuntimeOptions()
+                screen = .advancedOptions
+            }
+        )
+    }
+
+    @ViewBuilder private var mainContent: some View {
+        if session.isAvailable, screen == .home {
+            homeContent
+        } else {
+            terminalContent
+        }
+    }
+
+    private var terminalContent: some View {
         HomeContent(
             terminalText: terminalText,
             terminalAccessibleLinks: terminalAccessibleLinks,
@@ -122,6 +163,10 @@ struct PostJailbreakHomeView: View {
             onTerminalColumnCountChange: { terminalColumnCount = $0 },
             onSelectMenuItem: performMenuAction
         )
+    }
+
+    var body: some View {
+        mainContent
         .disabled(session.isPerformingAction)
         .allowsHitTesting(!session.isPerformingAction)
         .task(id: screen == .credits) {

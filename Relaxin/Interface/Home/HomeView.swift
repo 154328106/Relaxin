@@ -102,7 +102,69 @@ struct HomeView: View {
         engineFailure != nil
     }
 
-    private var primaryContent: some View {
+    private var homeStatusSubtitle: String {
+        "\(DeviceInfo.modelIdentifier) \u{2022} \(DeviceInfo.os)"
+    }
+
+    private var homePrimaryButtonTitle: String {
+        configuration.removeJailbreakEnabled
+            ? String(localized: "Remove Jailbreak", bundle: runtime.resourceBundle)
+            : String(localized: "Jailbreak", bundle: runtime.resourceBundle)
+    }
+
+    private var homeSecondaryActions: [DopamineHeroContent.SecondaryAction] {
+        var actions: [DopamineHeroContent.SecondaryAction] = []
+        if runtime.interfaceMode.showsMaintenance {
+            actions.append(
+                .init(
+                    String(localized: "Maintenance Tools", bundle: runtime.resourceBundle),
+                    id: "maintenance"
+                ) {
+                    screen = .maintenance
+                }
+            )
+        }
+        actions.append(
+            .init(String(localized: "Credits", bundle: runtime.resourceBundle), id: "credits") {
+                screen = .credits
+            }
+        )
+        return actions
+    }
+
+    @ViewBuilder private var homeContent: some View {
+        DopamineHeroContent(
+            statusTitle: String(localized: "Not Jailbroken", bundle: runtime.resourceBundle),
+            statusSubtitle: homeStatusSubtitle,
+            primaryButtonTitle: homePrimaryButtonTitle,
+            isPrimaryButtonEnabled: {
+                if case .idle = engineSession.phase { return true }
+                return false
+            }(),
+            isPrimaryButtonProminent: !configuration.removeJailbreakEnabled,
+            secondaryActions: homeSecondaryActions,
+            onPrimaryAction: {
+                // Mirrors the `.jailbreak` menu action: removal requires an
+                // explicit confirmation screen before the engine runs.
+                if configuration.removeJailbreakEnabled {
+                    screen = .confirmation(.removeJailbreak)
+                } else {
+                    startEngine()
+                }
+            },
+            onSettings: { screen = .advancedOptions }
+        )
+    }
+
+    @ViewBuilder private var primaryContent: some View {
+        if screen == .home {
+            homeContent
+        } else {
+            terminalContent
+        }
+    }
+
+    private var terminalContent: some View {
         HomeContent(
             terminalText: terminalText,
             terminalAccessibleLinks: terminalAccessibleLinks,
