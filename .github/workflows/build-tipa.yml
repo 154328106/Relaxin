@@ -15,7 +15,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        brew install ldid zstd gnu-tar
+        brew install ldid zstd gnu-tar ripgrep
 
     - name: Check environment
       run: |
