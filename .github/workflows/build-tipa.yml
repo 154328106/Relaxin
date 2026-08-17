@@ -21,7 +21,7 @@ jobs:
       run: |
         xcodebuild -version
         swift --version
-        ldid --version
+        which ldid
         zstd --version
 
     - name: Build TIPA (Dopamine UI + Relaxin RootHide)
