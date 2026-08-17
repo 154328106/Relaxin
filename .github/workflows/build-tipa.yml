@@ -23,6 +23,16 @@ jobs:
         make -C /tmp/trustcache
         sudo make -C /tmp/trustcache install PREFIX=/usr/local
 
+    - name: Select latest Xcode
+      run: |
+        echo "=== Available Xcode versions ==="
+        ls -d /Applications/Xcode_*.app 2>/dev/null || ls /Applications | grep -i xcode
+        LATEST="$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)"
+        if [ -n "$LATEST" ]; then
+          echo "Selecting: $LATEST"
+          sudo xcode-select -s "$LATEST/Contents/Developer"
+        fi
+
     - name: Check environment
       run: |
         xcodebuild -version
