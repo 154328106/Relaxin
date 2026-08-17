@@ -15,10 +15,13 @@ jobs:
 
     - name: Install dependencies
       run: |
-        brew install ldid zstd gnu-tar ripgrep dpkg make
-        # trustcache: CRKatri's Rust tool, built from source (Rust preinstalled on runner)
-        cargo install --git https://github.com/CRKatri/trustcache trustcache
-        echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+        brew install ldid zstd gnu-tar ripgrep dpkg make libmd
+        # trustcache: CRKatri's C tool, built from source (links -lmd from libmd)
+        git clone --depth 1 https://github.com/CRKatri/trustcache /tmp/trustcache
+        export C_INCLUDE_PATH="$(brew --prefix libmd)/include"
+        export LIBRARY_PATH="$(brew --prefix libmd)/lib"
+        make -C /tmp/trustcache
+        sudo make -C /tmp/trustcache install PREFIX=/usr/local
 
     - name: Check environment
       run: |
