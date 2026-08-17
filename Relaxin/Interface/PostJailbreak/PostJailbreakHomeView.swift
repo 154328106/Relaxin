@@ -108,32 +108,61 @@ struct PostJailbreakHomeView: View {
         "\(DeviceInfo.modelIdentifier) \u{2022} \(DeviceInfo.os)"
     }
 
-    @ViewBuilder private var homeContent: some View {
-        DopamineHeroContent(
-            statusTitle: String(localized: "Jailbroken", bundle: environment.resourceBundle),
-            statusSubtitle: homeStatusSubtitle,
-            primaryButtonTitle: String(
-                localized: "Restart SpringBoard",
-                bundle: environment.resourceBundle
-            ),
-            isPrimaryButtonEnabled: !session.isPerformingAction,
-            isPrimaryButtonProminent: true,
-            secondaryActions: [
-                .init(
-                    String(localized: "Restart Userspace", bundle: environment.resourceBundle),
-                    id: "restartUserspace"
-                ) {
-                    screen = .confirmation(.restartUserspace)
-                },
-                .init(String(localized: "Credits", bundle: environment.resourceBundle), id: "credits") {
-                    screen = .credits
-                },
-            ],
-            onPrimaryAction: { screen = .confirmation(.restartSpringBoard) },
-            onSettings: {
+    private var homeMenuRows: [DopamineHeroContent.MenuRow] {
+        [
+            .init(
+                id: "advancedOptions",
+                systemImage: "gearshape",
+                title: String(localized: "Advanced Options", bundle: environment.resourceBundle),
+                showsChevron: true,
+                isEnabled: !session.isPerformingAction
+            ) {
                 session.refreshRuntimeOptions()
                 screen = .advancedOptions
-            }
+            },
+            .init(
+                id: "restartSpringBoard",
+                systemImage: "arrow.clockwise",
+                title: String(localized: "Restart SpringBoard", bundle: environment.resourceBundle),
+                isEnabled: !session.isPerformingAction
+            ) {
+                screen = .confirmation(.restartSpringBoard)
+            },
+            .init(
+                id: "restartUserspace",
+                systemImage: "arrow.clockwise.circle",
+                title: String(localized: "Restart Userspace", bundle: environment.resourceBundle),
+                isEnabled: !session.isPerformingAction
+            ) {
+                screen = .confirmation(.restartUserspace)
+            },
+            .init(
+                id: "credits",
+                systemImage: "info.circle",
+                title: String(localized: "Credits", bundle: environment.resourceBundle),
+                showsChevron: true,
+                isEnabled: !session.isPerformingAction
+            ) {
+                screen = .credits
+            },
+        ]
+    }
+
+    @ViewBuilder private var homeContent: some View {
+        DopamineHeroContent(
+            headerTitle: "Relaxin",
+            headerSubtitle: homeStatusSubtitle,
+            headerFootnote: String(
+                localized: "RootHide Jailbreak Engine",
+                bundle: environment.resourceBundle
+            ),
+            menuRows: homeMenuRows,
+            primaryButtonTitle: String(localized: "Jailbroken", bundle: environment.resourceBundle),
+            primaryButtonSystemImage: "lock.open",
+            // Matches Dopamine's own jailbreak button: once jailbroken it becomes a
+            // disabled status display rather than a tappable action.
+            isPrimaryButtonEnabled: false,
+            onPrimaryAction: {}
         )
     }
 

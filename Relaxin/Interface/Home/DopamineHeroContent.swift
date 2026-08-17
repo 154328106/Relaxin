@@ -1,138 +1,175 @@
 import SwiftUI
 
-/// A Dopamine-style hero screen: logo mark, status text, a single large
-/// primary action button, and a minimal row of secondary text actions.
-/// Used for the idle "home" screen in both the pre-jailbreak (`HomeView`)
-/// and post-jailbreak (`PostJailbreakHomeView`) flows; everything reachable
-/// from the original terminal-driven home menu remains reachable here.
+/// A faithful recreation of Dopamine's real UIKit home screen (DOMainViewController /
+/// DOHeaderView / DOActionMenuView / DOJailbreakButton), ported to SwiftUI: a full-bleed
+/// photo background, a top-left logo+subtitle header, a translucent rounded action-menu
+/// card, and a separate translucent rounded primary button below it. Structure, spacing,
+/// and behavior (chevrons only on navigating rows, disabled rows dimmed, disabled primary
+/// button at 70% opacity) mirror the upstream layout; colors/typography are approximated
+/// since Dopamine's own theme-color source wasn't recoverable.
+///
+/// Used for the idle "home" screen in both the pre-jailbreak (`HomeView`) and
+/// post-jailbreak (`PostJailbreakHomeView`) flows; everything reachable from the original
+/// terminal-driven home menu remains reachable here.
 struct DopamineHeroContent: View {
-    struct SecondaryAction: Identifiable {
+    struct MenuRow: Identifiable {
         let id: String
+        let systemImage: String
         let title: String
+        var showsChevron = false
+        var isEnabled = true
         let action: () -> Void
-
-        init(_ title: String, id: String? = nil, action: @escaping () -> Void) {
-            self.title = title
-            self.id = id ?? title
-            self.action = action
-        }
     }
 
-    let statusTitle: String
-    let statusSubtitle: String?
+    let headerTitle: String
+    let headerSubtitle: String
+    let headerFootnote: String
+    let menuRows: [MenuRow]
     let primaryButtonTitle: String
+    let primaryButtonSystemImage: String
     let isPrimaryButtonEnabled: Bool
-    let isPrimaryButtonProminent: Bool
-    let secondaryActions: [SecondaryAction]
     let onPrimaryAction: () -> Void
-    var onSettings: (() -> Void)?
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    SwiftUI.Color(red: 0.12, green: 0.23, blue: 0.53),
-                    SwiftUI.Color(red: 0.10, green: 0.18, blue: 0.40),
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+        GeometryReader { proxy in
+            ZStack {
+                backgroundPhoto(in: proxy)
 
-            VStack(spacing: 0) {
-                if let onSettings {
-                    HStack {
-                        Spacer()
-                        Button(action: onSettings) {
-                            Image(systemName: "gearshape.fill")
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundStyle(.white.opacity(0.85))
-                                .frame(width: 40, height: 40)
-                                .background(Circle().fill(.white.opacity(0.12)))
-                        }
-                        .accessibilityLabel(Text("Advanced Options"))
+                VStack(alignment: .leading, spacing: 0) {
+                    header
+                    Spacer(minLength: 24)
+                    if !menuRows.isEmpty {
+                        menuCard
+                        Spacer(minLength: 16)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-                }
-
-                Spacer(minLength: 24)
-
-                VStack(spacing: 16) {
-                    Image("BootLogoMark")
-                        .resizable()
-                        .renderingMode(.original)
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 72, height: 72)
-                        .environment(\.colorScheme, .dark)
-
-                    VStack(spacing: 6) {
-                        Text(statusTitle)
-                            .font(.system(size: 26, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                            .multilineTextAlignment(.center)
-
-                        if let statusSubtitle {
-                            Text(statusSubtitle)
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundStyle(.white.opacity(0.65))
-                                .multilineTextAlignment(.center)
-                        }
-                    }
-                }
-
-                Spacer(minLength: 24)
-
-                VStack(spacing: 18) {
-                    Button(action: onPrimaryAction) {
-                        Text(primaryButtonTitle)
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 56)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(
-                                        isPrimaryButtonProminent
-                                            ? Theme.accent
-                                            : SwiftUI.Color.white.opacity(0.15)
-                                    )
-                            )
-                    }
-                    .disabled(!isPrimaryButtonEnabled)
-                    .opacity(isPrimaryButtonEnabled ? 1 : 0.5)
-
-                    if !secondaryActions.isEmpty {
-                        HStack(spacing: 28) {
-                            ForEach(secondaryActions) { action in
-                                Button(action: action.action) {
-                                    Text(action.title)
-                                }
-                            }
-                        }
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.6))
-                    }
+                    primaryButton
                 }
                 .padding(.horizontal, 30)
+                .padding(.top, proxy.safeAreaInsets.top + 24)
                 .padding(.bottom, 40)
             }
         }
+        .ignoresSafeArea()
+    }
+
+    private func backgroundPhoto(in proxy: GeometryProxy) -> some View {
+        Image("HeroBackground")
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: proxy.size.width, height: proxy.size.height + 200)
+            .clipped()
+            .overlay(SwiftUI.Color.black.opacity(0.18))
+            .ignoresSafeArea()
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 8) {
+                Image("BootLogoMark")
+                    .resizable()
+                    .renderingMode(.original)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 30, height: 30)
+                    .environment(\.colorScheme, .dark)
+                Text(headerTitle)
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+            }
+            .shadow(color: .black.opacity(0.3), radius: 12)
+
+            Text(headerSubtitle)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(.white)
+            Text(headerFootnote)
+                .font(.system(size: 14, weight: .regular))
+                .foregroundStyle(.white.opacity(0.6))
+        }
+    }
+
+    private var menuCard: some View {
+        VStack(spacing: 0) {
+            ForEach(Array(menuRows.enumerated()), id: \.element.id) { index, row in
+                Button(action: row.action) {
+                    HStack(spacing: 10) {
+                        Image(systemName: row.systemImage)
+                            .font(.system(size: 14, weight: .medium))
+                            .frame(width: 20)
+                        Text(row.title)
+                            .font(.system(size: 17, weight: .regular))
+                            .lineLimit(1)
+                        Spacer()
+                        if row.showsChevron {
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 15, weight: .regular))
+                                .foregroundStyle(.white.opacity(0.6))
+                        }
+                    }
+                    .foregroundStyle(.white)
+                    .frame(height: 52)
+                    .padding(.horizontal, 20)
+                    .contentShape(Rectangle())
+                }
+                .disabled(!row.isEnabled)
+                .opacity(row.isEnabled ? 1 : 0.4)
+
+                if index != menuRows.count - 1 {
+                    Rectangle()
+                        .fill(SwiftUI.Color.white.opacity(0.15))
+                        .frame(height: 1)
+                        .padding(.horizontal, 20)
+                }
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(SwiftUI.Color.black.opacity(0.4))
+        )
+    }
+
+    private var primaryButton: some View {
+        Button(action: onPrimaryAction) {
+            HStack(spacing: 8) {
+                Image(systemName: primaryButtonSystemImage)
+                    .font(.system(size: 14, weight: .medium))
+                Text(primaryButtonTitle)
+                    .font(.system(size: 17, weight: .semibold))
+            }
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: 56)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(SwiftUI.Color.black.opacity(0.4))
+            )
+        }
+        .disabled(!isPrimaryButtonEnabled)
+        .opacity(isPrimaryButtonEnabled ? 1 : 0.7)
     }
 }
 
 #Preview {
     DopamineHeroContent(
-        statusTitle: "Not Jailbroken",
-        statusSubtitle: "iPhone \u{2022} iOS 17.3.1",
-        primaryButtonTitle: "Jailbreak",
-        isPrimaryButtonEnabled: true,
-        isPrimaryButtonProminent: true,
-        secondaryActions: [
-            .init("Maintenance") {},
-            .init("Credits") {},
+        headerTitle: "Relaxin",
+        headerSubtitle: "iPhone \u{2022} iOS 17.3.1",
+        headerFootnote: "RootHide Jailbreak Engine",
+        menuRows: [
+            .init(
+                id: "advancedOptions",
+                systemImage: "gearshape",
+                title: "Advanced Options",
+                showsChevron: true
+            ) {},
+            .init(
+                id: "maintenance",
+                systemImage: "wrench.and.screwdriver",
+                title: "Maintenance Tools",
+                showsChevron: true
+            ) {},
+            .init(id: "credits", systemImage: "info.circle", title: "Credits", showsChevron: true) {},
         ],
-        onPrimaryAction: {},
-        onSettings: {}
+        primaryButtonTitle: "Jailbreak",
+        primaryButtonSystemImage: "lock.open",
+        isPrimaryButtonEnabled: true,
+        onPrimaryAction: {}
     )
 }

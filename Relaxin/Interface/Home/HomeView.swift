@@ -112,37 +112,57 @@ struct HomeView: View {
             : String(localized: "Jailbreak", bundle: runtime.resourceBundle)
     }
 
-    private var homeSecondaryActions: [DopamineHeroContent.SecondaryAction] {
-        var actions: [DopamineHeroContent.SecondaryAction] = []
+    private var homeMenuRows: [DopamineHeroContent.MenuRow] {
+        var rows: [DopamineHeroContent.MenuRow] = [
+            .init(
+                id: "advancedOptions",
+                systemImage: "gearshape",
+                title: String(localized: "Advanced Options", bundle: runtime.resourceBundle),
+                showsChevron: true
+            ) {
+                screen = .advancedOptions
+            },
+        ]
         if runtime.interfaceMode.showsMaintenance {
-            actions.append(
+            rows.append(
                 .init(
-                    String(localized: "Maintenance Tools", bundle: runtime.resourceBundle),
-                    id: "maintenance"
+                    id: "maintenance",
+                    systemImage: "wrench.and.screwdriver",
+                    title: String(localized: "Maintenance Tools", bundle: runtime.resourceBundle),
+                    showsChevron: true
                 ) {
                     screen = .maintenance
                 }
             )
         }
-        actions.append(
-            .init(String(localized: "Credits", bundle: runtime.resourceBundle), id: "credits") {
+        rows.append(
+            .init(
+                id: "credits",
+                systemImage: "info.circle",
+                title: String(localized: "Credits", bundle: runtime.resourceBundle),
+                showsChevron: true
+            ) {
                 screen = .credits
             }
         )
-        return actions
+        return rows
     }
 
     @ViewBuilder private var homeContent: some View {
         DopamineHeroContent(
-            statusTitle: String(localized: "Not Jailbroken", bundle: runtime.resourceBundle),
-            statusSubtitle: homeStatusSubtitle,
+            headerTitle: "Relaxin",
+            headerSubtitle: homeStatusSubtitle,
+            headerFootnote: String(
+                localized: "RootHide Jailbreak Engine",
+                bundle: runtime.resourceBundle
+            ),
+            menuRows: homeMenuRows,
             primaryButtonTitle: homePrimaryButtonTitle,
+            primaryButtonSystemImage: "lock.open",
             isPrimaryButtonEnabled: {
                 if case .idle = engineSession.phase { return true }
                 return false
             }(),
-            isPrimaryButtonProminent: !configuration.removeJailbreakEnabled,
-            secondaryActions: homeSecondaryActions,
             onPrimaryAction: {
                 // Mirrors the `.jailbreak` menu action: removal requires an
                 // explicit confirmation screen before the engine runs.
@@ -151,8 +171,7 @@ struct HomeView: View {
                 } else {
                     startEngine()
                 }
-            },
-            onSettings: { screen = .advancedOptions }
+            }
         )
     }
 
