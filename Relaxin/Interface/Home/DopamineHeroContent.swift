@@ -31,8 +31,8 @@ struct DopamineHeroContent: View {
         ZStack {
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color(red: 0.12, green: 0.23, blue: 0.53),
-                    Color(red: 0.10, green: 0.18, blue: 0.40),
+                    SwiftUI.Color(red: 0.12, green: 0.23, blue: 0.53),
+                    SwiftUI.Color(red: 0.10, green: 0.18, blue: 0.40),
                 ]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
