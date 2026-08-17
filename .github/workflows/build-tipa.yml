@@ -15,7 +15,10 @@ jobs:
 
     - name: Install dependencies
       run: |
-        brew install ldid zstd gnu-tar ripgrep
+        brew install ldid zstd gnu-tar ripgrep dpkg make
+        # trustcache: CRKatri's Rust tool, built from source (Rust preinstalled on runner)
+        cargo install --git https://github.com/CRKatri/trustcache trustcache
+        echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
 
     - name: Check environment
       run: |
@@ -23,6 +26,8 @@ jobs:
         swift --version
         which ldid
         zstd --version
+        which trustcache
+        dpkg-deb --version | head -1
 
     - name: Build TIPA (Dopamine UI + Relaxin RootHide)
       run: make tipa
