@@ -31,31 +31,47 @@ struct DopamineHeroContent: View {
     let onPrimaryAction: () -> Void
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            Image("HeroBackground")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .overlay(SwiftUI.Color.black.opacity(0.18))
-                .ignoresSafeArea()
+        // This is the exact GeometryReader/ZStack/VStack structure confirmed (by
+        // on-device screenshot) to render the header and menu-card text correctly.
+        // Only primaryButton was moved out, into .safeAreaInset below, since leaving
+        // it inside this VStack let a Spacer push it below the visible viewport. A
+        // prior attempt to restructure this whole hierarchy fixed the button position
+        // but made the header/menu text render blank on-device for reasons that
+        // weren't isolated, so everything else here is left untouched on purpose.
+        GeometryReader { proxy in
+            ZStack {
+                backgroundPhoto(in: proxy)
 
-            VStack(alignment: .leading, spacing: 24) {
-                header
-                if !menuRows.isEmpty {
-                    menuCard
+                VStack(alignment: .leading, spacing: 0) {
+                    header
+                    Spacer(minLength: 24)
+                    if !menuRows.isEmpty {
+                        menuCard
+                    }
                 }
+                .padding(.horizontal, 30)
+                .padding(.top, proxy.safeAreaInsets.top + 24)
+                .padding(.bottom, 24)
             }
-            .padding(.horizontal, 30)
-            .padding(.top, 24)
+            .frame(width: proxy.size.width, height: proxy.size.height)
+            .clipped()
         }
-        // Docks the button to the bottom of the screen unconditionally, regardless of
-        // how much (or how little) content is above it -- avoids relying on Spacer
-        // math inside a ZStack, which previously let the button be laid out below the
-        // visible viewport.
+        .ignoresSafeArea()
         .safeAreaInset(edge: .bottom) {
             primaryButton
                 .padding(.horizontal, 30)
                 .padding(.bottom, 16)
         }
+    }
+
+    private func backgroundPhoto(in proxy: GeometryProxy) -> some View {
+        Image("HeroBackground")
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: proxy.size.width, height: proxy.size.height + 200)
+            .clipped()
+            .overlay(SwiftUI.Color.black.opacity(0.18))
+            .ignoresSafeArea()
     }
 
     private var header: some View {
