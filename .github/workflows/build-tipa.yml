@@ -1,0 +1,41 @@
+name: Build Relaxin TIPA
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        brew install ldid zstd gnu-tar
+
+    - name: Check environment
+      run: |
+        xcodebuild -version
+        swift --version
+        ldid --version
+        zstd --version
+
+    - name: Build TIPA (Dopamine UI + Relaxin RootHide)
+      run: make tipa
+
+    - name: Upload TIPA artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: relaxin-tipa
+        path: build/Artifacts/*.tipa
+        retention-days: 30
+
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build/Artifacts/*.tipa
