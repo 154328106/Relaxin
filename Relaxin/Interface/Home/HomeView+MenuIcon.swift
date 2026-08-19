@@ -33,7 +33,7 @@ extension HomeView {
                 return .init(systemImage: "trash.fill", tint: Theme.Accents.red, chevron: nil)
             }
         case .jetsamMultiplier:
-            return .init(systemImage: "gauge.with.dots.needle.67percent", tint: Theme.Accents.teal)
+            return .init(systemImage: "speedometer", tint: Theme.Accents.teal)
         case .setJetsamMultiplier:
             return .init(systemImage: "circle.inset.filled", tint: Theme.Accents.blue, chevron: nil)
         case .resetRelaxin:

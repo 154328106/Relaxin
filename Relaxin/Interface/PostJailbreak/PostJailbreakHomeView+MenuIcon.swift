@@ -25,7 +25,7 @@ extension PostJailbreakHomeView {
         case .restartUserspace:
             return .init(systemImage: "arrow.clockwise.circle.fill", tint: Theme.Accents.teal, chevron: nil)
         case .refreshJailbreakApps:
-            return .init(systemImage: "app.badge.checkmark.fill", tint: Theme.Accents.green, chevron: nil)
+            return .init(systemImage: "arrow.triangle.2.circlepath", tint: Theme.Accents.green, chevron: nil)
         case .resetMobilePassword:
             return .init(systemImage: "key.fill", tint: Theme.Accents.indigo, chevron: nil)
         case .reinstallSileo:

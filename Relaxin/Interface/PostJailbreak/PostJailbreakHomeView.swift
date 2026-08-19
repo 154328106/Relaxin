@@ -108,6 +108,19 @@ struct PostJailbreakHomeView: View {
         "\(DeviceInfo.modelIdentifier) \u{2022} \(DeviceInfo.os)"
     }
 
+    /// Defer the state change to the next runloop so it doesn't collide with
+    /// SwiftUI's tap-dispatch on iOS 16.6.1 (bug where inline @State writes
+    /// from Button/onTapGesture actions on post-jailbreak home were silently
+    /// dropped, only the downstream haptic side-effect firing).
+    private func navigate(to target: Screen, refreshRuntimeOptions: Bool = false) {
+        Task { @MainActor in
+            if refreshRuntimeOptions {
+                session.refreshRuntimeOptions()
+            }
+            screen = target
+        }
+    }
+
     private var homeMenuRows: [DopamineHeroContent.MenuRow] {
         [
             .init(
@@ -118,8 +131,7 @@ struct PostJailbreakHomeView: View {
                 isEnabled: !session.isPerformingAction,
                 tint: Theme.Accents.blue
             ) {
-                session.refreshRuntimeOptions()
-                screen = .advancedOptions
+                navigate(to: .advancedOptions, refreshRuntimeOptions: true)
             },
             .init(
                 id: "restartSpringBoard",
@@ -128,7 +140,7 @@ struct PostJailbreakHomeView: View {
                 isEnabled: !session.isPerformingAction,
                 tint: Theme.Accents.teal
             ) {
-                screen = .confirmation(.restartSpringBoard)
+                navigate(to: .confirmation(.restartSpringBoard))
             },
             .init(
                 id: "restartUserspace",
@@ -137,7 +149,7 @@ struct PostJailbreakHomeView: View {
                 isEnabled: !session.isPerformingAction,
                 tint: Theme.Accents.teal
             ) {
-                screen = .confirmation(.restartUserspace)
+                navigate(to: .confirmation(.restartUserspace))
             },
             .init(
                 id: "credits",
@@ -147,7 +159,7 @@ struct PostJailbreakHomeView: View {
                 isEnabled: !session.isPerformingAction,
                 tint: Theme.Accents.pink
             ) {
-                screen = .credits
+                navigate(to: .credits)
             },
         ]
     }
