@@ -9,34 +9,21 @@ import SwiftUI
 ///   dropped anywhere as `.modifier(GlassCard())` or `.glassCard()`.
 struct GlassCard: ViewModifier {
     var cornerRadius: CGFloat = Theme.cardCornerRadius
-    var strokeOpacity: Double = 0.55
-    var fillOpacity: Double = 0.62
-
-    @Environment(\.colorScheme) private var colorScheme
+    var isEmphasized: Bool = false
 
     func body(content: Content) -> some View {
         content
             .background {
-                ZStack {
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(.ultraThinMaterial)
-
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(SwiftUI.Color.white.opacity(colorScheme == .dark ? 0.06 : fillOpacity))
-                }
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(SwiftUI.Color.white.opacity(isEmphasized ? 0.22 : 0.14))
             }
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(
-                        LinearGradient(
-                            colors: [
-                                SwiftUI.Color.white.opacity(colorScheme == .dark ? 0.30 : strokeOpacity),
-                                SwiftUI.Color.white.opacity(colorScheme == .dark ? 0.08 : 0.20),
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        ),
-                        lineWidth: 1
+                        isEmphasized
+                            ? Theme.accent.opacity(0.9)
+                            : SwiftUI.Color.white.opacity(0.30),
+                        lineWidth: isEmphasized ? 1.4 : 0.8
                     )
             }
     }
@@ -45,14 +32,9 @@ struct GlassCard: ViewModifier {
 extension View {
     func glassCard(
         cornerRadius: CGFloat = Theme.cardCornerRadius,
-        strokeOpacity: Double = 0.55,
-        fillOpacity: Double = 0.62
+        isEmphasized: Bool = false
     ) -> some View {
-        modifier(GlassCard(
-            cornerRadius: cornerRadius,
-            strokeOpacity: strokeOpacity,
-            fillOpacity: fillOpacity
-        ))
+        modifier(GlassCard(cornerRadius: cornerRadius, isEmphasized: isEmphasized))
     }
 }
 

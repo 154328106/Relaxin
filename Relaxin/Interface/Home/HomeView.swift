@@ -227,7 +227,8 @@ struct HomeView: View {
             title: screen.title(resourceBundle: runtime.resourceBundle),
             subtitle: homeStatusSubtitle,
             backAction: backAction,
-            rows: rows
+            rows: rows,
+            selectedID: preferredMenuAction
         )
     }
 

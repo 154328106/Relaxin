@@ -12,6 +12,7 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
     var subtitle: String? = nil
     let backAction: (() -> Void)?
     let rows: [Row]
+    var selectedID: ActionID? = nil
 
     struct Row: Identifiable {
         let id: ActionID
@@ -32,7 +33,7 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
                 ScrollView {
                     VStack(spacing: 12) {
                         ForEach(rows) { row in
-                            rowView(row)
+                            rowView(row, isSelected: row.id == selectedID)
                         }
                     }
                     .padding(.top, 8)
@@ -59,18 +60,22 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
     }
 
     @ViewBuilder
-    private func rowView(_ row: Row) -> some View {
+    private func rowView(_ row: Row, isSelected: Bool) -> some View {
         Button(action: row.action) {
             HStack(spacing: 14) {
                 IconBadge(systemImage: row.icon.systemImage, tint: row.icon.tint)
                 Text(row.title)
-                    .font(.system(size: 17, weight: .regular, design: .rounded))
+                    .font(.system(size: 17, weight: isSelected ? .semibold : .regular, design: .rounded))
                     .foregroundStyle(Theme.foreground)
                     .lineLimit(1)
                 Spacer(minLength: 0)
                 if row.isLoading {
                     ProgressView()
                         .controlSize(.small)
+                } else if isSelected {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(Theme.accent)
                 } else if let chevron = row.icon.chevron {
                     Image(systemName: chevron)
                         .font(.system(size: 14, weight: .semibold))
@@ -85,6 +90,6 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
         .buttonStyle(.plain)
         .disabled(row.isDisabled || row.isLoading)
         .opacity(row.isDisabled ? 0.45 : 1)
-        .glassCard()
+        .glassCard(isEmphasized: isSelected)
     }
 }

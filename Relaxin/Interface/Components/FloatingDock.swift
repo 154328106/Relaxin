@@ -39,7 +39,7 @@ struct FloatingDock: View {
         }
         .padding(.horizontal, 22)
         .padding(.vertical, 8)
-        .glassCard(cornerRadius: 32, strokeOpacity: 0.65)
+        .glassCard(cornerRadius: 32)
     }
 }
 

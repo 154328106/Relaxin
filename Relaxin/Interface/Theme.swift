@@ -25,12 +25,11 @@ enum Theme {
 
     // MARK: - Text
 
-    /// Primary text on the liquid gradient (dark for legibility in light mode,
-    /// adapts to bright white in dark mode via UITraitCollection).
-    static let foreground = SwiftUI.Color.primary
+    /// Primary text — white to read on the deep-blue gradient background.
+    static let foreground = SwiftUI.Color.white
 
     /// Secondary text (subtitles, footnotes).
-    static let secondaryForeground = SwiftUI.Color.secondary
+    static let secondaryForeground = SwiftUI.Color.white.opacity(0.7)
 
     /// Failure-page foreground: sits over a deep red gradient.
     static let failureForeground = SwiftUI.Color.white
