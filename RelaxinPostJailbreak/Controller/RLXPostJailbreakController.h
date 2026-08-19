@@ -10,6 +10,7 @@ typedef NS_ENUM(NSInteger, RLXPostJailbreakAction) {
     RLXPostJailbreakActionRestartUserspace,
     RLXPostJailbreakActionRefreshJailbreakApps,
     RLXPostJailbreakActionResetMobilePassword,
+    RLXPostJailbreakActionRebootDevice,
     RLXPostJailbreakActionRemoveJailbreak,
 };
 

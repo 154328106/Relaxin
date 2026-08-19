@@ -24,6 +24,8 @@ extension PostJailbreakHomeView {
             return .init(systemImage: "arrow.clockwise", tint: Theme.Accents.teal, chevron: nil)
         case .restartUserspace:
             return .init(systemImage: "arrow.clockwise.circle.fill", tint: Theme.Accents.teal, chevron: nil)
+        case .rebootDevice:
+            return .init(systemImage: "power", tint: Theme.Accents.red, chevron: nil)
         case .refreshJailbreakApps:
             return .init(systemImage: "arrow.triangle.2.circlepath", tint: Theme.Accents.green, chevron: nil)
         case .resetMobilePassword:

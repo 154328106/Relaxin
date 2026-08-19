@@ -12,6 +12,7 @@ int RLXPostJailbreakRestartSpringBoard(NSString *_Nullable __strong *_Nullable f
 NSError *_Nullable RLXPostJailbreakRestartUserspace(NSBundle *resourceBundle, BOOL darkAppearance);
 int RLXPostJailbreakRefreshApps(NSString *_Nullable __strong *_Nullable failurePhase);
 int RLXPostJailbreakResetMobilePassword(NSString *_Nullable __strong *_Nullable failurePhase);
+int RLXPostJailbreakRebootDevice(NSString *_Nullable __strong *_Nullable failurePhase);
 NSError *_Nullable RLXPostJailbreakRemove(NSString *_Nullable __strong *_Nullable failurePhase);
 
 #pragma GCC visibility pop
