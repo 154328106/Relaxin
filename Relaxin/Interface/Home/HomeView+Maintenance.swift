@@ -18,7 +18,11 @@ extension HomeView {
     }
 
     var softwareLicenseURL: URL? {
-        runtime.resourceBundle.url(forResource: "Licenses", withExtension: "txt")
+        // Licenses.txt ships in the app's main bundle (Relaxin/Resources/);
+        // runtime.resourceBundle points at the RelaxinEngine framework and
+        // does not contain it.
+        Bundle.main.url(forResource: "Licenses", withExtension: "txt")
+            ?? runtime.resourceBundle.url(forResource: "Licenses", withExtension: "txt")
     }
 
     var kernelcacheExportURL: URL? {

@@ -245,7 +245,8 @@ struct HomeView: View {
             subtitle: homeStatusSubtitle,
             backAction: backAction,
             rows: rows,
-            selectedID: preferredMenuAction
+            selectedID: preferredMenuAction,
+            shareItems: menuShareItems
         )
     }
 

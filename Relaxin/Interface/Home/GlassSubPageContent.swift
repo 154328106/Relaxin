@@ -13,6 +13,9 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
     let backAction: (() -> Void)?
     let rows: [Row]
     var selectedID: ActionID? = nil
+    /// Rows whose id appears here open a Share sheet (UIActivityViewController)
+    /// with the paired URL instead of relying on the caller to present it.
+    var shareItems: [ActionID: URL] = [:]
 
     struct Row: Identifiable {
         let id: ActionID
@@ -22,6 +25,8 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
         var isDisabled: Bool = false
         let action: () -> Void
     }
+
+    @State private var sharePresentation: GlassSharePresentation?
 
     var body: some View {
         ZStack {
@@ -45,6 +50,9 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
             .padding(.horizontal, Theme.pagePadding)
             .padding(.top, 8)
         }
+        .sheet(item: $sharePresentation) { presentation in
+            GlassShareSheet(url: presentation.url)
+        }
         // Edge-swipe back gesture — belt-and-braces alongside the nav bar's
         // dedicated button, so the user can always get home.
         .gesture(
@@ -61,7 +69,16 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
 
     @ViewBuilder
     private func rowView(_ row: Row, isSelected: Bool) -> some View {
-        Button(action: row.action) {
+        Button(action: {
+            // If the tapped row has a share URL, open the sheet first — the
+            // caller's action still fires (typically it's the state update
+            // that produced the URL in the first place).
+            if let url = shareItems[row.id] {
+                sharePresentation = GlassSharePresentation(url: url)
+            } else {
+                row.action()
+            }
+        }) {
             HStack(spacing: 14) {
                 IconBadge(systemImage: row.icon.systemImage, tint: row.icon.tint)
                 Text(row.title)
