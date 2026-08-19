@@ -174,7 +174,7 @@ struct PostJailbreakHomeView: View {
             headerTitle: "Relaxin",
             infoItems: heroInfoItems,
             menuRows: homeMenuRows,
-            primaryButtonTitle: String(localized: "Jailbroken", bundle: environment.resourceBundle),
+            primaryButtonTitle: "已经自由咯",
             // Post-jailbreak: open lock (already unlocked).
             primaryButtonSystemImage: "lock.open.fill",
             // Matches Dopamine's own jailbreak button: once jailbroken it becomes a
@@ -245,8 +245,10 @@ struct PostJailbreakHomeView: View {
 
     var body: some View {
         mainContent
-        .disabled(session.isPerformingAction)
-        .allowsHitTesting(!session.isPerformingAction)
+        // Per-row `isEnabled` already gates taps while the session is
+        // performing an action — a container-wide `.disabled` /
+        // `.allowsHitTesting` here mysteriously killed every button on the
+        // grouped glass home on iOS 16.6.1, so we drop it.
         .task(id: screen == .credits) {
             await animateCreditsIfNeeded()
         }

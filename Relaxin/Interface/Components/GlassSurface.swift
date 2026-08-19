@@ -25,6 +25,10 @@ struct GlassCard: ViewModifier {
                             : SwiftUI.Color.white.opacity(0.30),
                         lineWidth: isEmphasized ? 1.4 : 0.8
                     )
+                    // A Shape overlay hit-tests across its bounding box on
+                    // iOS 16 and can swallow taps meant for the button
+                    // inside — disable hit testing on the decorative border.
+                    .allowsHitTesting(false)
             }
     }
 }
