@@ -197,13 +197,24 @@ struct PostJailbreakHomeView: View {
     }
 
     @ViewBuilder private var mainContent: some View {
-        if session.isAvailable, screen == .home {
-            homeContent
-        } else if !session.isAvailable {
-            // Terminal-only "unavailable" screen keeps the original layout.
-            unavailableContent
-        } else {
-            glassSubPageContent
+        ZStack(alignment: .topTrailing) {
+            Group {
+                if session.isAvailable, screen == .home {
+                    homeContent
+                } else if !session.isAvailable {
+                    unavailableContent
+                } else {
+                    glassSubPageContent
+                }
+            }
+            // Diagnostic pill — remove once tap issue is understood.
+            Text("s:\(String(describing: screen).prefix(12))")
+                .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                .padding(.horizontal, 6).padding(.vertical, 2)
+                .background(SwiftUI.Color.red.opacity(0.85))
+                .foregroundColor(.white)
+                .cornerRadius(4)
+                .padding(.top, 4).padding(.trailing, 6)
         }
     }
 
