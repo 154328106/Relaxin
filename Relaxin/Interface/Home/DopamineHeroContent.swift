@@ -166,28 +166,32 @@ struct DopamineHeroContent: View {
 
             VStack(spacing: 0) {
                 ForEach(Array(menuRows.enumerated()), id: \.element.id) { index, row in
-                    Button(action: row.action) {
-                        HStack(spacing: 14) {
-                            IconBadge(systemImage: row.systemImage, tint: row.tint)
-                            Text(row.title)
-                                .font(.system(size: 17, weight: .regular, design: .rounded))
-                                .foregroundStyle(Theme.foreground)
-                                .lineLimit(1)
-                            Spacer()
-                            if row.showsChevron {
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundStyle(Theme.secondaryForeground.opacity(0.6))
-                            }
+                    HStack(spacing: 14) {
+                        IconBadge(systemImage: row.systemImage, tint: row.tint)
+                        Text(row.title)
+                            .font(.system(size: 17, weight: .regular, design: .rounded))
+                            .foregroundStyle(Theme.foreground)
+                            .lineLimit(1)
+                        Spacer()
+                        if row.showsChevron {
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Theme.secondaryForeground.opacity(0.6))
                         }
-                        .padding(.horizontal, 18)
-                        .padding(.vertical, 12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
-                    .disabled(!row.isEnabled)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 12)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
                     .opacity(row.isEnabled ? 1 : 0.45)
+                    // Bug: SwiftUI Button.action closures were silently
+                    // dropped for the post-jailbreak home rows on iOS 16.6.1.
+                    // .onTapGesture is dispatched directly by the gesture
+                    // recognizer and doesn't hit that path.
+                    .onTapGesture {
+                        guard row.isEnabled else { return }
+                        row.action()
+                    }
 
                     if index != menuRows.count - 1 {
                         SwiftUI.Color.white.opacity(0.10)
