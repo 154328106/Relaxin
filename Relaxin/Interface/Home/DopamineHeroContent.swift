@@ -168,10 +168,10 @@ struct DopamineHeroContent: View {
     DopamineHeroContent(
         headerTitle: "Relaxin",
         infoRows: [
-            .init(id: "supported", label: "适用设备：", value: "iOS 16.5.1-17.3.1"),
-            .init(id: "current", label: "当前设备：", value: "iPhone15,3 iOS 16.6.1"),
-            .init(id: "uptime", label: "运行时间：", value: "0天 12时 50分 05秒", liveUptime: true),
-            .init(id: "version", label: "软件版本：", value: "0.4.6 · RootHide Jailbreak"),
+            .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green, label: "适用设备：", value: "iOS 16.5.1-17.3.1"),
+            .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue, label: "当前设备：", value: "iPhone15,3 iOS 16.6.1"),
+            .init(id: "uptime", systemImage: "clock.fill", tint: Theme.Accents.teal, label: "运行时间：", value: "0天 12时 50分 05秒", liveUptime: true),
+            .init(id: "version", systemImage: "tag.fill", tint: Theme.Accents.purple, label: "软件版本：", value: "0.4.6 · RootHide Jailbreak"),
         ],
         menuRows: [
             .init(id: "advancedOptions", systemImage: "slider.horizontal.3", title: "高级选项", showsChevron: true, tint: Theme.Accents.blue) {},
