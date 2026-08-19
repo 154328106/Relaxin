@@ -152,14 +152,23 @@ struct PostJailbreakHomeView: View {
         ]
     }
 
+    private var heroInfoRows: [DopamineHeroContent.InfoRow] {
+        let version = AppInfo.version(in: environment.resourceBundle)
+        return [
+            .init(id: "supported", label: "适用设备：", value: "iOS 16.5.1-17.3.1"),
+            .init(id: "current", label: "当前设备：",
+                  value: "\(DeviceInfo.modelIdentifier) \(DeviceInfo.os)"),
+            .init(id: "uptime", label: "运行时间：",
+                  value: DeviceInfo.uptimeChinese, liveUptime: true),
+            .init(id: "version", label: "软件版本：",
+                  value: "\(version) · RootHide Jailbreak"),
+        ]
+    }
+
     @ViewBuilder private var homeContent: some View {
         DopamineHeroContent(
             headerTitle: "Relaxin",
-            headerSubtitle: homeStatusSubtitle,
-            headerFootnote: String(
-                localized: "RootHide Jailbreak Engine",
-                bundle: environment.resourceBundle
-            ),
+            infoRows: heroInfoRows,
             menuRows: homeMenuRows,
             primaryButtonTitle: String(localized: "Jailbroken", bundle: environment.resourceBundle),
             primaryButtonSystemImage: "lock.open",

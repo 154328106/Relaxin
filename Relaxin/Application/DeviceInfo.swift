@@ -63,6 +63,21 @@ enum DeviceInfo {
         return "\(minutes)m"
     }
 
+    /// Uptime rendered as "0天 12时 50分 05秒", suitable for the Chinese
+    /// header on the home page.
+    static var uptimeChinese: String {
+        var seconds = Int(elapsedTimeSinceBoot)
+        let days = seconds / 86400
+        seconds %= 86400
+        let hours = seconds / 3600
+        seconds %= 3600
+        let minutes = seconds / 60
+        let secs = seconds % 60
+        return String(format: "%d天 %02d时 %02d分 %02d秒", days, hours, minutes, secs)
+    }
+
+    static var uptimeSeconds: TimeInterval { elapsedTimeSinceBoot }
+
     private static var elapsedTimeSinceBoot: TimeInterval {
         guard let timebaseInfo else {
             return ProcessInfo.processInfo.systemUptime

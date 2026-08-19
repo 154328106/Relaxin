@@ -1,13 +1,12 @@
 import SwiftUI
 
-/// Home-screen hero: liquid-glass reskin of Dopamine's original UIKit home. A
-/// pale sky-blue gradient sits behind an icon-badge menu list and a big glass
-/// primary button. Uses only the primitives that render reliably on-device
-/// (plain ZStack/VStack, a single Spacer, SF Symbols, Text) — no
-/// GeometryReader, no safeAreaInset, no `.shadow`.
+/// Home-screen hero: big Relaxin title, a stack of glass info cards
+/// (适用设备 / 当前设备 / 运行时间 / 软件版本), the icon-badge menu list, and
+/// a glass primary action button — all on the deep-blue LiquidBackground.
 ///
-/// Used for the idle "home" screen in both the pre-jailbreak (`HomeView`) and
-/// post-jailbreak (`PostJailbreakHomeView`) flows.
+/// Uses only the primitives already confirmed to render on-device: plain
+/// ZStack/VStack, SF Symbols, Text, LinearGradient. No GeometryReader, no
+/// safeAreaInset, no `.shadow`, no `.blendMode` on the containers.
 struct DopamineHeroContent: View {
     struct MenuRow: Identifiable {
         let id: String
@@ -19,9 +18,18 @@ struct DopamineHeroContent: View {
         let action: () -> Void
     }
 
+    /// A label/value pair rendered inside a small glass info card at the top
+    /// of the hero. Pass `liveUptime: true` and the card refreshes its value
+    /// every second by re-reading `DeviceInfo.uptimeChinese`.
+    struct InfoRow: Identifiable {
+        let id: String
+        let label: String
+        let value: String
+        var liveUptime: Bool = false
+    }
+
     let headerTitle: String
-    let headerSubtitle: String
-    let headerFootnote: String
+    var infoRows: [InfoRow] = []
     let menuRows: [MenuRow]
     let primaryButtonTitle: String
     let primaryButtonSystemImage: String
@@ -34,32 +42,66 @@ struct DopamineHeroContent: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 header
-                Spacer()
+                Spacer(minLength: 12)
                 if !menuRows.isEmpty {
                     menuCard
                     Spacer().frame(height: 16)
                 }
                 primaryButton
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 24)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 20)
         }
     }
 
+    // MARK: - Header
+
     private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 14) {
             Text(headerTitle)
                 .font(Theme.pageTitleFont)
                 .foregroundStyle(Theme.foreground)
+                .padding(.leading, 4)
 
-            Text(headerSubtitle)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
-                .foregroundStyle(Theme.secondaryForeground)
-            Text(headerFootnote)
-                .font(.system(size: 13, weight: .regular, design: .rounded))
-                .foregroundStyle(Theme.secondaryForeground.opacity(0.75))
+            VStack(spacing: 8) {
+                ForEach(infoRows) { row in
+                    infoCard(row)
+                }
+            }
         }
     }
+
+    @ViewBuilder
+    private func infoCard(_ row: InfoRow) -> some View {
+        if row.liveUptime {
+            TimelineView(.periodic(from: .now, by: 1)) { _ in
+                infoCardRow(label: row.label, value: DeviceInfo.uptimeChinese)
+            }
+        } else {
+            infoCardRow(label: row.label, value: row.value)
+        }
+    }
+
+    private func infoCardRow(label: String, value: String) -> some View {
+        HStack(alignment: .center, spacing: 8) {
+            Text(label)
+                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .foregroundStyle(Theme.secondaryForeground)
+                .fixedSize(horizontal: true, vertical: false)
+            Text(value)
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .foregroundStyle(Theme.foreground)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassCard(cornerRadius: 14)
+    }
+
+    // MARK: - Menu
 
     private var menuCard: some View {
         VStack(spacing: 12) {
@@ -91,6 +133,8 @@ struct DopamineHeroContent: View {
         }
     }
 
+    // MARK: - Primary button
+
     private var primaryButton: some View {
         Button(action: onPrimaryAction) {
             HStack(spacing: 10) {
@@ -103,24 +147,12 @@ struct DopamineHeroContent: View {
             .frame(maxWidth: .infinity)
             .frame(height: 56)
             .background {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Theme.accent)
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    SwiftUI.Color.white.opacity(0.28),
-                                    SwiftUI.Color.clear,
-                                ],
-                                startPoint: .top,
-                                endPoint: .center
-                            )
-                        )
-                        .blendMode(.plusLighter)
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .strokeBorder(SwiftUI.Color.white.opacity(0.4), lineWidth: 0.8)
-                }
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Theme.accent)
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .strokeBorder(SwiftUI.Color.white.opacity(0.35), lineWidth: 0.8)
             }
         }
         .buttonStyle(.plain)
@@ -132,14 +164,18 @@ struct DopamineHeroContent: View {
 #Preview {
     DopamineHeroContent(
         headerTitle: "Relaxin",
-        headerSubtitle: "iPhone \u{2022} iOS 17.3.1",
-        headerFootnote: "RootHide Jailbreak Engine",
-        menuRows: [
-            .init(id: "advancedOptions", systemImage: "slider.horizontal.3", title: "Advanced Options", showsChevron: true, tint: Theme.Accents.blue) {},
-            .init(id: "maintenance", systemImage: "wrench.and.screwdriver.fill", title: "Maintenance Tools", showsChevron: true, tint: Theme.Accents.orange) {},
-            .init(id: "credits", systemImage: "heart.fill", title: "Credits", showsChevron: true, tint: Theme.Accents.pink) {},
+        infoRows: [
+            .init(id: "supported", label: "适用设备：", value: "iOS 16.5.1-17.3.1"),
+            .init(id: "current", label: "当前设备：", value: "iPhone15,3 iOS 16.6.1"),
+            .init(id: "uptime", label: "运行时间：", value: "0天 12时 50分 05秒", liveUptime: true),
+            .init(id: "version", label: "软件版本：", value: "0.4.6 · RootHide Jailbreak"),
         ],
-        primaryButtonTitle: "Jailbreak",
+        menuRows: [
+            .init(id: "advancedOptions", systemImage: "slider.horizontal.3", title: "高级选项", showsChevron: true, tint: Theme.Accents.blue) {},
+            .init(id: "maintenance", systemImage: "wrench.and.screwdriver.fill", title: "维护工具", showsChevron: true, tint: Theme.Accents.orange) {},
+            .init(id: "credits", systemImage: "heart.fill", title: "特别鸣谢", showsChevron: true, tint: Theme.Accents.pink) {},
+        ],
+        primaryButtonTitle: "开始越狱",
         primaryButtonSystemImage: "lock.open.fill",
         isPrimaryButtonEnabled: true,
         onPrimaryAction: {}
