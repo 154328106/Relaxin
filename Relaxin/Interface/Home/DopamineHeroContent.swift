@@ -181,6 +181,6 @@ struct DopamineHeroContent: View {
         }
         .buttonStyle(.plain)
         .disabled(!isPrimaryButtonEnabled)
-        .opacity(isPrimaryButtonEnabled ? 1 : 0.55)
+        .opacity(isPrimaryButtonEnabled ? 1 : 0.85)
     }
 }
