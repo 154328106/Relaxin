@@ -110,7 +110,6 @@ extension PostJailbreakHomeView {
                         .resetAndRemoval,
                         String(localized: "Reset & Remove", bundle: resourceBundle)
                     ),
-                    (.back, String(localized: "Back", bundle: resourceBundle)),
                 ]
             case .resetAndRemoval:
                 var entries: [(MenuAction, String)] = [
@@ -135,7 +134,6 @@ extension PostJailbreakHomeView {
                         .confirm(.removeJailbreak),
                         String(localized: "Remove Jailbreak", bundle: resourceBundle)
                     ),
-                    (.back, String(localized: "Back", bundle: resourceBundle)),
                 ])
                 return entries
             case .credits:
@@ -158,9 +156,6 @@ extension PostJailbreakHomeView {
                         ),
                     ])
                 }
-                entries.append(
-                    (.back, String(localized: "Back", bundle: resourceBundle))
-                )
                 return entries
             case let .confirmation(action):
                 return [
@@ -168,7 +163,6 @@ extension PostJailbreakHomeView {
                         action.menuAction,
                         "\(String(localized: "Execute", bundle: resourceBundle)): \(action.title(in: resourceBundle))"
                     ),
-                    (.back, String(localized: "Back", bundle: resourceBundle)),
                 ]
             }
         }

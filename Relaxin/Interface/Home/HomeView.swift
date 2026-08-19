@@ -116,9 +116,10 @@ struct HomeView: View {
         var rows: [DopamineHeroContent.MenuRow] = [
             .init(
                 id: "advancedOptions",
-                systemImage: "gearshape",
+                systemImage: "slider.horizontal.3",
                 title: String(localized: "Advanced Options", bundle: runtime.resourceBundle),
-                showsChevron: true
+                showsChevron: true,
+                tint: Theme.Accents.blue
             ) {
                 screen = .advancedOptions
             },
@@ -127,9 +128,10 @@ struct HomeView: View {
             rows.append(
                 .init(
                     id: "maintenance",
-                    systemImage: "wrench.and.screwdriver",
+                    systemImage: "wrench.and.screwdriver.fill",
                     title: String(localized: "Maintenance Tools", bundle: runtime.resourceBundle),
-                    showsChevron: true
+                    showsChevron: true,
+                    tint: Theme.Accents.orange
                 ) {
                     screen = .maintenance
                 }
@@ -138,9 +140,10 @@ struct HomeView: View {
         rows.append(
             .init(
                 id: "credits",
-                systemImage: "info.circle",
+                systemImage: "heart.fill",
                 title: String(localized: "Credits", bundle: runtime.resourceBundle),
-                showsChevron: true
+                showsChevron: true,
+                tint: Theme.Accents.pink
             ) {
                 screen = .credits
             }
@@ -176,34 +179,55 @@ struct HomeView: View {
     }
 
     @ViewBuilder private var primaryContent: some View {
-        if screen == .home {
+        switch screen {
+        case .home:
             homeContent
-        } else {
-            terminalContent
+        case .engine:
+            engineContent
+        default:
+            glassSubPageContent
         }
     }
 
-    private var terminalContent: some View {
-        HomeContent(
+    /// Full-screen glass wrapper around the running terminal (engine phase).
+    private var engineContent: some View {
+        GlassEngineContent(
+            title: screen.title(resourceBundle: runtime.resourceBundle),
             terminalText: terminalText,
-            terminalAccessibleLinks: terminalAccessibleLinks,
-            terminalHeight: screen.terminalHeight,
-            rendersTerminalBackgroundActively: rendersTerminalBackgroundActively,
-            showsMenu: screen.showsMenu,
-            menuItems: menuItems,
-            preferredMenuAction: preferredMenuAction,
-            secondaryMenuActions: [.back],
-            shareItems: menuShareItems,
-            loadingMenuActions: loadingMenuActions,
-            isVolumeButtonInputEnabled: alert == nil,
-            allowsOpeningTerminalLinks: runtime.interfaceMode.allowsExternalNavigation,
-            onTerminalColumnCountChange: { terminalColumnCount = $0 },
-            onSelectMenuItem: performMenuAction,
-            onTerminalLongPress: {
-                #if DEBUG
-                    engineSession.postJailbreakSession.debugSetAvailable(true)
-                #endif
+            onColumnCountChange: { terminalColumnCount = $0 }
+        )
+    }
+
+    /// Liquid-glass sub-page (advanced options / maintenance / credits /
+    /// jetsam / confirmation). Replaces the old terminal+plain-menu layout
+    /// and gives every sub-page a proper back button up top instead of a
+    /// buried "Back" entry.
+    private var glassSubPageContent: some View {
+        let backAction: (() -> Void)? = screen.backDestination.map { destination in
+            {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    screen = destination
+                }
             }
+        }
+
+        let rows: [GlassSubPageContent.Row] = menuItems.map { item in
+            let icon = HomeView.icon(for: item.id)
+            return GlassSubPageContent.Row(
+                id: item.id,
+                icon: icon,
+                title: item.title,
+                isLoading: loadingMenuActions.contains(item.id),
+                isDisabled: false,
+                action: { performMenuAction(item.id) }
+            )
+        }
+
+        return GlassSubPageContent(
+            title: screen.title(resourceBundle: runtime.resourceBundle),
+            subtitle: homeStatusSubtitle,
+            backAction: backAction,
+            rows: rows
         )
     }
 

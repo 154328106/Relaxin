@@ -112,10 +112,11 @@ struct PostJailbreakHomeView: View {
         [
             .init(
                 id: "advancedOptions",
-                systemImage: "gearshape",
+                systemImage: "slider.horizontal.3",
                 title: String(localized: "Advanced Options", bundle: environment.resourceBundle),
                 showsChevron: true,
-                isEnabled: !session.isPerformingAction
+                isEnabled: !session.isPerformingAction,
+                tint: Theme.Accents.blue
             ) {
                 session.refreshRuntimeOptions()
                 screen = .advancedOptions
@@ -124,24 +125,27 @@ struct PostJailbreakHomeView: View {
                 id: "restartSpringBoard",
                 systemImage: "arrow.clockwise",
                 title: String(localized: "Restart SpringBoard", bundle: environment.resourceBundle),
-                isEnabled: !session.isPerformingAction
+                isEnabled: !session.isPerformingAction,
+                tint: Theme.Accents.teal
             ) {
                 screen = .confirmation(.restartSpringBoard)
             },
             .init(
                 id: "restartUserspace",
-                systemImage: "arrow.clockwise.circle",
+                systemImage: "arrow.clockwise.circle.fill",
                 title: String(localized: "Restart Userspace", bundle: environment.resourceBundle),
-                isEnabled: !session.isPerformingAction
+                isEnabled: !session.isPerformingAction,
+                tint: Theme.Accents.teal
             ) {
                 screen = .confirmation(.restartUserspace)
             },
             .init(
                 id: "credits",
-                systemImage: "info.circle",
+                systemImage: "heart.fill",
                 title: String(localized: "Credits", bundle: environment.resourceBundle),
                 showsChevron: true,
-                isEnabled: !session.isPerformingAction
+                isEnabled: !session.isPerformingAction,
+                tint: Theme.Accents.pink
             ) {
                 screen = .credits
             },
@@ -169,28 +173,59 @@ struct PostJailbreakHomeView: View {
     @ViewBuilder private var mainContent: some View {
         if session.isAvailable, screen == .home {
             homeContent
+        } else if !session.isAvailable {
+            // Terminal-only "unavailable" screen keeps the original layout.
+            unavailableContent
         } else {
-            terminalContent
+            glassSubPageContent
         }
     }
 
-    private var terminalContent: some View {
+    private var unavailableContent: some View {
         HomeContent(
             terminalText: terminalText,
-            terminalAccessibleLinks: terminalAccessibleLinks,
+            terminalAccessibleLinks: [],
             terminalHeight: screen.terminalHeight,
             rendersTerminalBackgroundActively: false,
-            showsMenu: session.isAvailable,
+            showsMenu: false,
             menuItems: menuItems,
             preferredMenuAction: nil,
-            secondaryMenuActions: [.back],
-            shareItems: menuShareItems,
+            secondaryMenuActions: [],
+            shareItems: [:],
             loadingMenuActions: [],
-            isVolumeButtonInputEnabled: alert == nil
-                && !session.isPerformingAction,
+            isVolumeButtonInputEnabled: false,
             allowsOpeningTerminalLinks: environment.interfaceMode.allowsExternalNavigation,
             onTerminalColumnCountChange: { terminalColumnCount = $0 },
             onSelectMenuItem: performMenuAction
+        )
+    }
+
+    private var glassSubPageContent: some View {
+        let backAction: (() -> Void)? = screen.backDestination.map { destination in
+            {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    screen = destination
+                }
+            }
+        }
+
+        let rows: [GlassSubPageContent<MenuAction>.Row] = menuItems.map { item in
+            let icon = PostJailbreakHomeView.icon(for: item.id)
+            return GlassSubPageContent<MenuAction>.Row(
+                id: item.id,
+                icon: icon,
+                title: item.title,
+                isLoading: false,
+                isDisabled: session.isPerformingAction,
+                action: { performMenuAction(item.id) }
+            )
+        }
+
+        return GlassSubPageContent<MenuAction>(
+            title: screen.title(resourceBundle: environment.resourceBundle),
+            subtitle: homeStatusSubtitle,
+            backAction: backAction,
+            rows: rows
         )
     }
 

@@ -105,6 +105,8 @@ extension HomeView {
                 )
                 return entries
             case .advancedOptions:
+                // No trailing `.back` — the liquid-glass nav bar owns the
+                // return affordance now.
                 return [
                     (
                         .toggleOption(.tweakInjection),
@@ -134,7 +136,6 @@ extension HomeView {
                             resourceBundle: resourceBundle
                         )
                     ),
-                    (.back, String(localized: "Back", bundle: resourceBundle)),
                 ]
             case .maintenance:
                 var entries: [(MenuAction, String)] = []
@@ -151,13 +152,12 @@ extension HomeView {
                         )
                     }
                 }
-                entries.append(contentsOf: [
+                entries.append(
                     (
                         .confirm(.resetRelaxin),
                         String(localized: "Reset Relaxin", bundle: resourceBundle)
-                    ),
-                    (.back, String(localized: "Back", bundle: resourceBundle)),
-                ])
+                    )
+                )
                 return entries
             case .credits:
                 var entries: [(MenuAction, String)] = []
@@ -173,14 +173,11 @@ extension HomeView {
                         ),
                     ])
                 }
-                entries.append(
-                    (.back, String(localized: "Back", bundle: resourceBundle))
-                )
                 return entries
             case .jetsamMultiplier:
                 return JailbreakConfiguration.JetsamMultiplier.allCases.map {
                     (.setJetsamMultiplier($0), $0.title(in: resourceBundle))
-                } + [(.back, String(localized: "Back", bundle: resourceBundle))]
+                }
             case let .confirmation(action):
                 let title = switch action {
                 case .resetRelaxin:
@@ -193,7 +190,6 @@ extension HomeView {
                         action.menuAction,
                         "\(String(localized: "Execute", bundle: resourceBundle)): \(title)"
                     ),
-                    (.back, String(localized: "Back", bundle: resourceBundle)),
                 ]
             case .engine:
                 return []
