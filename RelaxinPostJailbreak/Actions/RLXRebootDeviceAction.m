@@ -3,8 +3,14 @@
 #import "RLXPostJailbreakActionRunner.h"
 
 #include <errno.h>
-#include <sys/reboot.h>
 #include <unistd.h>
+
+// iOS SDK strips <sys/reboot.h> — forward-declare the libSystem-exported
+// syscall wrapper and the RB_AUTOBOOT flag directly.
+#ifndef RB_AUTOBOOT
+#define RB_AUTOBOOT 0
+#endif
+extern int reboot(int howto);
 
 #if !TARGET_OS_SIMULATOR
 
