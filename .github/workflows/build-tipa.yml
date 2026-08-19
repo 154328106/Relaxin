@@ -44,9 +44,8 @@ jobs:
         dpkg-deb --version | head -1
 
     - name: Build TIPA (Dopamine UI + Relaxin RootHide)
-      # APPICON_NAME= (empty): skip the Xcode 26 .icon app icon that the
-      # runner's older Xcode cannot compile. Icon restored during UI rework.
-      run: make tipa APPICON_NAME=
+      # Use the shipped traditional AppIcon.appiconset (Dopamine's blue icon).
+      run: make tipa APPICON_NAME=AppIcon
 
     - name: Upload TIPA artifact
       uses: actions/upload-artifact@v4
