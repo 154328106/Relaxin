@@ -155,12 +155,16 @@ struct PostJailbreakHomeView: View {
     private var heroInfoRows: [DopamineHeroContent.InfoRow] {
         let version = AppInfo.version(in: environment.resourceBundle)
         return [
-            .init(id: "supported", label: "适用设备：", value: "iOS 16.5.1-17.3.1"),
-            .init(id: "current", label: "当前设备：",
+            .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green,
+                  label: "适用设备：", value: "iOS 16.5.1-17.3.1"),
+            .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue,
+                  label: "当前设备：",
                   value: "\(DeviceInfo.modelIdentifier) \(DeviceInfo.os)"),
-            .init(id: "uptime", label: "运行时间：",
+            .init(id: "uptime", systemImage: "clock.fill", tint: Theme.Accents.teal,
+                  label: "运行时间：",
                   value: DeviceInfo.uptimeChinese, liveUptime: true),
-            .init(id: "version", label: "软件版本：",
+            .init(id: "version", systemImage: "tag.fill", tint: Theme.Accents.purple,
+                  label: "软件版本：",
                   value: "\(version) · RootHide Jailbreak"),
         ]
     }
@@ -171,7 +175,7 @@ struct PostJailbreakHomeView: View {
             infoRows: heroInfoRows,
             menuRows: homeMenuRows,
             primaryButtonTitle: String(localized: "Jailbroken", bundle: environment.resourceBundle),
-            primaryButtonSystemImage: "lock.open",
+            primaryButtonSystemImage: "lock.open.fill",
             // Matches Dopamine's own jailbreak button: once jailbroken it becomes a
             // disabled status display rather than a tappable action.
             isPrimaryButtonEnabled: false,

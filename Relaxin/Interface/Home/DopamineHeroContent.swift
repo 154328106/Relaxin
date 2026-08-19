@@ -23,6 +23,8 @@ struct DopamineHeroContent: View {
     /// every second by re-reading `DeviceInfo.uptimeChinese`.
     struct InfoRow: Identifiable {
         let id: String
+        let systemImage: String
+        let tint: SwiftUI.Color
         let label: String
         let value: String
         var liveUptime: Bool = false
@@ -57,13 +59,13 @@ struct DopamineHeroContent: View {
     // MARK: - Header
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 16) {
             Text(headerTitle)
                 .font(Theme.pageTitleFont)
                 .foregroundStyle(Theme.foreground)
-                .padding(.leading, 4)
+                .frame(maxWidth: .infinity, alignment: .center)
 
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
                 ForEach(infoRows) { row in
                     infoCard(row)
                 }
@@ -75,16 +77,17 @@ struct DopamineHeroContent: View {
     private func infoCard(_ row: InfoRow) -> some View {
         if row.liveUptime {
             TimelineView(.periodic(from: .now, by: 1)) { _ in
-                infoCardRow(label: row.label, value: DeviceInfo.uptimeChinese)
+                infoCardRow(row: row, value: DeviceInfo.uptimeChinese)
             }
         } else {
-            infoCardRow(label: row.label, value: row.value)
+            infoCardRow(row: row, value: row.value)
         }
     }
 
-    private func infoCardRow(label: String, value: String) -> some View {
-        HStack(alignment: .center, spacing: 8) {
-            Text(label)
+    private func infoCardRow(row: InfoRow, value: String) -> some View {
+        HStack(spacing: 12) {
+            IconBadge(systemImage: row.systemImage, tint: row.tint, size: 28)
+            Text(row.label)
                 .font(.system(size: 14, weight: .medium, design: .rounded))
                 .foregroundStyle(Theme.secondaryForeground)
                 .fixedSize(horizontal: true, vertical: false)
@@ -92,13 +95,13 @@ struct DopamineHeroContent: View {
                 .font(.system(size: 14, weight: .semibold, design: .rounded))
                 .foregroundStyle(Theme.foreground)
                 .lineLimit(1)
-                .minimumScaleFactor(0.75)
+                .minimumScaleFactor(0.7)
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard(cornerRadius: 14)
+        .glassCard(cornerRadius: 18)
     }
 
     // MARK: - Menu
