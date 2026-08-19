@@ -196,8 +196,13 @@ struct PostJailbreakHomeView: View {
         )
     }
 
-    @ViewBuilder private var mainContent: some View {
-        ZStack(alignment: .topTrailing) {
+    private var mainContent: some View {
+        // ZStack + Group wrapper is load-bearing: on iOS 16.6.1 the raw
+        // three-branch if/else-if/else returned from a @ViewBuilder computed
+        // property would let @State writes go through but not re-evaluate
+        // this conditional, so taps looked dead. Wrapping in a stable outer
+        // container (ZStack) makes SwiftUI reliably re-render the branch.
+        ZStack {
             Group {
                 if session.isAvailable, screen == .home {
                     homeContent
@@ -207,14 +212,6 @@ struct PostJailbreakHomeView: View {
                     glassSubPageContent
                 }
             }
-            // Diagnostic pill — remove once tap issue is understood.
-            Text("s:\(String(describing: screen).prefix(12))")
-                .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                .padding(.horizontal, 6).padding(.vertical, 2)
-                .background(SwiftUI.Color.red.opacity(0.85))
-                .foregroundColor(.white)
-                .cornerRadius(4)
-                .padding(.top, 4).padding(.trailing, 6)
         }
     }
 

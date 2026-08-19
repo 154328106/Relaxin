@@ -53,7 +53,7 @@ enum Theme {
     static let uiFont = UIFont.monospacedSystemFont(ofSize: 14, weight: .regular)
 
     /// Large-title font used at the top of each page ("Relaxin" / "更多"-style).
-    static let pageTitleFont = Font.system(size: 34, weight: .bold, design: .rounded)
+    static let pageTitleFont = Font.system(size: 26, weight: .bold, design: .rounded)
 
     /// Section-title font used inside grouped glass cards.
     static let sectionTitleFont = Font.system(size: 13, weight: .semibold, design: .rounded)
