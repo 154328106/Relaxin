@@ -117,28 +117,31 @@ struct DopamineHeroContent: View {
     private var menuStack: some View {
         VStack(spacing: 12) {
             ForEach(menuRows) { row in
-                Button(action: row.action) {
-                    HStack(spacing: 14) {
-                        IconBadge(systemImage: row.systemImage, tint: row.tint)
-                        Text(row.title)
-                            .font(.system(size: 17, weight: .regular, design: .rounded))
-                            .foregroundStyle(Theme.foreground)
-                            .lineLimit(1)
-                        Spacer()
-                        if row.showsChevron {
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(Theme.secondaryForeground.opacity(0.6))
-                        }
+                HStack(spacing: 14) {
+                    IconBadge(systemImage: row.systemImage, tint: row.tint)
+                    Text(row.title)
+                        .font(.system(size: 17, weight: .regular, design: .rounded))
+                        .foregroundStyle(Theme.foreground)
+                        .lineLimit(1)
+                    Spacer()
+                    if row.showsChevron {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(Theme.secondaryForeground.opacity(0.6))
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
-                .disabled(!row.isEnabled)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
                 .opacity(row.isEnabled ? 1 : 0.45)
+                // See grouped variant: iOS 16.6.1 was silently dropping
+                // Button.action for these rows post-jailbreak — direct tap
+                // gesture avoids that.
+                .onTapGesture {
+                    guard row.isEnabled else { return }
+                    row.action()
+                }
                 .glassCard()
             }
         }
