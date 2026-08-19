@@ -111,15 +111,15 @@ struct PostJailbreakHomeView: View {
         "\(DeviceInfo.modelIdentifier) \u{2022} \(DeviceInfo.os)"
     }
 
-    /// Defer the state change to the next runloop so it doesn't collide with
-    /// SwiftUI's tap-dispatch on iOS 16.6.1 (bug where inline @State writes
-    /// from Button/onTapGesture actions on post-jailbreak home were silently
-    /// dropped, only the downstream haptic side-effect firing).
+    /// Direct navigation — no runloop defer needed now that mainContent is
+    /// wrapped in ZStack+Group (the real cure for the iOS 16.6.1 tap-eaten
+    /// bug). Skipping the Task hop makes taps feel instant instead of the
+    /// previous half-beat lag.
     private func navigate(to target: Screen, refreshRuntimeOptions: Bool = false) {
-        Task { @MainActor in
-            if refreshRuntimeOptions {
-                session.refreshRuntimeOptions()
-            }
+        if refreshRuntimeOptions {
+            session.refreshRuntimeOptions()
+        }
+        withAnimation(.easeInOut(duration: 0.2)) {
             screen = target
         }
     }
