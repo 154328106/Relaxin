@@ -27,8 +27,8 @@ struct DopamineHeroContent: View {
     }
 
     let headerTitle: String
-    var systemOverviewTitle: String = "System Overview"
-    var toolsSectionTitle: String = "Tools & Settings"
+    var systemOverviewTitle: String = "系统概览"
+    var toolsSectionTitle: String = "设置与工具"
     var infoItems: [InfoItem] = []
     let menuRows: [MenuRow]
     let primaryButtonTitle: String
@@ -131,19 +131,18 @@ struct DopamineHeroContent: View {
     }
 
     private func infoCellBody(item: InfoItem, value: String) -> some View {
-        HStack(alignment: .top, spacing: 10) {
-            IconBadge(systemImage: item.systemImage, tint: item.tint, size: 30)
-                .padding(.top, 2)
-            VStack(alignment: .leading, spacing: 3) {
+        HStack(alignment: .center, spacing: 8) {
+            IconBadge(systemImage: item.systemImage, tint: item.tint, size: 28)
+            VStack(alignment: .leading, spacing: 2) {
                 Text(item.label)
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
                     .foregroundStyle(Theme.secondaryForeground)
+                    .lineLimit(1)
                 Text(value)
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(Theme.foreground)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.75)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.55)
             }
             Spacer(minLength: 0)
         }

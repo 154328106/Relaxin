@@ -78,6 +78,34 @@ enum DeviceInfo {
 
     static var uptimeSeconds: TimeInterval { elapsedTimeSinceBoot }
 
+    /// Marketing name for the current model identifier, shortened for the
+    /// home-screen info card ("iPhone15,3" → "14PM"). Falls back to the raw
+    /// identifier when unknown.
+    static var shortModelName: String {
+        modelShortNameMap[modelIdentifier] ?? modelIdentifier
+    }
+
+    private static let modelShortNameMap: [String: String] = [
+        // A12 (iPhone XS / XR)
+        "iPhone11,2": "XS", "iPhone11,4": "XS Max", "iPhone11,6": "XS Max",
+        "iPhone11,8": "XR",
+        // A13 (iPhone 11 series)
+        "iPhone12,1": "11", "iPhone12,3": "11 Pro", "iPhone12,5": "11 PM",
+        "iPhone12,8": "SE 2",
+        // A14 (iPhone 12 series)
+        "iPhone13,1": "12 mini", "iPhone13,2": "12", "iPhone13,3": "12 Pro",
+        "iPhone13,4": "12 PM",
+        // A15 (iPhone 13 / 14 non-Pro)
+        "iPhone14,4": "13 mini", "iPhone14,5": "13", "iPhone14,2": "13 Pro",
+        "iPhone14,3": "13 PM", "iPhone14,6": "SE 3",
+        "iPhone14,7": "14", "iPhone14,8": "14 Plus",
+        // A16 (iPhone 14 Pro / 15)
+        "iPhone15,2": "14 Pro", "iPhone15,3": "14 PM",
+        "iPhone15,4": "15", "iPhone15,5": "15 Plus",
+        // A17 Pro (iPhone 15 Pro)
+        "iPhone16,1": "15 Pro", "iPhone16,2": "15 PM",
+    ]
+
     private static var elapsedTimeSinceBoot: TimeInterval {
         guard let timebaseInfo else {
             return ProcessInfo.processInfo.systemUptime

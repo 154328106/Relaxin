@@ -159,7 +159,7 @@ struct HomeView: View {
         return [
             .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue,
                   label: "当前设备",
-                  value: "\(DeviceInfo.modelIdentifier)\n\(DeviceInfo.os)"),
+                  value: "\(DeviceInfo.shortModelName) \(DeviceInfo.os)"),
             .init(id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal,
                   label: "运行时间",
                   value: DeviceInfo.uptimeChinese, liveUptime: true),
@@ -167,7 +167,7 @@ struct HomeView: View {
                   label: "兼容版本", value: "iOS 16.5.1-17.3.1"),
             .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange,
                   label: "软件版本",
-                  value: "\(version) · RootHide Jailbreak"),
+                  value: "\(version) · RootHide"),
         ]
     }
 
