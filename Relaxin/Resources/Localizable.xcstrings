@@ -2727,6 +2727,22 @@
         }
       }
     },
+    "Reboot Device" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reboot Device"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重启本机"
+          }
+        }
+      }
+    },
     "Restart Userspace" : {
       "localizations" : {
         "ar" : {

@@ -152,6 +152,7 @@ extension PostJailbreakSession {
         case restartUserspace(darkAppearance: Bool)
         case refreshJailbreakApps
         case resetMobilePassword
+        case rebootDevice
         case removeJailbreak
     }
 
@@ -172,6 +173,8 @@ private extension PostJailbreakSession.Action {
             .refreshJailbreakApps
         case .resetMobilePassword:
             .resetMobilePassword
+        case .rebootDevice:
+            .rebootDevice
         case .removeJailbreak:
             .removeJailbreak
         }

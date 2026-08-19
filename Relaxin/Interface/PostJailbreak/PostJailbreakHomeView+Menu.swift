@@ -44,7 +44,7 @@ extension PostJailbreakHomeView {
                 .advancedOptions
             case let .confirmation(action):
                 switch action {
-                case .restartSpringBoard, .restartUserspace:
+                case .restartSpringBoard, .restartUserspace, .rebootDevice:
                     .home
                 case .removeJailbreak:
                     .resetAndRemoval
@@ -203,6 +203,7 @@ extension PostJailbreakHomeView {
     enum ConfirmationAction: Hashable {
         case restartSpringBoard
         case restartUserspace
+        case rebootDevice
         case removeJailbreak
 
         func title(in resourceBundle: Bundle) -> String {
@@ -211,6 +212,8 @@ extension PostJailbreakHomeView {
                 String(localized: "Restart SpringBoard", bundle: resourceBundle)
             case .restartUserspace:
                 String(localized: "Restart Userspace", bundle: resourceBundle)
+            case .rebootDevice:
+                String(localized: "Reboot Device", bundle: resourceBundle)
             case .removeJailbreak:
                 String(localized: "Remove Jailbreak", bundle: resourceBundle)
             }
@@ -222,6 +225,8 @@ extension PostJailbreakHomeView {
                 .restartSpringBoard
             case .restartUserspace:
                 .restartUserspace
+            case .rebootDevice:
+                .rebootDevice
             case .removeJailbreak:
                 .removeJailbreak
             }
@@ -237,6 +242,7 @@ extension PostJailbreakHomeView {
         case toggleOption(ToggleOption)
         case restartSpringBoard
         case restartUserspace
+        case rebootDevice
         case refreshJailbreakApps
         case resetMobilePassword
         case reinstallSileo

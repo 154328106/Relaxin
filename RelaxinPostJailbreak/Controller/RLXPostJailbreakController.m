@@ -63,6 +63,9 @@ static NSError *_Nullable rlx_execute_post_jailbreak_action(
         case RLXPostJailbreakActionResetMobilePassword:
             status = RLXPostJailbreakResetMobilePassword(&failurePhase);
             break;
+        case RLXPostJailbreakActionRebootDevice:
+            status = RLXPostJailbreakRebootDevice(&failurePhase);
+            break;
         case RLXPostJailbreakActionRemoveJailbreak:
             return RLXPostJailbreakRemove(&failurePhase);
     }

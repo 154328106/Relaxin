@@ -155,6 +155,15 @@ struct PostJailbreakHomeView: View {
                 navigate(to: .confirmation(.restartUserspace))
             },
             .init(
+                id: "rebootDevice",
+                systemImage: "power",
+                title: String(localized: "Reboot Device", bundle: environment.resourceBundle),
+                isEnabled: !session.isPerformingAction,
+                tint: Theme.Accents.red
+            ) {
+                navigate(to: .confirmation(.rebootDevice))
+            },
+            .init(
                 id: "credits",
                 systemImage: "heart.fill",
                 title: String(localized: "Credits", bundle: environment.resourceBundle),
@@ -347,6 +356,8 @@ struct PostJailbreakHomeView: View {
             session.perform(.restartSpringBoard)
         case .restartUserspace:
             restartUserspace()
+        case .rebootDevice:
+            session.perform(.rebootDevice)
         case .refreshJailbreakApps:
             session.perform(.refreshJailbreakApps)
         case .resetMobilePassword:
