@@ -109,7 +109,7 @@ struct HomeView: View {
     private var homePrimaryButtonTitle: String {
         configuration.removeJailbreakEnabled
             ? String(localized: "Remove Jailbreak", bundle: runtime.resourceBundle)
-            : String(localized: "Jailbreak", bundle: runtime.resourceBundle)
+            : "获取自由吧"
     }
 
     private var homeMenuRows: [DopamineHeroContent.MenuRow] {
