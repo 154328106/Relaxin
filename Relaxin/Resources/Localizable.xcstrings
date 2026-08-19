@@ -2722,7 +2722,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "妙手回春"
+            "value" : "重启桌面"
           }
         }
       }
@@ -2780,7 +2780,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回光返照"
+            "value" : "重启空间"
           }
         }
       }

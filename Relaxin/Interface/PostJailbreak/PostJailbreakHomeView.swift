@@ -85,11 +85,14 @@ struct PostJailbreakHomeView: View {
 
     private var menuShareItems: [MenuAction: URL] {
         guard environment.interfaceMode.allowsExternalNavigation,
-              screen == .credits,
-              let url = environment.resourceBundle.url(
-                  forResource: "Licenses",
-                  withExtension: "txt"
-              )
+              screen == .credits
+        else {
+            return [:]
+        }
+        // Licenses.txt lives in the app's main bundle; environment.resourceBundle
+        // points at the RelaxinEngine framework which doesn't carry it.
+        guard let url = Bundle.main.url(forResource: "Licenses", withExtension: "txt")
+            ?? environment.resourceBundle.url(forResource: "Licenses", withExtension: "txt")
         else {
             return [:]
         }
@@ -135,7 +138,7 @@ struct PostJailbreakHomeView: View {
             },
             .init(
                 id: "restartSpringBoard",
-                systemImage: "arrow.clockwise",
+                systemImage: "house.fill",
                 title: String(localized: "Restart SpringBoard", bundle: environment.resourceBundle),
                 isEnabled: !session.isPerformingAction,
                 tint: Theme.Accents.teal
@@ -144,10 +147,10 @@ struct PostJailbreakHomeView: View {
             },
             .init(
                 id: "restartUserspace",
-                systemImage: "arrow.clockwise.circle.fill",
+                systemImage: "bolt.horizontal.circle.fill",
                 title: String(localized: "Restart Userspace", bundle: environment.resourceBundle),
                 isEnabled: !session.isPerformingAction,
-                tint: Theme.Accents.teal
+                tint: Theme.Accents.orange
             ) {
                 navigate(to: .confirmation(.restartUserspace))
             },
@@ -259,7 +262,8 @@ struct PostJailbreakHomeView: View {
             title: screen.title(resourceBundle: environment.resourceBundle),
             subtitle: homeStatusSubtitle,
             backAction: backAction,
-            rows: rows
+            rows: rows,
+            shareItems: menuShareItems
         )
     }
 
