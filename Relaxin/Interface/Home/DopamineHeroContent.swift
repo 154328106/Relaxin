@@ -1,10 +1,12 @@
 import SwiftUI
 
-/// Home-screen hero: centered Relaxin title, a "System Overview" glass card
-/// (2×2 info grid), a "Tools & Settings" glass card (menu list with dividers),
-/// and a gradient primary button. Uses only the primitives already confirmed
-/// to render on-device — no GeometryReader, no `.shadow`, no `.blendMode`
-/// on containers, no `.ultraThinMaterial` on hero cards.
+/// Home-screen hero (flat variant): centered Relaxin title, a vertical stack
+/// of individual horizontal glass info rows (适用设备 / 当前设备 / 运行时间 /
+/// 软件版本), individual menu glass rows, and a gradient primary button.
+///
+/// Uses only the primitives already confirmed to render on-device — no
+/// GeometryReader, no `.shadow`, no `.blendMode` on containers, no
+/// `.ultraThinMaterial` on hero cards.
 struct DopamineHeroContent: View {
     struct MenuRow: Identifiable {
         let id: String
@@ -16,8 +18,8 @@ struct DopamineHeroContent: View {
         let action: () -> Void
     }
 
-    /// One cell inside the System Overview 2×2 info grid.
-    struct InfoItem: Identifiable {
+    /// Single horizontal info row: badge + label + value on one line.
+    struct InfoRow: Identifiable {
         let id: String
         let systemImage: String
         let tint: SwiftUI.Color
@@ -27,9 +29,7 @@ struct DopamineHeroContent: View {
     }
 
     let headerTitle: String
-    var systemOverviewTitle: String = "系统概览"
-    var toolsSectionTitle: String = "设置与工具"
-    var infoItems: [InfoItem] = []
+    var infoRows: [InfoRow] = []
     let menuRows: [MenuRow]
     let primaryButtonTitle: String
     let primaryButtonSystemImage: String
@@ -40,19 +40,20 @@ struct DopamineHeroContent: View {
         ZStack {
             LiquidBackground()
 
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 0) {
                 title
+                    .padding(.bottom, 14)
 
-                if !infoItems.isEmpty {
-                    systemOverviewCard
+                if !infoRows.isEmpty {
+                    infoStack
                 }
 
-                Spacer(minLength: 0)
+                Spacer(minLength: 12)
 
                 if !menuRows.isEmpty {
-                    toolsCard
+                    menuStack
+                    Spacer().frame(height: 16)
                 }
-
                 primaryButton
             }
             .padding(.horizontal, 20)
@@ -70,136 +71,77 @@ struct DopamineHeroContent: View {
             .padding(.top, 4)
     }
 
-    // MARK: - System Overview card
+    // MARK: - Info stack
 
-    private var systemOverviewCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text(systemOverviewTitle)
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                .foregroundStyle(Theme.foreground)
-
-            SwiftUI.Color.white.opacity(0.14)
-                .frame(height: 0.5)
-
-            infoGrid
-        }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard(cornerRadius: 22)
-    }
-
-    private var infoGrid: some View {
-        // Two-column grid — pairs items 0/1 in the first row, 2/3 in the
-        // second. We avoid LazyVGrid here to keep the layout stack simple.
-        VStack(spacing: 16) {
-            ForEach(0 ..< pairedRows.count, id: \.self) { rowIndex in
-                let pair = pairedRows[rowIndex]
-                HStack(alignment: .top, spacing: 12) {
-                    infoCell(pair.0)
-                    if let second = pair.1 {
-                        infoCell(second)
-                    } else {
-                        SwiftUI.Color.clear.frame(maxWidth: .infinity)
-                    }
-                }
+    private var infoStack: some View {
+        VStack(spacing: 10) {
+            ForEach(infoRows) { row in
+                infoCard(row)
             }
         }
-    }
-
-    private var pairedRows: [(InfoItem, InfoItem?)] {
-        var out: [(InfoItem, InfoItem?)] = []
-        var index = 0
-        while index < infoItems.count {
-            let first = infoItems[index]
-            let second = (index + 1 < infoItems.count) ? infoItems[index + 1] : nil
-            out.append((first, second))
-            index += 2
-        }
-        return out
     }
 
     @ViewBuilder
-    private func infoCell(_ item: InfoItem) -> some View {
-        if item.liveUptime {
+    private func infoCard(_ row: InfoRow) -> some View {
+        if row.liveUptime {
             TimelineView(.periodic(from: .now, by: 1)) { _ in
-                infoCellBody(item: item, value: DeviceInfo.uptimeChinese)
+                infoCardRow(row: row, value: DeviceInfo.uptimeChinese)
             }
         } else {
-            infoCellBody(item: item, value: item.value)
+            infoCardRow(row: row, value: row.value)
         }
     }
 
-    private func infoCellBody(item: InfoItem, value: String) -> some View {
-        HStack(alignment: .center, spacing: 8) {
-            IconBadge(systemImage: item.systemImage, tint: item.tint, size: 28)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(item.label)
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
-                    .foregroundStyle(Theme.secondaryForeground)
-                    .lineLimit(1)
-                Text(value)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                    .foregroundStyle(Theme.foreground)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.55)
-            }
+    private func infoCardRow(row: InfoRow, value: String) -> some View {
+        HStack(spacing: 12) {
+            IconBadge(systemImage: row.systemImage, tint: row.tint, size: 28)
+            Text(row.label)
+                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .foregroundStyle(Theme.secondaryForeground)
+                .fixedSize(horizontal: true, vertical: false)
+            Text(value)
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .foregroundStyle(Theme.foreground)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
             Spacer(minLength: 0)
         }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .glassCard(cornerRadius: 18)
     }
 
-    // MARK: - Tools & Settings card
+    // MARK: - Menu stack (individual glass rows)
 
-    private var toolsCard: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(toolsSectionTitle)
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                .foregroundStyle(Theme.foreground)
-                .padding(.horizontal, 18)
-                .padding(.top, 14)
-                .padding(.bottom, 8)
-
-            SwiftUI.Color.white.opacity(0.14)
-                .frame(height: 0.5)
-                .padding(.horizontal, 18)
-
-            VStack(spacing: 0) {
-                ForEach(Array(menuRows.enumerated()), id: \.element.id) { index, row in
-                    Button(action: row.action) {
-                        HStack(spacing: 14) {
-                            IconBadge(systemImage: row.systemImage, tint: row.tint)
-                            Text(row.title)
-                                .font(.system(size: 17, weight: .regular, design: .rounded))
-                                .foregroundStyle(Theme.foreground)
-                                .lineLimit(1)
-                            Spacer()
-                            if row.showsChevron {
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundStyle(Theme.secondaryForeground.opacity(0.6))
-                            }
+    private var menuStack: some View {
+        VStack(spacing: 12) {
+            ForEach(menuRows) { row in
+                Button(action: row.action) {
+                    HStack(spacing: 14) {
+                        IconBadge(systemImage: row.systemImage, tint: row.tint)
+                        Text(row.title)
+                            .font(.system(size: 17, weight: .regular, design: .rounded))
+                            .foregroundStyle(Theme.foreground)
+                            .lineLimit(1)
+                        Spacer()
+                        if row.showsChevron {
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Theme.secondaryForeground.opacity(0.6))
                         }
-                        .padding(.horizontal, 18)
-                        .padding(.vertical, 12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
-                    .disabled(!row.isEnabled)
-                    .opacity(row.isEnabled ? 1 : 0.45)
-
-                    if index != menuRows.count - 1 {
-                        SwiftUI.Color.white.opacity(0.10)
-                            .frame(height: 0.5)
-                            .padding(.leading, 18 + 34 + 14)
-                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
+                .disabled(!row.isEnabled)
+                .opacity(row.isEnabled ? 1 : 0.45)
+                .glassCard()
             }
-            .padding(.bottom, 8)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard(cornerRadius: 22)
     }
 
     // MARK: - Primary button (gradient pill)
@@ -238,25 +180,4 @@ struct DopamineHeroContent: View {
         .disabled(!isPrimaryButtonEnabled)
         .opacity(isPrimaryButtonEnabled ? 1 : 0.55)
     }
-}
-
-#Preview {
-    DopamineHeroContent(
-        headerTitle: "Relaxin",
-        infoItems: [
-            .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue, label: "当前设备", value: "iPhone15,3 iOS 16.6.1"),
-            .init(id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal, label: "运行时间", value: "0天 09:00:13", liveUptime: true),
-            .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green, label: "兼容版本", value: "iOS 16.5.1-17.3.1"),
-            .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange, label: "软件版本", value: "0.4.6 · RootHide Jailbreak"),
-        ],
-        menuRows: [
-            .init(id: "advancedOptions", systemImage: "slider.horizontal.3", title: "高级选项", showsChevron: true, tint: Theme.Accents.blue) {},
-            .init(id: "maintenance", systemImage: "wrench.and.screwdriver.fill", title: "维护工具", showsChevron: true, tint: Theme.Accents.orange) {},
-            .init(id: "credits", systemImage: "heart.fill", title: "特别鸣谢", showsChevron: true, tint: Theme.Accents.pink) {},
-        ],
-        primaryButtonTitle: "开始越狱",
-        primaryButtonSystemImage: "lock.fill",
-        isPrimaryButtonEnabled: true,
-        onPrimaryAction: {}
-    )
 }

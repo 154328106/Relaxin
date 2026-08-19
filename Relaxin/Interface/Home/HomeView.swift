@@ -151,30 +151,27 @@ struct HomeView: View {
         return rows
     }
 
-    private var heroInfoItems: [DopamineHeroContent.InfoItem] {
-        // Bundle.main holds the app's own Info.plist with the marketing
-        // version (runtime.resourceBundle points at the RelaxinEngine
-        // framework whose version stays at 0.0.0).
+    private var heroInfoRows: [DopamineHeroContent.InfoRow] {
         let version = AppInfo.version(in: .main)
         return [
             .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green,
-                  label: "兼容版本", value: "iOS 16.5.1-17.3.1"),
-            .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange,
-                  label: "软件版本",
-                  value: "\(version) · RootHide"),
+                  label: "适用设备：", value: "iOS 16.5.1-17.3.1"),
             .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue,
-                  label: "当前设备",
+                  label: "当前设备：",
                   value: "\(DeviceInfo.shortModelName) \(DeviceInfo.os)"),
-            .init(id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal,
-                  label: "运行时间",
+            .init(id: "uptime", systemImage: "clock.fill", tint: Theme.Accents.teal,
+                  label: "运行时间：",
                   value: DeviceInfo.uptimeChinese, liveUptime: true),
+            .init(id: "version", systemImage: "tag.fill", tint: Theme.Accents.purple,
+                  label: "软件版本：",
+                  value: "\(version) · RootHide Jailbreak"),
         ]
     }
 
     @ViewBuilder private var homeContent: some View {
         DopamineHeroContent(
             headerTitle: "Relaxin",
-            infoItems: heroInfoItems,
+            infoRows: heroInfoRows,
             menuRows: homeMenuRows,
             primaryButtonTitle: homePrimaryButtonTitle,
             // Pre-jailbreak: closed lock (you're about to unlock).

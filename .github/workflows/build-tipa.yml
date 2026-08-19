@@ -2,7 +2,7 @@ name: Build Relaxin TIPA
 
 on:
   push:
-    branches: [ main, liquid-glass-ui ]
+    branches: [ main, liquid-glass-ui, liquid-glass-flat ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
