@@ -13,6 +13,7 @@ struct HomeView: View {
     @State var logExportState = LogExportState.idle
     @State private var visibleCreditCharacterCount = 0
     @State private var terminalColumnCount = 32
+    @State private var jailbreakState = JailbreakStateProbe.State.none
 
     init(runtime: RelaxinRuntime) {
         self.runtime = runtime
@@ -31,6 +32,20 @@ struct HomeView: View {
             forResource: "libkrw-relaxin",
             withExtension: "deb"
         ) != nil
+    }
+
+    var canRemoveJailbreak: Bool {
+        jailbreakState != .none
+    }
+
+    func refreshJailbreakState() {
+        let state = JailbreakStateProbe.state(
+            isRuntimeActive: engineSession.postJailbreakSession.probeRuntimeActive()
+        )
+        jailbreakState = state
+        if state == .none, configuration.removeJailbreakEnabled {
+            configuration.removeJailbreakEnabled = false
+        }
     }
 
     private var enabledToggleOptions: Set<ToggleOption> {
@@ -330,8 +345,13 @@ struct HomeView: View {
     var body: some View {
         productContent
             .task {
+                refreshJailbreakState()
                 guard runtime.interfaceMode == .full else { return }
                 engineSession.postJailbreakSession.refreshAvailability()
+            }
+            .onChange(of: screen) { newScreen in
+                guard newScreen == .home else { return }
+                refreshJailbreakState()
             }
             .modifier(
                 LightImpactFeedbackModifier(trigger: screen) { oldScreen, newScreen in
