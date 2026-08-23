@@ -131,22 +131,25 @@ struct DopamineHeroContent: View {
     }
 
     private func infoCellBody(item: InfoItem, value: String) -> some View {
-        HStack(alignment: .center, spacing: 8) {
-            IconBadge(systemImage: item.systemImage, tint: item.tint, size: 28)
-            VStack(alignment: .leading, spacing: 2) {
+        // Icon stacked above the text and centred in its half of the grid.
+        // The badge is deliberately kept well under the column width so the
+        // longest value ("iPhone15,3 iOS 16.6.1") still gets a full line.
+        VStack(spacing: 8) {
+            IconBadge(systemImage: item.systemImage, tint: item.tint, size: 42)
+            VStack(spacing: 3) {
                 Text(item.label)
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
                     .foregroundStyle(Theme.secondaryForeground)
                     .lineLimit(1)
                 Text(value)
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(Theme.foreground)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.55)
+                    .minimumScaleFactor(0.5)
             }
-            Spacer(minLength: 0)
+            .multilineTextAlignment(.center)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     // MARK: - Tools & Settings card
@@ -206,7 +209,7 @@ struct DopamineHeroContent: View {
         .glassCard(cornerRadius: 22)
     }
 
-    // MARK: - Primary button (gradient pill)
+    // MARK: - Primary button (gradient rounded rect)
 
     private var primaryButton: some View {
         Button(action: onPrimaryAction) {
@@ -220,7 +223,7 @@ struct DopamineHeroContent: View {
             .frame(maxWidth: .infinity)
             .frame(height: 58)
             .background {
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(
                         LinearGradient(
                             colors: [
@@ -234,8 +237,10 @@ struct DopamineHeroContent: View {
                     )
             }
             .overlay {
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .strokeBorder(SwiftUI.Color.white.opacity(0.35), lineWidth: 0.8)
+                    // strokeBorder overlays swallow taps on iOS 16.6.1.
+                    .allowsHitTesting(false)
             }
         }
         .buttonStyle(.plain)

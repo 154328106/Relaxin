@@ -164,7 +164,8 @@ struct HomeView: View {
                   value: "\(version) · RootHide"),
             .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue,
                   label: "当前设备",
-                  value: "\(DeviceInfo.shortModelName) \(DeviceInfo.os)"),
+                  // Raw model identifier (iPhone15,3), not the marketing name.
+                  value: "\(DeviceInfo.modelIdentifier) \(DeviceInfo.os)"),
             .init(id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal,
                   label: "运行时间",
                   value: DeviceInfo.uptimeChinese, liveUptime: true),
