@@ -13,6 +13,7 @@ struct HomeView: View {
     @State var logExportState = LogExportState.idle
     @State private var visibleCreditCharacterCount = 0
     @State private var terminalColumnCount = 32
+    @State private var jailbreakState = JailbreakStateProbe.State.none
 
     init(runtime: RelaxinRuntime) {
         self.runtime = runtime
@@ -166,29 +167,54 @@ struct HomeView: View {
                   label: "当前设备",
                   // Raw model identifier (iPhone15,3), not the marketing name.
                   value: "\(DeviceInfo.modelIdentifier) \(DeviceInfo.os)"),
-            // Pre-jailbreak the device uptime says nothing useful — this is
-            // the screen you're on *before* the engine runs. Show the
-            // jailbreak state instead, and only switch to the live uptime
-            // once the engine has actually finished in this session.
-            hasJailbroken
-                ? DopamineHeroContent.InfoItem(
-                    id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal,
-                    label: "运行时间", value: DeviceInfo.uptimeChinese, liveUptime: true
-                )
-                : DopamineHeroContent.InfoItem(
-                    id: "jailbreakState", systemImage: "lock.fill", tint: Theme.Accents.orange,
-                    label: "越狱状态", value: "当前设备未越狱"
-                ),
+            // Device uptime only says something worth reading once the
+            // jailbreak is live; before that the cell reports the probed
+            // jailbreak state instead.
+            jailbreakInfoItem,
         ]
     }
 
-    /// True once the engine has reported a successful run in this session.
-    /// There is no jailbreak-state probe in the UI layer — the full app is
-    /// the pre-jailbreak interface (RelaxinLite is the post-jailbreak one),
-    /// so the engine phase is the only honest signal we have here.
-    private var hasJailbroken: Bool {
-        if case .finished = engineSession.phase { return true }
-        return false
+    private var jailbreakInfoItem: DopamineHeroContent.InfoItem {
+        switch jailbreakState {
+        case .active:
+            DopamineHeroContent.InfoItem(
+                id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal,
+                label: "运行时间", value: DeviceInfo.uptimeChinese, liveUptime: true
+            )
+        case .installedInactive:
+            DopamineHeroContent.InfoItem(
+                id: "jailbreakState", systemImage: "arrow.clockwise.circle.fill",
+                tint: Theme.Accents.indigo,
+                label: "越狱状态", value: "待重新越狱"
+            )
+        case .none:
+            DopamineHeroContent.InfoItem(
+                id: "jailbreakState", systemImage: "lock.fill", tint: Theme.Accents.orange,
+                label: "越狱状态", value: "当前设备未越狱"
+            )
+        }
+    }
+
+    /// Re-probes the device: a live RootHide runtime, else a finished
+    /// bootstrap sitting on disk (what a reboot leaves behind), else nothing.
+    /// Cheap enough — one `jbclient` call plus one directory listing.
+    func refreshJailbreakState() {
+        let state = JailbreakStateProbe.state(
+            isRuntimeActive: engineSession.postJailbreakSession.probeRuntimeActive()
+        )
+        jailbreakState = state
+        // Nothing installed means nothing to remove: drop a stale request so
+        // the primary button can't stay stuck on "Remove Jailbreak" after the
+        // toggle that set it has been hidden.
+        if state == .none, configuration.removeJailbreakEnabled {
+            configuration.removeJailbreakEnabled = false
+        }
+    }
+
+    /// Whether a removal is worth offering at all — there has to be a
+    /// bootstrap on disk for it to have anything to do.
+    var canRemoveJailbreak: Bool {
+        jailbreakState != .none
     }
 
     @ViewBuilder private var homeContent: some View {
@@ -392,8 +418,15 @@ struct HomeView: View {
     var body: some View {
         productContent
             .task {
+                refreshJailbreakState()
                 guard runtime.interfaceMode == .full else { return }
                 engineSession.postJailbreakSession.refreshAvailability()
+            }
+            .onChange(of: screen) { newScreen in
+                // Coming back to the hero page after the engine ran — the
+                // state on disk may well have changed underneath us.
+                guard newScreen == .home else { return }
+                refreshJailbreakState()
             }
             .modifier(
                 LightImpactFeedbackModifier(trigger: screen) { oldScreen, newScreen in

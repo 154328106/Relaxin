@@ -9,6 +9,7 @@ extension HomeView {
             interfaceMode: runtime.interfaceMode,
             canExportKernelcache: runtime.interfaceMode.allowsFileExport
                 && kernelcacheExportURL != nil,
+            canRemoveJailbreak: canRemoveJailbreak,
             resourceBundle: runtime.resourceBundle
         ).map { entry in
             OptionListItem(id: entry.action, title: entry.title)

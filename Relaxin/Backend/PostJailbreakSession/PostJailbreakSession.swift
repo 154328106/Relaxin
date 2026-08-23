@@ -52,6 +52,15 @@ final class PostJailbreakSession: ObservableObject {
             && reinstallSileoAction != nil
     }
 
+    /// Read-only device probe: is a RootHide runtime live right now?
+    ///
+    /// Unlike `refreshAvailability()` this touches no published state and is
+    /// not gated on the interface mode, so the pre-jailbreak hero card can
+    /// call it without flipping the whole UI over to the post-jailbreak view.
+    func probeRuntimeActive() -> Bool {
+        controller.isAvailable()
+    }
+
     func refreshAvailability() {
         #if DEBUG
             if let debugAvailableOverride {

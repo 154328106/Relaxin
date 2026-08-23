@@ -126,6 +126,7 @@
 				Backend/JailbreakConfiguration/JailbreakTarget.swift,
 				"Backend/Logging/AppLog+EngineBridge.swift",
 				"Backend/Logging/AppLog+Export.swift",
+				Backend/Utilities/JailbreakStateProbe.swift,
 				Backend/Utilities/RelaxinReset.swift,
 				"Interface/Home/HomeView+Actions.swift",
 				"Interface/Home/HomeView+FailureView.swift",

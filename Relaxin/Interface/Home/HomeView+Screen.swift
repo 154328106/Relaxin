@@ -76,6 +76,7 @@ extension HomeView {
             configuration: JailbreakConfiguration,
             interfaceMode: RelaxinInterfaceMode,
             canExportKernelcache: Bool,
+            canRemoveJailbreak: Bool,
             resourceBundle: Bundle
         ) -> [(action: MenuAction, title: String)] {
             switch self {
@@ -107,7 +108,7 @@ extension HomeView {
             case .advancedOptions:
                 // No trailing `.back` — the liquid-glass nav bar owns the
                 // return affordance now.
-                return [
+                var entries: [(MenuAction, String)] = [
                     (
                         .toggleOption(.tweakInjection),
                         optionTitle(
@@ -128,15 +129,23 @@ extension HomeView {
                         .jetsamMultiplier,
                         "\(String(localized: "Jetsam Multiplier", bundle: resourceBundle)): \(configuration.jetsamMultiplier.title(in: resourceBundle))"
                     ),
-                    (
-                        .toggleOption(.removeJailbreak),
-                        optionTitle(
-                            for: .removeJailbreak,
-                            configuration: configuration,
-                            resourceBundle: resourceBundle
-                        )
-                    ),
                 ]
+                // Removal is only offered when a bootstrap is actually
+                // installed — otherwise the switch arms a run that has
+                // nothing to uninstall.
+                if canRemoveJailbreak {
+                    entries.append(
+                        (
+                            .toggleOption(.removeJailbreak),
+                            optionTitle(
+                                for: .removeJailbreak,
+                                configuration: configuration,
+                                resourceBundle: resourceBundle
+                            )
+                        )
+                    )
+                }
+                return entries
             case .maintenance:
                 var entries: [(MenuAction, String)] = []
                 if interfaceMode.allowsFileExport {
