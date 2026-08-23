@@ -81,8 +81,10 @@ struct DopamineHeroContent: View {
                 .foregroundStyle(Theme.foreground)
                 .frame(maxWidth: .infinity, alignment: .center)
 
-            SwiftUI.Color.white.opacity(0.14)
-                .frame(height: 0.5)
+            // 0.14 @ 0.5pt washed out completely against the brighter blue
+            // ramp — a hairline that thin doesn't survive on a 3x screen.
+            SwiftUI.Color.white.opacity(0.30)
+                .frame(height: 1)
 
             infoGrid
         }
@@ -167,8 +169,8 @@ struct DopamineHeroContent: View {
                 .padding(.top, 14)
                 .padding(.bottom, 8)
 
-            SwiftUI.Color.white.opacity(0.14)
-                .frame(height: 0.5)
+            SwiftUI.Color.white.opacity(0.30)
+                .frame(height: 1)
                 .padding(.horizontal, 18)
 
             VStack(spacing: 0) {

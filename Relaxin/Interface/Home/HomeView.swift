@@ -166,10 +166,29 @@ struct HomeView: View {
                   label: "当前设备",
                   // Raw model identifier (iPhone15,3), not the marketing name.
                   value: "\(DeviceInfo.modelIdentifier) \(DeviceInfo.os)"),
-            .init(id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal,
-                  label: "运行时间",
-                  value: DeviceInfo.uptimeChinese, liveUptime: true),
+            // Pre-jailbreak the device uptime says nothing useful — this is
+            // the screen you're on *before* the engine runs. Show the
+            // jailbreak state instead, and only switch to the live uptime
+            // once the engine has actually finished in this session.
+            hasJailbroken
+                ? DopamineHeroContent.InfoItem(
+                    id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal,
+                    label: "运行时间", value: DeviceInfo.uptimeChinese, liveUptime: true
+                )
+                : DopamineHeroContent.InfoItem(
+                    id: "jailbreakState", systemImage: "lock.fill", tint: Theme.Accents.orange,
+                    label: "越狱状态", value: "当前设备未越狱"
+                ),
         ]
+    }
+
+    /// True once the engine has reported a successful run in this session.
+    /// There is no jailbreak-state probe in the UI layer — the full app is
+    /// the pre-jailbreak interface (RelaxinLite is the post-jailbreak one),
+    /// so the engine phase is the only honest signal we have here.
+    private var hasJailbroken: Bool {
+        if case .finished = engineSession.phase { return true }
+        return false
     }
 
     @ViewBuilder private var homeContent: some View {
