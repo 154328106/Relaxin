@@ -77,10 +77,7 @@ struct HomeContent<Action: Hashable>: View {
         .background {
             ZStack {
                 LinearGradient(
-                    gradient: Gradient(colors: [
-                        SwiftUI.Color(red: 0.12, green: 0.23, blue: 0.53),
-                        SwiftUI.Color(red: 0.10, green: 0.18, blue: 0.40)
-                    ]),
+                    colors: Theme.backgroundGradient,
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )

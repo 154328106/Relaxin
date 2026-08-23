@@ -207,11 +207,57 @@ struct HomeView: View {
         }
     }
 
+    /// Phase headline for the engine screen's status card.
+    private var engineStatusTitle: String {
+        switch engineSession.phase {
+        case .idle:
+            "准备就绪"
+        case .running:
+            "正在越狱"
+        case .finished:
+            "越狱完成"
+        case .failed:
+            "越狱失败"
+        }
+    }
+
+    /// Label of the step the engine is on, monospaced under the headline.
+    private var engineStatusDetail: String? {
+        engineSession.output.last { $0.status == .running }?.label
+            ?? engineSession.output.last?.label
+    }
+
+    /// Live progress, derived from the most recent output line that carries a
+    /// position/count pair — the engine reports those as "03/12"-style steps.
+    private var engineProgress: (step: String, value: Double)? {
+        let line = engineSession.output.last {
+            $0.position != nil && $0.count != nil
+        }
+        guard let position = line?.position,
+              let count = line?.count,
+              count > 0
+        else { return nil }
+        return (
+            String(format: "%02d/%02d", position, count),
+            min(1, Double(position) / Double(count))
+        )
+    }
+
     /// Full-screen glass wrapper around the running terminal (engine phase).
     private var engineContent: some View {
-        GlassEngineContent(
+        let progress = engineProgress
+        return GlassEngineContent(
             title: screen.title(resourceBundle: runtime.resourceBundle),
             terminalText: terminalText,
+            statusTitle: engineStatusTitle,
+            statusDetail: engineStatusDetail,
+            progress: progress?.value,
+            stepText: progress?.step,
+            isFinished: {
+                if case .finished = engineSession.phase { return true }
+                return false
+            }(),
+            isFailed: isShowingFailure,
             onColumnCountChange: { terminalColumnCount = $0 }
         )
     }

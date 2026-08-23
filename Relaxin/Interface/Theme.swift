@@ -36,6 +36,21 @@ enum Theme {
 
     // MARK: - Backgrounds
 
+    /// Page background — one blue ramp shared by every screen (hero page,
+    /// sub-pages, engine terminal) so the whole app reads as a single
+    /// gradient. Plain LinearGradient stops on purpose: gradients render
+    /// reliably on-device, blend modes and image washes historically don't.
+    static let backgroundGradient: [SwiftUI.Color] = [
+        SwiftUI.Color(red: 0.20, green: 0.47, blue: 0.98),
+        SwiftUI.Color(red: 0.10, green: 0.29, blue: 0.76),
+        SwiftUI.Color(red: 0.05, green: 0.16, blue: 0.47),
+        SwiftUI.Color(red: 0.02, green: 0.07, blue: 0.24),
+    ]
+
+    /// Terminal console surface — near-black so monospaced output keeps the
+    /// contrast it needs on top of the blue ramp.
+    static let consoleSurface = SwiftUI.Color(red: 0.02, green: 0.05, blue: 0.13)
+
     /// Deep-red gradient used by the failure screen. Kept saturated on purpose
     /// so the failure page reads as an alarm even after the palette rework.
     static let failureBackground = SwiftUI.Color(red: 0.72, green: 0, blue: 0)

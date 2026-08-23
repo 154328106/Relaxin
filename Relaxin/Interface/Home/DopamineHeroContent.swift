@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Home-screen hero: centered Relaxin title, a "System Overview" glass card
-/// (2×2 info grid), a "Tools & Settings" glass card (menu list with dividers),
+/// Home-screen hero: a glass card whose header is the centered Relaxin
+/// title over a 2×2 info grid, a "Tools & Settings" glass card (menu list),
 /// and a gradient primary button. Uses only the primitives already confirmed
 /// to render on-device — no GeometryReader, no `.shadow`, no `.blendMode`
 /// on containers, no `.ultraThinMaterial` on hero cards.
@@ -27,7 +27,6 @@ struct DopamineHeroContent: View {
     }
 
     let headerTitle: String
-    var systemOverviewTitle: String = "系统概览"
     var toolsSectionTitle: String = "设置与工具"
     var infoItems: [InfoItem] = []
     let menuRows: [MenuRow]
@@ -41,9 +40,10 @@ struct DopamineHeroContent: View {
             LiquidBackground()
 
             VStack(alignment: .leading, spacing: 20) {
-                title
-
-                if !infoItems.isEmpty {
+                if infoItems.isEmpty {
+                    // No grid to host the title — fall back to a bare header.
+                    title
+                } else {
                     systemOverviewCard
                 }
 
@@ -73,10 +73,13 @@ struct DopamineHeroContent: View {
     // MARK: - System Overview card
 
     private var systemOverviewCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text(systemOverviewTitle)
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
+        VStack(alignment: .center, spacing: 14) {
+            // The page title lives inside the card now — the standalone
+            // "系统概览" heading is gone, the title does that job.
+            Text(headerTitle)
+                .font(Theme.pageTitleFont)
                 .foregroundStyle(Theme.foreground)
+                .frame(maxWidth: .infinity, alignment: .center)
 
             SwiftUI.Color.white.opacity(0.14)
                 .frame(height: 0.5)
@@ -84,7 +87,8 @@ struct DopamineHeroContent: View {
             infoGrid
         }
         .padding(.horizontal, 18)
-        .padding(.vertical, 16)
+        .padding(.top, 18)
+        .padding(.bottom, 16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .glassCard(cornerRadius: 22)
     }
