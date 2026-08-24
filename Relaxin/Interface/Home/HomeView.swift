@@ -177,17 +177,35 @@ struct HomeView: View {
         let version = AppInfo.version(in: .main)
         return [
             .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green,
-                  label: "适用设备：", value: "iOS 16.5.1-17.3.1"),
+                  label: "适用设备", value: "iOS 16.5.1-17.3.1"),
+            .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange,
+                  label: "软件版本", value: "\(version) · RootHide"),
             .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue,
-                  label: "当前设备：",
-                  value: "\(DeviceInfo.shortModelName) \(DeviceInfo.os)"),
-            .init(id: "uptime", systemImage: "clock.fill", tint: Theme.Accents.teal,
-                  label: "运行时间：",
-                  value: DeviceInfo.uptimeChinese, liveUptime: true),
-            .init(id: "version", systemImage: "tag.fill", tint: Theme.Accents.purple,
-                  label: "软件版本：",
-                  value: "\(version) · RootHide Jailbreak"),
+                  label: "当前设备",
+                  value: "\(DeviceInfo.modelIdentifier) \(DeviceInfo.os)"),
+            jailbreakInfoRow,
         ]
+    }
+
+    private var jailbreakInfoRow: DopamineHeroContent.InfoRow {
+        switch jailbreakState {
+        case .active:
+            DopamineHeroContent.InfoRow(
+                id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal,
+                label: "运行时间", value: DeviceInfo.uptimeChinese, liveUptime: true
+            )
+        case .installedInactive:
+            DopamineHeroContent.InfoRow(
+                id: "jailbreakState", systemImage: "arrow.clockwise.circle.fill",
+                tint: Theme.Accents.indigo,
+                label: "越狱状态", value: "待重新越狱"
+            )
+        case .none:
+            DopamineHeroContent.InfoRow(
+                id: "jailbreakState", systemImage: "lock.fill", tint: Theme.Accents.orange,
+                label: "越狱状态", value: "当前设备未越狱"
+            )
+        }
     }
 
     @ViewBuilder private var homeContent: some View {

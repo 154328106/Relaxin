@@ -1,8 +1,8 @@
 import SwiftUI
 
 /// Home-screen hero (flat variant): centered Relaxin title, a vertical stack
-/// of individual horizontal glass info rows (适用设备 / 当前设备 / 运行时间 /
-/// 软件版本), individual menu glass rows, and a gradient primary button.
+/// of individual horizontal glass info rows (适用设备 / 软件版本 / 当前设备 /
+/// 越狱状态或运行时间), individual menu glass rows, and a gradient primary button.
 ///
 /// Uses only the primitives already confirmed to render on-device — no
 /// GeometryReader, no `.shadow`, no `.blendMode` on containers, no
