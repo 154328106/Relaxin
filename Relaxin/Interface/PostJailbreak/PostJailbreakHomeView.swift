@@ -141,7 +141,7 @@ struct PostJailbreakHomeView: View {
             .init(
                 id: "restartSpringBoard",
                 systemImage: "house.fill",
-                title: String(localized: "Restart SpringBoard", bundle: environment.resourceBundle),
+                title: Self.restartSpringBoardTitle(in: environment.resourceBundle),
                 isEnabled: !session.isPerformingAction,
                 tint: Theme.Accents.teal
             ) {
@@ -150,7 +150,7 @@ struct PostJailbreakHomeView: View {
             .init(
                 id: "restartUserspace",
                 systemImage: "bolt.horizontal.circle.fill",
-                title: String(localized: "Restart Userspace", bundle: environment.resourceBundle),
+                title: Self.restartUserspaceTitle(in: environment.resourceBundle),
                 isEnabled: !session.isPerformingAction,
                 tint: Theme.Accents.orange
             ) {
