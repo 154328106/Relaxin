@@ -28,8 +28,9 @@ make clean               # Remove derived data and generated BaseBin resources
 
 The repository does not redistribute the closed-source 0.4.8 binaries. If you
 have the upstream app bundle, the hybrid packager starts from that bundle and
-replaces only the main executable, compiled asset catalog, Metal library, and
-icons. The upstream localizations and every core file remain intact:
+replaces only the main executable, optional Xcode Debug support dylibs,
+compiled asset catalog, Metal library, and icons. The upstream localizations
+and every core file remain intact:
 
 ```bash
 make hybrid-048-tipa \
