@@ -26,6 +26,13 @@ struct HomeView: View {
         colorScheme == .dark
     }
 
+    var supportsIDownload: Bool {
+        runtime.resourceBundle.url(
+            forResource: "libkrw-relaxin",
+            withExtension: "deb"
+        ) != nil
+    }
+
     private var enabledToggleOptions: Set<ToggleOption> {
         Set(
             ToggleOption.allCases.filter {

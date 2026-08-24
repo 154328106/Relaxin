@@ -2,6 +2,7 @@
 
 #import "RLXPostJailbreakController.h"
 #import "RLXPostJailbreakLog.h"
+#import "RLXPostJailbreakActionRunner.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -44,6 +45,17 @@ static void test_explicit_bundle_ownership(void) {
     expect(first.resourceBundle != second.resourceBundle, "controller: instances do not share resource configuration");
     expect(!first.hasActiveRootHideRuntime, "controller: host platform has no active RootHide runtime");
     expect(!first.isAvailable, "controller: host platform reports post-jailbreak runtime unavailable");
+}
+
+static void test_relaxin_048_action_abi(void) {
+    expect(RLXPostJailbreakActionRemoveJailbreak == 4, "0.4.8 ABI: remove jailbreak is action 4");
+    expect(RLXPostJailbreakActionRestartDevice == 5, "0.4.8 ABI: restart device is action 5");
+    expect(RLXPostJailbreakActionUpdateBaseBin == 6, "0.4.8 ABI: update BaseBin is action 6");
+    expect([RLXPostJailbreakActionName(RLXPostJailbreakActionRestartDevice) isEqualToString:@"Restart Device"],
+           "0.4.8 ABI: restart device name matches the binary core");
+    expect([RLXPostJailbreakActionIdentifier(RLXPostJailbreakActionUpdateBaseBin)
+               isEqualToString:@"update_basebin"],
+           "0.4.8 ABI: update BaseBin identifier matches the binary core");
 }
 
 static void test_invalid_action(void) {
@@ -113,6 +125,7 @@ static void test_log_sink(void) {
 int main(void) {
     @autoreleasepool {
         test_explicit_bundle_ownership();
+        test_relaxin_048_action_abi();
         test_invalid_action();
         test_unavailable_action();
         test_log_sink();

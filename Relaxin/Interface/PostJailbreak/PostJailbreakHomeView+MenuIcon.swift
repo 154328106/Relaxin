@@ -19,6 +19,8 @@ extension PostJailbreakHomeView {
                 return .init(systemImage: "shippingbox.fill", tint: Theme.Accents.purple, chevron: nil)
             case .appJIT:
                 return .init(systemImage: "bolt.fill", tint: Theme.Accents.orange, chevron: nil)
+            case .iDownload:
+                return .init(systemImage: "terminal.fill", tint: Theme.Accents.green, chevron: nil)
             }
         case .restartSpringBoard:
             return .init(systemImage: "arrow.clockwise", tint: Theme.Accents.teal, chevron: nil)
@@ -32,6 +34,8 @@ extension PostJailbreakHomeView {
             return .init(systemImage: "key.fill", tint: Theme.Accents.indigo, chevron: nil)
         case .reinstallSileo:
             return .init(systemImage: "arrow.down.app.fill", tint: Theme.Accents.blue, chevron: nil)
+        case .updateBaseBin:
+            return .init(systemImage: "arrow.triangle.2.circlepath.circle.fill", tint: Theme.Accents.orange, chevron: nil)
         case .removeJailbreak:
             return .init(systemImage: "trash.fill", tint: Theme.Accents.red, chevron: nil)
         case .confirm:

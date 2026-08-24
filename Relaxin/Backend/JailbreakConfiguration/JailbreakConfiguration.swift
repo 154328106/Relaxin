@@ -6,6 +6,7 @@ struct JailbreakConfiguration {
     private enum StorageKey {
         static let tweakInjectionEnabled = "tweakInjectionEnabled"
         static let appJITEnabled = "appJITEnabled"
+        static let iDownloadEnabled = "iDownloadEnabled"
         static let jetsamMultiplier = "jetsamMultiplier"
         static let removeJailbreakEnabled = "removeJailbreakEnabled"
     }
@@ -26,6 +27,15 @@ struct JailbreakConfiguration {
             defaults.set(
                 appJITEnabled,
                 forKey: StorageKey.appJITEnabled
+            )
+        }
+    }
+
+    var iDownloadEnabled: Bool {
+        didSet {
+            defaults.set(
+                iDownloadEnabled,
+                forKey: StorageKey.iDownloadEnabled
             )
         }
     }
@@ -53,6 +63,7 @@ struct JailbreakConfiguration {
         defaults.register(defaults: [
             StorageKey.tweakInjectionEnabled: true,
             StorageKey.appJITEnabled: true,
+            StorageKey.iDownloadEnabled: false,
             StorageKey.jetsamMultiplier: JetsamMultiplier.three.rawValue,
             StorageKey.removeJailbreakEnabled: false,
         ])
@@ -60,6 +71,7 @@ struct JailbreakConfiguration {
             forKey: StorageKey.tweakInjectionEnabled
         )
         appJITEnabled = defaults.bool(forKey: StorageKey.appJITEnabled)
+        iDownloadEnabled = defaults.bool(forKey: StorageKey.iDownloadEnabled)
         jetsamMultiplier = defaults
             .string(forKey: StorageKey.jetsamMultiplier)
             .flatMap(JetsamMultiplier.init(rawValue:))
@@ -73,6 +85,7 @@ struct JailbreakConfiguration {
         var manifest = try target.confirmedManifest()
         manifest[.tweakInjectionEnabledKey] = tweakInjectionEnabled ? "true" : "false"
         manifest[.appJITEnabledKey] = appJITEnabled ? "true" : "false"
+        manifest[.iDownloadEnabledKey] = iDownloadEnabled ? "true" : "false"
         manifest[.jetsamMultiplierKey] = jetsamMultiplier.rawValue
         manifest[.removeJailbreakEnabledKey] = removeJailbreakEnabled ? "true" : "false"
         return manifest

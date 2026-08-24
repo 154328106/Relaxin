@@ -14,6 +14,7 @@ The repository uses the top-level `Makefile` for all build and packaging workflo
 make build               # Build the iOS app (unsigned)
 make ipa                 # Build and package an unsigned IPA
 make tipa                # Build and package a no-sandbox TIPA
+make hybrid-048-tipa     # Use this UI with an audited upstream 0.4.8 app
 make bootstrap-resources # Download, ad-hoc sign, and stage the RootHide bootstrap
 make check               # Validate the zstd integration contract
 make test-host           # Run the host-side trust-cache model and fault-injection tests
@@ -22,6 +23,22 @@ make format-lint         # Run Swift and C-family formatters in check mode
 make scan-license        # Refresh Relaxin/Resources/Licenses.txt from Vendor
 make clean               # Remove derived data and generated BaseBin resources
 ```
+
+### Relaxin 0.4.8 core with this UI
+
+The repository does not redistribute the closed-source 0.4.8 binaries. If you
+have the upstream app bundle, the hybrid packager starts from that bundle and
+replaces only the main executable, compiled asset catalog, Metal library, and
+icons. The upstream localizations and every core file remain intact:
+
+```bash
+make hybrid-048-tipa \
+    UPSTREAM_048_APP=/path/to/Relaxin-v0.4.8/Payload/Relaxin.app
+```
+
+The packager pins the audited `RelaxinEngine`, `basebin.tar`, and `basebin.tc`
+hashes and verifies that all non-UI files remain unchanged. The resulting file
+is written to `build/Artifacts/Relaxin-0.4.8-ui.tipa`.
 
 ## License
 

@@ -5,6 +5,7 @@ extension PostJailbreakHomeView {
         enum Kind {
             case notice
             case userspaceRebootRequired
+            case deviceRestartRequired
         }
 
         let title: String
@@ -28,6 +29,17 @@ extension PostJailbreakHomeView {
                     bundle: resourceBundle
                 ),
                 kind: .userspaceRebootRequired
+            )
+        }
+
+        static func deviceRestartRequired(in resourceBundle: Bundle) -> Alert {
+            Alert(
+                title: String(localized: "Relaxin Update", bundle: resourceBundle),
+                message: String(
+                    localized: "You need to restart the device to finish the Relaxin version update.",
+                    bundle: resourceBundle
+                ),
+                kind: .deviceRestartRequired
             )
         }
     }
