@@ -2,6 +2,20 @@ import CoreGraphics
 import Foundation
 
 extension PostJailbreakHomeView {
+    static func restartSpringBoardTitle(in resourceBundle: Bundle) -> String {
+        if Locale.preferredLanguages.first?.lowercased().hasPrefix("zh") == true {
+            return "重启桌面"
+        }
+        return String(localized: "Restart SpringBoard", bundle: resourceBundle)
+    }
+
+    static func restartUserspaceTitle(in resourceBundle: Bundle) -> String {
+        if Locale.preferredLanguages.first?.lowercased().hasPrefix("zh") == true {
+            return "重启空间"
+        }
+        return String(localized: "Restart Userspace", bundle: resourceBundle)
+    }
+
     enum Screen: Equatable {
         case home
         case advancedOptions
@@ -67,16 +81,14 @@ extension PostJailbreakHomeView {
                 return [
                     (
                         .confirm(.restartSpringBoard),
-                        String(
-                            localized: "Restart SpringBoard",
-                            bundle: resourceBundle
+                        PostJailbreakHomeView.restartSpringBoardTitle(
+                            in: resourceBundle
                         )
                     ),
                     (
                         .confirm(.restartUserspace),
-                        String(
-                            localized: "Restart Userspace",
-                            bundle: resourceBundle
+                        PostJailbreakHomeView.restartUserspaceTitle(
+                            in: resourceBundle
                         )
                     ),
                     (
@@ -239,9 +251,9 @@ extension PostJailbreakHomeView {
         func title(in resourceBundle: Bundle) -> String {
             switch self {
             case .restartSpringBoard:
-                String(localized: "Restart SpringBoard", bundle: resourceBundle)
+                PostJailbreakHomeView.restartSpringBoardTitle(in: resourceBundle)
             case .restartUserspace:
-                String(localized: "Restart Userspace", bundle: resourceBundle)
+                PostJailbreakHomeView.restartUserspaceTitle(in: resourceBundle)
             case .rebootDevice:
                 String(localized: "Restart Device", bundle: resourceBundle)
             case .removeJailbreak:
