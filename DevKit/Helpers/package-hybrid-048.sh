@@ -104,7 +104,7 @@ core_manifest() {
         find . -type f -print0 \
             | while IFS= read -r -d '' path; do
                 case "${path#./}" in
-                    "$APP_EXECUTABLE"|Assets.car|default.metallib|AppIcon*.png)
+                    "$APP_EXECUTABLE"|Relaxin.debug.dylib|__preview.dylib|Assets.car|default.metallib|AppIcon*.png)
                         continue
                         ;;
                 esac
@@ -123,6 +123,12 @@ chmod 0755 "$HYBRID_APP/$APP_EXECUTABLE"
 for ui_resource in Assets.car default.metallib; do
     if [[ -f "$UI_APP/$ui_resource" ]]; then
         /usr/bin/ditto "$UI_APP/$ui_resource" "$HYBRID_APP/$ui_resource"
+    fi
+done
+for ui_binary in Relaxin.debug.dylib __preview.dylib; do
+    if [[ -f "$UI_APP/$ui_binary" ]]; then
+        /usr/bin/ditto "$UI_APP/$ui_binary" "$HYBRID_APP/$ui_binary"
+        chmod 0755 "$HYBRID_APP/$ui_binary"
     fi
 done
 
