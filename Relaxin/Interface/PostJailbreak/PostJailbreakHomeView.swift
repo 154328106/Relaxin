@@ -76,6 +76,8 @@ struct PostJailbreakHomeView: View {
         return screen.menuEntries(
             runtimeOptions: session.runtimeOptions,
             canReinstallSileo: session.canReinstallSileo,
+            supportsIDownload: session.supportsIDownload,
+            needsBaseBinUpdate: session.needsBaseBinUpdate,
             allowsExternalNavigation: environment.interfaceMode.allowsExternalNavigation,
             resourceBundle: environment.resourceBundle
         ).map { entry in
@@ -157,7 +159,7 @@ struct PostJailbreakHomeView: View {
             .init(
                 id: "rebootDevice",
                 systemImage: "power",
-                title: String(localized: "Reboot Device", bundle: environment.resourceBundle),
+                title: String(localized: "Restart Device", bundle: environment.resourceBundle),
                 isEnabled: !session.isPerformingAction,
                 tint: Theme.Accents.red
             ) {
@@ -330,7 +332,35 @@ struct PostJailbreakHomeView: View {
                         )
                     )
                 )
+            case .deviceRestartRequired:
+                SwiftUI.Alert(
+                    title: Text(alert.title),
+                    message: Text(alert.message),
+                    primaryButton: .default(
+                        Text(
+                            String(
+                                localized: "Restart Device",
+                                bundle: environment.resourceBundle
+                            )
+                        )
+                    ) {
+                        session.perform(.rebootDevice)
+                    },
+                    secondaryButton: .cancel(
+                        Text(
+                            String(
+                                localized: "Reboot Later",
+                                bundle: environment.resourceBundle
+                            )
+                        )
+                    )
+                )
             }
+        }
+        .onChange(of: session.lastCompletedAction) { action in
+            guard action == .updateBaseBin else { return }
+            session.consumeLastCompletedAction()
+            alert = .deviceRestartRequired(in: environment.resourceBundle)
         }
     }
 
@@ -366,6 +396,8 @@ struct PostJailbreakHomeView: View {
         case .reinstallSileo:
             guard session.canReinstallSileo else { return }
             session.reinstallSileo()
+        case .updateBaseBin:
+            session.perform(.updateBaseBin)
         case .removeJailbreak:
             session.perform(.removeJailbreak)
         case .back:
@@ -383,6 +415,8 @@ struct PostJailbreakHomeView: View {
             alert = .userspaceRebootRequired(in: environment.resourceBundle)
         case .appJIT:
             session.setAppJITEnabled(enabled)
+        case .iDownload:
+            session.setIDownloadEnabled(enabled)
         }
     }
 

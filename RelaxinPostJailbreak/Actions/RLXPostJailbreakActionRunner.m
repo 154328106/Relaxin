@@ -26,10 +26,12 @@ NSString *_Nullable RLXPostJailbreakActionName(RLXPostJailbreakAction action) {
             return @"Refresh Jailbreak Apps";
         case RLXPostJailbreakActionResetMobilePassword:
             return @"Reset Mobile Password";
-        case RLXPostJailbreakActionRebootDevice:
-            return @"Reboot Device";
         case RLXPostJailbreakActionRemoveJailbreak:
             return @"Remove Jailbreak";
+        case RLXPostJailbreakActionRestartDevice:
+            return @"Restart Device";
+        case RLXPostJailbreakActionUpdateBaseBin:
+            return @"Update BaseBin";
     }
     return nil;
 }
@@ -44,10 +46,12 @@ NSString *_Nullable RLXPostJailbreakActionIdentifier(RLXPostJailbreakAction acti
             return @"refresh_jailbreak_apps";
         case RLXPostJailbreakActionResetMobilePassword:
             return @"reset_mobile_password";
-        case RLXPostJailbreakActionRebootDevice:
-            return @"reboot_device";
         case RLXPostJailbreakActionRemoveJailbreak:
             return @"remove_jailbreak";
+        case RLXPostJailbreakActionRestartDevice:
+            return @"restart_device";
+        case RLXPostJailbreakActionUpdateBaseBin:
+            return @"update_basebin";
     }
     return nil;
 }

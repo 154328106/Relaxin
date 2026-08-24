@@ -3670,6 +3670,86 @@
           }
         }
       }
+    },
+    "iDownload (Developer Shell)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iDownload (Developer Shell)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iDownload\uff08\u5f00\u53d1\u8005 Shell\uff09"
+          }
+        }
+      }
+    },
+    "Relaxin Update" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relaxin Update"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relaxin \u66f4\u65b0"
+          }
+        }
+      }
+    },
+    "Restart Device" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restart Device"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\u91cd\u542f\u8bbe\u5907"
+          }
+        }
+      }
+    },
+    "Update BaseBin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update BaseBin"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\u66f4\u65b0 BaseBin"
+          }
+        }
+      }
+    },
+    "You need to restart the device to finish the Relaxin version update." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You need to restart the device to finish the Relaxin version update."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\u9700\u8981\u91cd\u65b0\u542f\u52a8\u8bbe\u5907\u624d\u80fd\u5b8c\u6210 Relaxin \u7248\u672c\u66f4\u65b0\u3002"
+          }
+        }
+      }
     }
   },
   "version" : "1.3"

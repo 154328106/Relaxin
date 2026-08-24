@@ -29,6 +29,8 @@ extension HomeView {
                 return .init(systemImage: "shippingbox.fill", tint: Theme.Accents.purple, chevron: nil)
             case .appJIT:
                 return .init(systemImage: "bolt.fill", tint: Theme.Accents.orange, chevron: nil)
+            case .iDownload:
+                return .init(systemImage: "terminal.fill", tint: Theme.Accents.green, chevron: nil)
             case .removeJailbreak:
                 return .init(systemImage: "trash.fill", tint: Theme.Accents.red, chevron: nil)
             }

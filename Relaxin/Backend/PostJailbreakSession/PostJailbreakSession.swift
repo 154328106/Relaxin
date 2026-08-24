@@ -10,8 +10,10 @@ final class PostJailbreakSession: ObservableObject {
 
     @Published private(set) var isAvailable = false
     @Published private(set) var runtimeOptions = RuntimeOptions()
+    @Published private(set) var needsBaseBinUpdate = false
     @Published private(set) var output: [TerminalOutputLine] = []
     @Published private(set) var isPerformingAction = false
+    @Published private(set) var lastCompletedAction: Action?
 
     let environment: PostJailbreakEnvironment
     private let controller: RLXPostJailbreakController
@@ -52,6 +54,13 @@ final class PostJailbreakSession: ObservableObject {
             && reinstallSileoAction != nil
     }
 
+    var supportsIDownload: Bool {
+        environment.resourceBundle.url(
+            forResource: "libkrw-relaxin",
+            withExtension: "deb"
+        ) != nil
+    }
+
     /// Read-only device probe: is a RootHide runtime live right now?
     ///
     /// Unlike `refreshAvailability()` this touches no published state and is
@@ -78,8 +87,12 @@ final class PostJailbreakSession: ObservableObject {
         guard isAvailable else { return }
         runtimeOptions = RuntimeOptions(
             tweakInjectionEnabled: controller.tweakInjectionEnabled(),
-            appJITEnabled: controller.appJITEnabled()
+            appJITEnabled: controller.appJITEnabled(),
+            iDownloadEnabled: supportsIDownload
+                && controller.iDownloadEnabled()
         )
+        needsBaseBinUpdate = supportsIDownload
+            && !controller.installedBaseBinMatchesBundledVersion()
     }
 
     func setTweakInjectionEnabled(_ enabled: Bool) {
@@ -94,9 +107,15 @@ final class PostJailbreakSession: ObservableObject {
         runtimeOptions.appJITEnabled = enabled
     }
 
+    func setIDownloadEnabled(_ enabled: Bool) {
+        guard isAvailable, supportsIDownload else { return }
+        controller.setIDownloadEnabled(enabled)
+        runtimeOptions.iDownloadEnabled = enabled
+    }
+
     func perform(_ action: Action) {
         guard isAvailable, !isPerformingAction else { return }
-        performOperation { [controller] outputHandler in
+        performOperation(completedAction: action) { [controller] outputHandler in
             try await controller.perform(
                 action: action.postJailbreakAction,
                 arguments: action.postJailbreakArguments,
@@ -110,7 +129,14 @@ final class PostJailbreakSession: ObservableObject {
         performOperation(reinstallSileoAction)
     }
 
-    private func performOperation(_ operation: @escaping ReinstallSileoAction) {
+    func consumeLastCompletedAction() {
+        lastCompletedAction = nil
+    }
+
+    private func performOperation(
+        completedAction: Action? = nil,
+        _ operation: @escaping ReinstallSileoAction
+    ) {
         guard isAvailable, !isPerformingAction else { return }
         isPerformingAction = true
         Task { [self] in
@@ -131,6 +157,7 @@ final class PostJailbreakSession: ObservableObject {
                 }
                 try await operation(outputHandler)
                 refreshAvailability()
+                lastCompletedAction = completedAction
             } catch {
                 append(
                     TerminalOutputLine(
@@ -156,18 +183,20 @@ final class PostJailbreakSession: ObservableObject {
 }
 
 extension PostJailbreakSession {
-    enum Action {
+    enum Action: Equatable {
         case restartSpringBoard
         case restartUserspace(darkAppearance: Bool)
         case refreshJailbreakApps
         case resetMobilePassword
         case rebootDevice
         case removeJailbreak
+        case updateBaseBin
     }
 
     struct RuntimeOptions: Equatable {
         var tweakInjectionEnabled = true
         var appJITEnabled = true
+        var iDownloadEnabled = false
     }
 }
 
@@ -183,9 +212,11 @@ private extension PostJailbreakSession.Action {
         case .resetMobilePassword:
             .resetMobilePassword
         case .rebootDevice:
-            .rebootDevice
+            .restartDevice
         case .removeJailbreak:
             .removeJailbreak
+        case .updateBaseBin:
+            .updateBaseBin
         }
     }
 

@@ -10,8 +10,9 @@ typedef NS_ENUM(NSInteger, RLXPostJailbreakAction) {
     RLXPostJailbreakActionRestartUserspace,
     RLXPostJailbreakActionRefreshJailbreakApps,
     RLXPostJailbreakActionResetMobilePassword,
-    RLXPostJailbreakActionRebootDevice,
     RLXPostJailbreakActionRemoveJailbreak,
+    RLXPostJailbreakActionRestartDevice,
+    RLXPostJailbreakActionUpdateBaseBin,
 };
 
 typedef NSString *RLXPostJailbreakActionArgumentKey NS_TYPED_EXTENSIBLE_ENUM;
@@ -32,11 +33,17 @@ typedef void (^RLXPostJailbreakCompletionHandler)(NSError *_Nullable error);
 - (BOOL)isAvailable;
 - (BOOL)hasActiveRootHideRuntime;
 
+/// Returns YES when the installed BaseBin matches the one bundled by Relaxin.
+- (BOOL)installedBaseBinMatchesBundledVersion;
+
 - (BOOL)tweakInjectionEnabled;
 - (void)setTweakInjectionEnabled:(BOOL)enabled;
 
 - (BOOL)appJITEnabled;
 - (void)setAppJITEnabled:(BOOL)enabled;
+
+- (BOOL)iDownloadEnabled;
+- (void)setIDownloadEnabled:(BOOL)enabled;
 
 - (void)performAction:(RLXPostJailbreakAction)action
         outputHandler:(nullable RLXPostJailbreakOutputHandler)outputHandler

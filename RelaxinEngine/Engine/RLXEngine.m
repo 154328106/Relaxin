@@ -22,6 +22,7 @@ RLXEngineManifestKey const RLXEngineManifestTargetOSBuildKey = @"targetOSBuild";
 RLXEngineManifestKey const RLXEngineManifestRuntimeProfileKey = @"runtimeProfile";
 RLXEngineManifestKey const RLXEngineManifestTweakInjectionEnabledKey = @"tweakInjectionEnabled";
 RLXEngineManifestKey const RLXEngineManifestAppJITEnabledKey = @"appJITEnabled";
+RLXEngineManifestKey const RLXEngineManifestIDownloadEnabledKey = @"iDownloadEnabled";
 RLXEngineManifestKey const RLXEngineManifestJetsamMultiplierKey = @"jetsamMultiplier";
 RLXEngineManifestKey const RLXEngineManifestRemoveJailbreakEnabledKey = @"removeJailbreakEnabled";
 RLXEngineManifestKey const RLXEngineManifestBootLogoDarkAppearanceKey = @"bootLogoDarkAppearance";

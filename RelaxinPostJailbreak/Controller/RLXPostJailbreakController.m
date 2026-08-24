@@ -63,11 +63,15 @@ static NSError *_Nullable rlx_execute_post_jailbreak_action(
         case RLXPostJailbreakActionResetMobilePassword:
             status = RLXPostJailbreakResetMobilePassword(&failurePhase);
             break;
-        case RLXPostJailbreakActionRebootDevice:
-            status = RLXPostJailbreakRebootDevice(&failurePhase);
-            break;
         case RLXPostJailbreakActionRemoveJailbreak:
             return RLXPostJailbreakRemove(&failurePhase);
+        case RLXPostJailbreakActionRestartDevice:
+            status = RLXPostJailbreakRebootDevice(&failurePhase);
+            break;
+        case RLXPostJailbreakActionUpdateBaseBin:
+            return RLXPostJailbreakUnavailableActionError(
+                action,
+                @"BaseBin updates require the Relaxin 0.4.8 core.");
     }
 
     return status == 0 ? nil : RLXPostJailbreakActionExecutionError(action, failurePhase ?: @"unknown", status, nil);
@@ -119,6 +123,13 @@ static NSError *_Nullable rlx_execute_post_jailbreak_action(
 #else
     return NO;
 #endif
+}
+
+- (BOOL)installedBaseBinMatchesBundledVersion {
+    // The source-built compatibility core has no self-update action. Treat its
+    // bundled BaseBin as current; the 0.4.8 binary core replaces this method in
+    // hybrid packages and performs the real installed-vs-bundled comparison.
+    return YES;
 }
 
 - (BOOL)tweakInjectionEnabled {
@@ -177,6 +188,15 @@ static NSError *_Nullable rlx_execute_post_jailbreak_action(
 #else
     (void)enabled;
 #endif
+}
+
+- (BOOL)iDownloadEnabled {
+    return NO;
+}
+
+- (void)setIDownloadEnabled:(BOOL)enabled {
+    // iDownload is supplied and controlled by the 0.4.8 binary core.
+    (void)enabled;
 }
 
 - (void)performAction:(RLXPostJailbreakAction)action

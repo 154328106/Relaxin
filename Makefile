@@ -26,6 +26,9 @@ IPA_PACKAGER    := $(ROOT_DIR)/DevKit/Helpers/package-ipa.sh
 TIPA_OUTPUT     ?= $(ROOT_DIR)/build/Artifacts/$(IOS_SCHEME)-$(APP_VERSION).tipa
 TIPA_PACKAGER   := $(ROOT_DIR)/DevKit/Helpers/package-tipa.sh
 TIPA_ENTITLEMENTS := $(ROOT_DIR)/DevKit/Packaging/Relaxin.tipa.entitlements
+HYBRID_048_PACKAGER := $(ROOT_DIR)/DevKit/Helpers/package-hybrid-048.sh
+HYBRID_048_OUTPUT ?= $(ROOT_DIR)/build/Artifacts/Relaxin-0.4.8-ui.tipa
+UPSTREAM_048_APP ?=
 LITE_DEB_OUTPUT ?= $(ROOT_DIR)/build/Artifacts/relaxin-lite.deb
 LITE_DEB_PACKAGER := $(ROOT_DIR)/DevKit/Packaging/RelaxinLite/package-deb.sh
 
@@ -69,7 +72,7 @@ XCODEBUILD := $(XCODEBUILD_WRAPPER) \
     ASSETCATALOG_COMPILER_APPICON_NAME="$(APPICON_NAME)"
 
 .PHONY: all help print-version \
-        build build-ios lite-deb tipa ipa bootstrap-resources scan-license check test-host \
+        build build-ios lite-deb tipa ipa hybrid-048-tipa bootstrap-resources scan-license check test-host \
         kernel-offsets \
         format format-lint \
         clean \
@@ -94,6 +97,7 @@ help:
 	@echo "  lite-deb              Build the Relaxin Lite RootHide package"
 	@echo "  ipa                   Build and package an unsigned IPA"
 	@echo "  tipa                  Build and package a no-sandbox TIPA"
+	@echo "  hybrid-048-tipa       Put this UI over an audited upstream 0.4.8 core"
 	@echo "  bootstrap-resources   Download, ad-hoc sign, and stage the RootHide bootstrap"
 	@echo "  kernel-offsets        Regenerate the bundled kernelcache offset table"
 	@echo "  scan-license          Refresh Licenses.txt from Vendor"
@@ -218,6 +222,17 @@ tipa: _check-tipa-tools build-ios
 	    "$(APP_BUNDLE)" \
 	    "$(TIPA_ENTITLEMENTS)" \
 	    "$(TIPA_OUTPUT)"
+
+hybrid-048-tipa: _check-tipa-tools build-ios
+	@test -n "$(UPSTREAM_048_APP)" || { \
+	    echo "error: set UPSTREAM_048_APP=/path/to/Payload/Relaxin.app" >&2; \
+	    exit 64; \
+	}
+	/bin/bash "$(HYBRID_048_PACKAGER)" \
+	    "$(APP_BUNDLE)" \
+	    "$(UPSTREAM_048_APP)" \
+	    "$(TIPA_ENTITLEMENTS)" \
+	    "$(HYBRID_048_OUTPUT)"
 
 ipa: build-ios
 	"$(IPA_PACKAGER)" "$(APP_BUNDLE)" "$(IPA_OUTPUT)"

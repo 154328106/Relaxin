@@ -57,6 +57,8 @@ extension PostJailbreakHomeView {
         func menuEntries(
             runtimeOptions: PostJailbreakSession.RuntimeOptions,
             canReinstallSileo: Bool,
+            supportsIDownload: Bool,
+            needsBaseBinUpdate: Bool,
             allowsExternalNavigation: Bool,
             resourceBundle: Bundle
         ) -> [(action: MenuAction, title: String)] {
@@ -84,7 +86,7 @@ extension PostJailbreakHomeView {
                     (.credits, String(localized: "Credits", bundle: resourceBundle)),
                 ]
             case .advancedOptions:
-                return [
+                var entries: [(MenuAction, String)] = [
                     (
                         .toggleOption(.tweakInjection),
                         ToggleOption.tweakInjection.title(
@@ -106,11 +108,34 @@ extension PostJailbreakHomeView {
                             bundle: resourceBundle
                         )
                     ),
+                ]
+                if supportsIDownload {
+                    entries.insert(
+                        (
+                            .toggleOption(.iDownload),
+                            ToggleOption.iDownload.title(
+                                in: runtimeOptions,
+                                resourceBundle: resourceBundle
+                            )
+                        ),
+                        at: 2
+                    )
+                }
+                if needsBaseBinUpdate {
+                    entries.append(
+                        (
+                            .updateBaseBin,
+                            String(localized: "Update BaseBin", bundle: resourceBundle)
+                        )
+                    )
+                }
+                entries.append(
                     (
                         .resetAndRemoval,
                         String(localized: "Reset & Remove", bundle: resourceBundle)
-                    ),
-                ]
+                    )
+                )
+                return entries
             case .resetAndRemoval:
                 var entries: [(MenuAction, String)] = [
                     (
@@ -171,6 +196,7 @@ extension PostJailbreakHomeView {
     enum ToggleOption: CaseIterable, Hashable {
         case tweakInjection
         case appJIT
+        case iDownload
 
         func isEnabled(
             in runtimeOptions: PostJailbreakSession.RuntimeOptions
@@ -180,6 +206,8 @@ extension PostJailbreakHomeView {
                 runtimeOptions.tweakInjectionEnabled
             case .appJIT:
                 runtimeOptions.appJITEnabled
+            case .iDownload:
+                runtimeOptions.iDownloadEnabled
             }
         }
 
@@ -192,6 +220,8 @@ extension PostJailbreakHomeView {
                 String(localized: "Tweak Injection", bundle: resourceBundle)
             case .appJIT:
                 String(localized: "Allow JIT in Apps", bundle: resourceBundle)
+            case .iDownload:
+                String(localized: "iDownload (Developer Shell)", bundle: resourceBundle)
             }
             let state = isEnabled(in: runtimeOptions)
                 ? String(localized: "ON", bundle: resourceBundle)
@@ -213,7 +243,7 @@ extension PostJailbreakHomeView {
             case .restartUserspace:
                 String(localized: "Restart Userspace", bundle: resourceBundle)
             case .rebootDevice:
-                String(localized: "Reboot Device", bundle: resourceBundle)
+                String(localized: "Restart Device", bundle: resourceBundle)
             case .removeJailbreak:
                 String(localized: "Remove Jailbreak", bundle: resourceBundle)
             }
@@ -246,6 +276,7 @@ extension PostJailbreakHomeView {
         case refreshJailbreakApps
         case resetMobilePassword
         case reinstallSileo
+        case updateBaseBin
         case removeJailbreak
         case confirm(ConfirmationAction)
         case back
