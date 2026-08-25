@@ -116,7 +116,7 @@ extension PostJailbreakHomeView {
                     (
                         .installWhitelistManager,
                         String(
-                            localized: "Install Whitelist Manager",
+                            localized: "Install Whitelist App",
                             bundle: resourceBundle
                         )
                     ),

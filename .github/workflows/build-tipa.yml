@@ -6,6 +6,23 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      build_mode:
+        description: Build the source app or graft GroupedGlass onto an audited 0.4.8 app
+        required: true
+        default: source
+        type: choice
+        options:
+        - source
+        - hybrid-048
+      upstream_url:
+        description: Direct URL for the audited upstream 0.4.8 IPA (hybrid mode only)
+        required: false
+        type: string
+      upstream_sha256:
+        description: SHA-256 for the upstream IPA (hybrid mode only)
+        required: false
+        type: string
 
 jobs:
   build:
@@ -43,9 +60,35 @@ jobs:
         which trustcache
         dpkg-deb --version | head -1
 
-    - name: Build TIPA (Dopamine UI + Relaxin RootHide)
+    - name: Build source TIPA (GroupedGlass UI + Relaxin RootHide)
+      if: github.event_name != 'workflow_dispatch' || inputs.build_mode != 'hybrid-048'
       # Use the shipped traditional AppIcon.appiconset (Dopamine's blue icon).
       run: make tipa APPICON_NAME=AppIcon
+
+    - name: Download audited Relaxin 0.4.8 core
+      if: github.event_name == 'workflow_dispatch' && inputs.build_mode == 'hybrid-048'
+      env:
+        UPSTREAM_URL: ${{ inputs.upstream_url }}
+        UPSTREAM_SHA256: ${{ inputs.upstream_sha256 }}
+      run: |
+        test -n "$UPSTREAM_URL"
+        test -n "$UPSTREAM_SHA256"
+        curl --fail --location --retry 3 --output /tmp/relaxin-0.4.8.ipa "$UPSTREAM_URL"
+        printf '%s  %s\n' "$(printf '%s' "$UPSTREAM_SHA256" | tr '[:upper:]' '[:lower:]')" \
+          /tmp/relaxin-0.4.8.ipa | shasum -a 256 --check
+        mkdir -p /tmp/relaxin-upstream
+        /usr/bin/ditto -x -k /tmp/relaxin-0.4.8.ipa /tmp/relaxin-upstream
+        test -d /tmp/relaxin-upstream/Payload/Relaxin.app
+        rm -rf /tmp/relaxin-upstream/Payload/Relaxin.app/_CodeSignature
+        rm -f /tmp/relaxin-upstream/Payload/Relaxin.app/embedded.mobileprovision
+
+    - name: Build GroupedGlass TIPA over audited 0.4.8 core
+      if: github.event_name == 'workflow_dispatch' && inputs.build_mode == 'hybrid-048'
+      run: |
+        make hybrid-048-tipa \
+          APPICON_NAME=AppIcon \
+          UPSTREAM_048_APP=/tmp/relaxin-upstream/Payload/Relaxin.app \
+          HYBRID_048_OUTPUT=build/Artifacts/Relaxin-0.4.8-GroupedGlass-Whitelist-TrueCore.tipa
 
     - name: Upload TIPA artifact
       uses: actions/upload-artifact@v4

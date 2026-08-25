@@ -169,7 +169,7 @@ struct HomeView: View {
                   label: "兼容版本", value: "iOS 16.5.1-17.3.1"),
             .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange,
                   label: "软件版本",
-                  value: "\(version) · RootHide"),
+                  value: "\(version)·Whitelist"),
             .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue,
                   label: "当前设备",
                   // Raw model identifier (iPhone15,3), not the marketing name.
