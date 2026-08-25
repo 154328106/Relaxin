@@ -2047,38 +2047,6 @@
         }
       }
     },
-    "Open Sileo, refresh sources, then install RootHide Inject Manager." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open Sileo, refresh sources, then install RootHide Inject Manager."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请打开 Sileo 并刷新软件源，然后安装 RootHide Inject Manager。"
-          }
-        }
-      }
-    },
-    "Package Manager Unavailable" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Package Manager Unavailable"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无法打开软件包管理器"
-          }
-        }
-      }
-    },
     "Refresh Jailbreak Apps" : {
       "localizations" : {
         "ar" : {
