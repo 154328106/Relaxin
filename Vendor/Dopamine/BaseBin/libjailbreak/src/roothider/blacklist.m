@@ -7,6 +7,9 @@
 #define APP_PATH_PREFIX "/private/var/containers/Bundle/Application/"
 #define NULL_UUID "00000000-0000-0000-0000-000000000000"
 
+static const char *injectPlistPath = NULL;
+static const char *injectSystemPlistPath = NULL;
+
 NSString *getAppBundlePathFromSpawnPath(const char *path) {
     if (!path)
         return nil;
@@ -77,7 +80,7 @@ bool isBlacklistedApp(const char *identifier) {
     if (!identifier)
         return false;
 
-    if ([builtinApps() containsObject:@(identifier)])
+    if ([builtinApps() containsObject:[NSString stringWithUTF8String:identifier]])
         return false;
 
     NSString *configFilePath = JBROOT_PATH(@"/var/mobile/Library/RootHide/RootHideConfig.plist");
@@ -96,11 +99,62 @@ bool isBlacklistedApp(const char *identifier) {
     return blacklisted.boolValue;
 }
 
-bool isBlacklistedPath(const char *path) {
+static bool isBlacklistedPathOriginal(const char *path) {
     if (!path)
         return false;
     NSString *identifier = getAppIdentifierFromPath(path);
     if (!identifier)
         return false;
     return isBlacklistedApp(identifier.UTF8String);
+}
+
+bool zqbb_wantsInject(const char *execName, const char *injectPath);
+bool zqbb_isWhiteListForSystem(const char *path, const char *injectSystemPath);
+
+static BOOL zqbb_wantsBlacklist(NSString *execName) {
+    if (!execName)
+        return NO;
+
+    NSString *configFilePath =
+        JBROOT_PATH(@"/var/mobile/Library/RootHide/cn.zqbb.inject.wantsblacklist.plist");
+    NSDictionary *config = [NSDictionary dictionaryWithContentsOfFile:configFilePath];
+    return [config[execName] boolValue];
+}
+
+static bool zqbb_isBlacklistedExec(const char *path, const char *injectPath) {
+    const char *exec = strrchr(path, '/');
+    if (!exec)
+        return true;
+    exec++;
+
+    if (zqbb_wantsBlacklist([NSString stringWithUTF8String:exec]) &&
+        isBlacklistedPathOriginal(path))
+        return true;
+
+    // Selected executables are allowed to see and use the jailbreak.
+    return !zqbb_wantsInject(exec, injectPath);
+}
+
+bool isBlacklistedPath(const char *path) {
+    if (!path)
+        return false;
+
+    if (!injectPlistPath)
+        injectPlistPath =
+            strdup(JBROOT_PATH("/var/mobile/Library/RootHide/cn.zqbb.inject.plist"));
+    if (!injectSystemPlistPath)
+        injectSystemPlistPath =
+            strdup(JBROOT_PATH("/var/mobile/Library/RootHide/cn.zqbb.inject.system.plist"));
+
+    if (access(injectPlistPath, F_OK) == 0) {
+        if (!strcmp(path, "/sbin/launchd"))
+            return false;
+        if (zqbb_isWhiteListForSystem(path, injectSystemPlistPath))
+            return false;
+        return zqbb_isBlacklistedExec(path, injectPlistPath);
+    }
+
+    // Preserve the standard RootHide blacklist behavior until the user has
+    // installed/configured Inject Manager.
+    return isBlacklistedPathOriginal(path);
 }

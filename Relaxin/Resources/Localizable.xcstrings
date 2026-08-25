@@ -2031,6 +2031,22 @@
         }
       }
     },
+    "Install Whitelist Manager" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Install Whitelist Manager"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安装白名单管理器"
+          }
+        }
+      }
+    },
     "Refresh Jailbreak Apps" : {
       "localizations" : {
         "ar" : {
