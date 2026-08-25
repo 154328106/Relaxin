@@ -1,6 +1,5 @@
 import LocalAuthentication
 import SwiftUI
-import UIKit
 
 struct PostJailbreakHomeView: View {
     private static let ownGoalStudioPicksURL = URL(string: "https://owngoal.dev")!
@@ -429,25 +428,10 @@ struct PostJailbreakHomeView: View {
 
     private func installWhitelistManager() {
         guard environment.interfaceMode.allowsExternalNavigation else { return }
-
-        let packageIdentifier = "cn.zqbb.inject.manager"
-        let candidates = ["sileo", "sssss"].compactMap {
-            URL(string: "\($0)://package/\(packageIdentifier)")
-        }
-        guard let destination = candidates.first(where: UIApplication.shared.canOpenURL) else {
-            alert = Alert(
-                title: String(
-                    localized: "Package Manager Unavailable",
-                    bundle: environment.resourceBundle
-                ),
-                message: String(
-                    localized: "Open Sileo, refresh sources, then install RootHide Inject Manager.",
-                    bundle: environment.resourceBundle
-                )
-            )
-            return
-        }
-        UIApplication.shared.open(destination, options: [:])
+        guard let destination = URL(
+            string: "sileo://package/cn.zqbb.inject.manager"
+        ) else { return }
+        openURL(destination)
     }
 
     private func authenticateForPasswordReset() {
