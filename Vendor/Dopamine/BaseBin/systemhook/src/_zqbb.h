@@ -2,5 +2,7 @@
 
 #include <stdbool.h>
 
-bool zqbb_wantInject(const char *execName, const char *injectPath);
-bool zqbb_isWhiteList(const char *path);
+// Implemented in libjailbreak/src/roothider/_whitelist.c, which systemhook
+// compiles in directly and launchdhook picks up from libjailbreak.
+bool zqbb_wantsInject(const char *execName, const char *injectPath);
+bool zqbb_isWhiteListForSystem(const char *path, const char *injectSystemPath);
