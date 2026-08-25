@@ -389,6 +389,8 @@ struct PostJailbreakHomeView: View {
             restartUserspace()
         case .rebootDevice:
             session.perform(.rebootDevice)
+        case .installWhitelistManager:
+            installWhitelistManager()
         case .refreshJailbreakApps:
             session.perform(.refreshJailbreakApps)
         case .resetMobilePassword:
@@ -424,6 +426,14 @@ struct PostJailbreakHomeView: View {
         session.perform(
             .restartUserspace(darkAppearance: bootLogoUsesDarkAppearance)
         )
+    }
+
+    private func installWhitelistManager() {
+        guard environment.interfaceMode.allowsExternalNavigation else { return }
+        guard let destination = URL(
+            string: "sileo://package/cn.zqbb.inject.manager"
+        ) else { return }
+        openURL(destination)
     }
 
     private func authenticateForPasswordReset() {
