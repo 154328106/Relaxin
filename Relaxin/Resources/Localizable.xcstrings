@@ -2031,18 +2031,18 @@
         }
       }
     },
-    "Install Whitelist Manager" : {
+    "Install Whitelist App" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Install Whitelist Manager"
+            "value" : "Install Whitelist App"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "安装白名单管理器"
+            "value" : "安装白名单应用"
           }
         }
       }
