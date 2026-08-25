@@ -9,6 +9,11 @@
 	</dict>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Authentication is required to change your mobile password.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>sileo</string>
+		<string>sssss</string>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
