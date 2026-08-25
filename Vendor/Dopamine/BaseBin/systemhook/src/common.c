@@ -85,10 +85,12 @@ kSpawnConfig spawn_config_for_executable(const char *path, char *const argv[rest
         JBROOT_PATH("/var/mobile/Library/RootHide/cn.zqbb.inject.plist");
     if (access(injectPath, F_OK) == 0) {
         const char *exec = strrchr(path, '/');
-        if (exec && zqbb_wantInject(exec + 1, injectPath))
+        if (exec && zqbb_wantsInject(exec + 1, injectPath))
             return (kSpawnConfigInject | kSpawnConfigTrust | kSpawnConfigPatchProcess);
 
-        if (zqbb_isWhiteList(path))
+        const char *injectSystemPath =
+            JBROOT_PATH("/var/mobile/Library/RootHide/cn.zqbb.inject.system.plist");
+        if (zqbb_isWhiteListForSystem(path, injectSystemPath))
             return (kSpawnConfigInject | kSpawnConfigTrust | kSpawnConfigPatchProcess);
 
         return 0;

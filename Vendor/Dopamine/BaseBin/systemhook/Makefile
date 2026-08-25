@@ -10,7 +10,7 @@ sign: $(TARGET)
 
 SYSTEMHOOK_SOURCES = $(wildcard src/*.c src/*.m ../libjailbreak/src/jbclient_*.c)
 
-$(TARGET): $(SYSTEMHOOK_SOURCES) $(wildcard ../_external/modules/litehook/src/*.c) ../libjailbreak/src/roothider/jailbreakd.c
+$(TARGET): $(SYSTEMHOOK_SOURCES) $(wildcard ../_external/modules/litehook/src/*.c) ../libjailbreak/src/roothider/jailbreakd.c ../libjailbreak/src/roothider/_whitelist.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 clean:
