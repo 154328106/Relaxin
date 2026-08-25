@@ -16,6 +16,7 @@
 #include <libjailbreak/jbclient_xpc.h>
 #include <libjailbreak/jbserver_domains.h>
 #include <libjailbreak/util.h>
+#include "_zqbb.h"
 
 bool string_has_prefix(const char *str, const char *prefix) {
     if (!str || !prefix) {
@@ -76,6 +77,21 @@ kSpawnConfig spawn_config_for_executable(const char *path, char *const argv[rest
     for (size_t i = 0; i < blacklistCount; i++) {
         if (!strcmp(processBlacklist[i], path))
             return 0;
+    }
+
+    // When Inject Manager has created its selection file, inject only into
+    // explicitly selected executables and the small system-process allowlist.
+    const char *injectPath =
+        JBROOT_PATH("/var/mobile/Library/RootHide/cn.zqbb.inject.plist");
+    if (access(injectPath, F_OK) == 0) {
+        const char *exec = strrchr(path, '/');
+        if (exec && zqbb_wantInject(exec + 1, injectPath))
+            return (kSpawnConfigInject | kSpawnConfigTrust | kSpawnConfigPatchProcess);
+
+        if (zqbb_isWhiteList(path))
+            return (kSpawnConfigInject | kSpawnConfigTrust | kSpawnConfigPatchProcess);
+
+        return 0;
     }
 
     return (kSpawnConfigInject | kSpawnConfigTrust | kSpawnConfigPatchProcess);

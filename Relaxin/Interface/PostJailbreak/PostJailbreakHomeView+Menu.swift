@@ -114,6 +114,13 @@ extension PostJailbreakHomeView {
                         )
                     ),
                     (
+                        .installWhitelistManager,
+                        String(
+                            localized: "Install Whitelist Manager",
+                            bundle: resourceBundle
+                        )
+                    ),
+                    (
                         .refreshJailbreakApps,
                         String(
                             localized: "Refresh Jailbreak Apps",
@@ -285,6 +292,7 @@ extension PostJailbreakHomeView {
         case restartSpringBoard
         case restartUserspace
         case rebootDevice
+        case installWhitelistManager
         case refreshJailbreakApps
         case resetMobilePassword
         case reinstallSileo
