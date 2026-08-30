@@ -62,7 +62,7 @@ struct JailbreakConfiguration {
         self.defaults = defaults
         defaults.register(defaults: [
             StorageKey.tweakInjectionEnabled: true,
-            StorageKey.appJITEnabled: true,
+            StorageKey.appJITEnabled: false,
             StorageKey.iDownloadEnabled: false,
             StorageKey.jetsamMultiplier: JetsamMultiplier.three.rawValue,
             StorageKey.removeJailbreakEnabled: false,

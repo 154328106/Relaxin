@@ -179,7 +179,7 @@ struct HomeView: View {
             .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green,
                   label: "适用设备", value: "iOS 16.5.1-17.3.1"),
             .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange,
-                  label: "软件版本", value: "\(version) · RootHide"),
+                  label: "软件版本", value: "\(version)·RootHide"),
             .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue,
                   label: "当前设备",
                   value: "\(DeviceInfo.modelIdentifier) \(DeviceInfo.os)"),
