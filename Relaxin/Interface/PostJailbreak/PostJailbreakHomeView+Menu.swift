@@ -60,7 +60,7 @@ extension PostJailbreakHomeView {
                 switch action {
                 case .restartSpringBoard, .restartUserspace, .rebootDevice:
                     .home
-                case .removeJailbreak:
+                case .reinstallSileo, .removeJailbreak:
                     .resetAndRemoval
                 }
             case .home:
@@ -161,7 +161,7 @@ extension PostJailbreakHomeView {
                 if canReinstallSileo {
                     entries.append(
                         (
-                            .reinstallSileo,
+                            .confirm(.reinstallSileo),
                             String(localized: "Reinstall Sileo", bundle: resourceBundle)
                         )
                     )
@@ -246,6 +246,7 @@ extension PostJailbreakHomeView {
         case restartSpringBoard
         case restartUserspace
         case rebootDevice
+        case reinstallSileo
         case removeJailbreak
 
         func title(in resourceBundle: Bundle) -> String {
@@ -256,6 +257,8 @@ extension PostJailbreakHomeView {
                 PostJailbreakHomeView.restartUserspaceTitle(in: resourceBundle)
             case .rebootDevice:
                 String(localized: "Restart Device", bundle: resourceBundle)
+            case .reinstallSileo:
+                String(localized: "Reinstall Sileo", bundle: resourceBundle)
             case .removeJailbreak:
                 String(localized: "Remove Jailbreak", bundle: resourceBundle)
             }
@@ -269,6 +272,8 @@ extension PostJailbreakHomeView {
                 .restartUserspace
             case .rebootDevice:
                 .rebootDevice
+            case .reinstallSileo:
+                .reinstallSileo
             case .removeJailbreak:
                 .removeJailbreak
             }
