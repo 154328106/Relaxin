@@ -16,6 +16,13 @@ extension PostJailbreakHomeView {
         return String(localized: "Restart Userspace", bundle: resourceBundle)
     }
 
+    static func installWhitelistManagerTitle(in resourceBundle: Bundle) -> String {
+        if Locale.preferredLanguages.first?.lowercased().hasPrefix("zh") == true {
+            return "安装白名单应用"
+        }
+        return String(localized: "Install Whitelist App", bundle: resourceBundle)
+    }
+
     enum Screen: Equatable {
         case home
         case advancedOptions
@@ -60,7 +67,7 @@ extension PostJailbreakHomeView {
                 switch action {
                 case .restartSpringBoard, .restartUserspace, .rebootDevice:
                     .home
-                case .removeJailbreak:
+                case .reinstallSileo, .removeJailbreak:
                     .resetAndRemoval
                 }
             case .home:
@@ -115,9 +122,8 @@ extension PostJailbreakHomeView {
                     ),
                     (
                         .installWhitelistManager,
-                        String(
-                            localized: "Install Whitelist App",
-                            bundle: resourceBundle
+                        PostJailbreakHomeView.installWhitelistManagerTitle(
+                            in: resourceBundle
                         )
                     ),
                     (
@@ -168,7 +174,7 @@ extension PostJailbreakHomeView {
                 if canReinstallSileo {
                     entries.append(
                         (
-                            .reinstallSileo,
+                            .confirm(.reinstallSileo),
                             String(localized: "Reinstall Sileo", bundle: resourceBundle)
                         )
                     )
@@ -253,6 +259,7 @@ extension PostJailbreakHomeView {
         case restartSpringBoard
         case restartUserspace
         case rebootDevice
+        case reinstallSileo
         case removeJailbreak
 
         func title(in resourceBundle: Bundle) -> String {
@@ -263,6 +270,8 @@ extension PostJailbreakHomeView {
                 PostJailbreakHomeView.restartUserspaceTitle(in: resourceBundle)
             case .rebootDevice:
                 String(localized: "Restart Device", bundle: resourceBundle)
+            case .reinstallSileo:
+                String(localized: "Reinstall Sileo", bundle: resourceBundle)
             case .removeJailbreak:
                 String(localized: "Remove Jailbreak", bundle: resourceBundle)
             }
@@ -276,6 +285,8 @@ extension PostJailbreakHomeView {
                 .restartUserspace
             case .rebootDevice:
                 .rebootDevice
+            case .reinstallSileo:
+                .reinstallSileo
             case .removeJailbreak:
                 .removeJailbreak
             }

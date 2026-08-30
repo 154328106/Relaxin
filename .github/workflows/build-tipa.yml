@@ -8,19 +8,20 @@ on:
   workflow_dispatch:
     inputs:
       build_mode:
-        description: Build the source app or graft this UI onto an audited 0.4.8 app
+        description: Build the source app or graft FlatGlass onto an audited upstream app
         required: true
         default: source
         type: choice
         options:
         - source
         - hybrid-048
+        - hybrid-049
       upstream_url:
-        description: Direct URL for the audited upstream 0.4.8 IPA (hybrid mode only)
+        description: Direct URL for the audited upstream IPA/TIPA (hybrid mode only)
         required: false
         type: string
       upstream_sha256:
-        description: SHA-256 for the upstream IPA (hybrid mode only)
+        description: SHA-256 for the upstream IPA/TIPA (hybrid mode only)
         required: false
         type: string
 
@@ -60,24 +61,24 @@ jobs:
         which trustcache
         dpkg-deb --version | head -1
 
-    - name: Build source TIPA (Dopamine UI + Relaxin RootHide)
-      if: github.event_name != 'workflow_dispatch' || inputs.build_mode != 'hybrid-048'
+    - name: Build source TIPA (FlatGlass UI + Relaxin RootHide)
+      if: github.event_name != 'workflow_dispatch' || inputs.build_mode == 'source'
       # Use the shipped traditional AppIcon.appiconset (Dopamine's blue icon).
       run: make tipa APPICON_NAME=AppIcon
 
-    - name: Download audited Relaxin 0.4.8 core
-      if: github.event_name == 'workflow_dispatch' && inputs.build_mode == 'hybrid-048'
+    - name: Download audited Relaxin core
+      if: github.event_name == 'workflow_dispatch' && startsWith(inputs.build_mode, 'hybrid-')
       env:
         UPSTREAM_URL: ${{ inputs.upstream_url }}
         UPSTREAM_SHA256: ${{ inputs.upstream_sha256 }}
       run: |
         test -n "$UPSTREAM_URL"
         test -n "$UPSTREAM_SHA256"
-        curl --fail --location --retry 3 --output /tmp/relaxin-0.4.8.ipa "$UPSTREAM_URL"
+        curl --fail --location --retry 3 --output /tmp/relaxin-upstream.tipa "$UPSTREAM_URL"
         printf '%s  %s\n' "$(printf '%s' "$UPSTREAM_SHA256" | tr '[:upper:]' '[:lower:]')" \
-          /tmp/relaxin-0.4.8.ipa | shasum -a 256 --check
+          /tmp/relaxin-upstream.tipa | shasum -a 256 --check
         mkdir -p /tmp/relaxin-upstream
-        /usr/bin/ditto -x -k /tmp/relaxin-0.4.8.ipa /tmp/relaxin-upstream
+        /usr/bin/ditto -x -k /tmp/relaxin-upstream.tipa /tmp/relaxin-upstream
         test -d /tmp/relaxin-upstream/Payload/Relaxin.app
         rm -rf /tmp/relaxin-upstream/Payload/Relaxin.app/_CodeSignature
         rm -f /tmp/relaxin-upstream/Payload/Relaxin.app/embedded.mobileprovision
@@ -90,15 +91,29 @@ jobs:
           UPSTREAM_048_APP=/tmp/relaxin-upstream/Payload/Relaxin.app \
           HYBRID_048_OUTPUT=build/Artifacts/Relaxin-0.4.8-Flat-TrueCore.tipa
 
-    - name: Upload TIPA artifact
+    - name: Build FlatGlass TIPA over audited 0.4.9 core
+      if: github.event_name == 'workflow_dispatch' && inputs.build_mode == 'hybrid-049'
+      run: |
+        make hybrid-049-tipa \
+          APPICON_NAME=AppIcon \
+          UPSTREAM_049_APP=/tmp/relaxin-upstream/Payload/Relaxin.app \
+          HYBRID_049_OUTPUT=build/Artifacts/Relaxin-0.4.9-FlatGlass-Whitelist-TrueCore.tipa
+        cp build/Artifacts/Relaxin-0.4.9-FlatGlass-Whitelist-TrueCore.tipa \
+          build/Artifacts/Relaxin-0.4.9-FlatGlass-Whitelist-TrueCore.ipa
+
+    - name: Upload IPA and TIPA artifacts
       uses: actions/upload-artifact@v4
       with:
         name: relaxin-tipa
-        path: build/Artifacts/*.tipa
+        path: |
+          build/Artifacts/*.tipa
+          build/Artifacts/*.ipa
         retention-days: 30
 
     - name: Create Release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
-        files: build/Artifacts/*.tipa
+        files: |
+          build/Artifacts/*.tipa
+          build/Artifacts/*.ipa
