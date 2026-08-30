@@ -42,7 +42,7 @@ struct DopamineHeroContent: View {
     let onPrimaryAction: () -> Void
 
     private static let infoBadgeSize: CGFloat = 28
-    private static let menuBadgeSize: CGFloat = 30
+    private static let menuBadgeSize: CGFloat = 32
 
     /// Left/right inset used by row content and by the hairline separators,
     /// so the separators run the full width of the card content.
@@ -141,8 +141,11 @@ struct DopamineHeroContent: View {
                 .foregroundStyle(Theme.foreground)
                 .fixedSize(horizontal: true, vertical: false)
             Spacer(minLength: 8)
+            // A notch smaller than the label: the values are long strings
+            // ("iOS 16.5.1-17.3.1", "iPhone15,3 iOS 16.6.1") and reading
+            // better for being a little quieter than what they answer.
             Text(value)
-                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
                 .foregroundStyle(Theme.foreground)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
@@ -156,7 +159,7 @@ struct DopamineHeroContent: View {
     // MARK: - 控制中心 (one glass card per row)
 
     private var menuStack: some View {
-        VStack(spacing: 11) {
+        VStack(spacing: 12) {
             ForEach(menuRows) { row in
                 HStack(spacing: 12) {
                     IconBadge(systemImage: row.systemImage, tint: row.tint, size: Self.menuBadgeSize)
@@ -172,7 +175,10 @@ struct DopamineHeroContent: View {
                     }
                 }
                 .padding(.horizontal, Self.rowInset)
-                .padding(.vertical, 8)
+                // Taller than the info rows on purpose: these are the
+                // tappable ones, and the menu is what should fill the space
+                // between the 系统信息 card and the primary button.
+                .padding(.vertical, 12)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
                 .opacity(row.isEnabled ? 1 : 0.45)
@@ -183,7 +189,7 @@ struct DopamineHeroContent: View {
                     guard row.isEnabled else { return }
                     row.action()
                 }
-                .glassCard(cornerRadius: 18)
+                .glassCard(cornerRadius: 20)
             }
         }
     }
