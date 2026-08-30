@@ -143,9 +143,13 @@ cmp -s "$BEFORE_CORE" "$AFTER_CORE" \
     || fail "a non-UI upstream file changed while assembling the hybrid app"
 
 if command -v otool >/dev/null 2>&1; then
-    otool -L "$HYBRID_APP/$APP_EXECUTABLE" \
+    UI_LINK_BINARY="$HYBRID_APP/$APP_EXECUTABLE"
+    if [[ -f "$HYBRID_APP/Relaxin.debug.dylib" ]]; then
+        UI_LINK_BINARY="$HYBRID_APP/Relaxin.debug.dylib"
+    fi
+    otool -L "$UI_LINK_BINARY" \
         | grep -Fq '@rpath/RelaxinEngine.framework/RelaxinEngine' \
-        || fail "UI executable is not linked to RelaxinEngine.framework"
+        || fail "UI binary is not linked to RelaxinEngine.framework"
 fi
 
 ldid -S"$ENTITLEMENTS" -Cadhoc "$HYBRID_APP/$APP_EXECUTABLE"
