@@ -3,7 +3,7 @@
 set -Eeuo pipefail
 
 if [[ "$#" -ne 4 ]]; then
-    echo "usage: $0 <ui-app> <upstream-0.4.8-app> <entitlements> <output-tipa>" >&2
+    echo "usage: $0 <ui-app> <upstream-app> <entitlements> <output-tipa>" >&2
     exit 64
 fi
 
@@ -14,9 +14,10 @@ OUTPUT_TIPA="$4"
 APP_NAME="$(basename "$UPSTREAM_APP")"
 APP_EXECUTABLE="${APP_NAME%.app}"
 
-EXPECTED_ENGINE_SHA256="a3fad4442db34f875a192e16afe1fa32c03f32385a8a2cfad06f1f18863b4811"
-EXPECTED_BASEBIN_SHA256="6686669da72c7c361e7e8880343df26cd3fc631e51adee91d6c0f5c7fb724c08"
-EXPECTED_BASEBIN_TC_SHA256="a61cb2ed96cc3a92ccd37625a9e365c196f9c8394ca376af6f1937541d31302d"
+EXPECTED_RELAXIN_VERSION="${EXPECTED_RELAXIN_VERSION:-0.4.8}"
+EXPECTED_ENGINE_SHA256="${EXPECTED_ENGINE_SHA256:-a3fad4442db34f875a192e16afe1fa32c03f32385a8a2cfad06f1f18863b4811}"
+EXPECTED_BASEBIN_SHA256="${EXPECTED_BASEBIN_SHA256:-6686669da72c7c361e7e8880343df26cd3fc631e51adee91d6c0f5c7fb724c08}"
+EXPECTED_BASEBIN_TC_SHA256="${EXPECTED_BASEBIN_TC_SHA256:-a61cb2ed96cc3a92ccd37625a9e365c196f9c8394ca376af6f1937541d31302d}"
 
 fail() {
     echo "error: $*" >&2
@@ -45,8 +46,8 @@ UPSTREAM_VERSION="$(bundle_value "$UPSTREAM_APP" CFBundleShortVersionString)"
 UI_IDENTIFIER="$(bundle_value "$UI_APP" CFBundleIdentifier)"
 [[ "$UPSTREAM_IDENTIFIER" == "com.aapl.relaxin" ]] \
     || fail "unexpected upstream bundle identifier: $UPSTREAM_IDENTIFIER"
-[[ "$UPSTREAM_VERSION" == "0.4.8" ]] \
-    || fail "expected upstream Relaxin 0.4.8, found: $UPSTREAM_VERSION"
+[[ "$UPSTREAM_VERSION" == "$EXPECTED_RELAXIN_VERSION" ]] \
+    || fail "expected upstream Relaxin $EXPECTED_RELAXIN_VERSION, found: $UPSTREAM_VERSION"
 [[ "$UI_IDENTIFIER" == "$UPSTREAM_IDENTIFIER" ]] \
     || fail "UI and upstream bundle identifiers differ"
 
@@ -66,7 +67,7 @@ verify_pinned_file() {
     local actual
     actual="$(sha256_file "$UPSTREAM_APP/$relative_path")"
     if [[ "$actual" != "$expected" && "${ALLOW_UNVERIFIED_RELAXIN_CORE:-0}" != "1" ]]; then
-        fail "$relative_path does not match the audited 0.4.8 core (got $actual)"
+        fail "$relative_path does not match the audited $EXPECTED_RELAXIN_VERSION core (got $actual)"
     fi
 }
 
@@ -77,7 +78,7 @@ verify_pinned_file basebin.tc "$EXPECTED_BASEBIN_TC_SHA256"
 if command -v nm >/dev/null 2>&1; then
     NM_OUTPUT="$(nm -gU "$UPSTREAM_APP/$ENGINE_RELATIVE")"
     grep -Fq '_RLXEngineManifestIDownloadEnabledKey' <<<"$NM_OUTPUT" \
-        || fail "upstream engine has no 0.4.8 iDownload manifest interface"
+        || fail "upstream engine has no iDownload manifest interface"
     grep -Fq '_OBJC_CLASS_$_RLXPostJailbreakController' <<<"$NM_OUTPUT" \
         || fail "upstream engine has no post-jailbreak controller"
 fi
@@ -87,7 +88,7 @@ OUTPUT_DIRECTORY="$(dirname "$OUTPUT_TIPA")"
 mkdir -p "$OUTPUT_DIRECTORY"
 OUTPUT_DIRECTORY="$(cd "$OUTPUT_DIRECTORY" && pwd -P)"
 OUTPUT_TIPA="$OUTPUT_DIRECTORY/$OUTPUT_NAME"
-WORK_DIRECTORY="$(mktemp -d "${TMPDIR:-/tmp}/relaxin-hybrid-048.XXXXXX")"
+WORK_DIRECTORY="$(mktemp -d "${TMPDIR:-/tmp}/relaxin-hybrid-${EXPECTED_RELAXIN_VERSION//./}.XXXXXX")"
 HYBRID_APP="$WORK_DIRECTORY/Payload/$APP_NAME"
 TEMPORARY_TIPA="$OUTPUT_DIRECTORY/.$OUTPUT_NAME.tmp.$$"
 BEFORE_CORE="$WORK_DIRECTORY/core-before.sha256"
@@ -117,7 +118,7 @@ core_manifest() {
 core_manifest "$HYBRID_APP" >"$BEFORE_CORE"
 
 # Replace only UI-owned artifacts. Info.plist, framework, BaseBin, bootstrap,
-# offsets, packages and every other upstream file remain from 0.4.8.
+# offsets, packages and every other upstream file remain from the pinned core.
 /usr/bin/ditto "$UI_APP/$APP_EXECUTABLE" "$HYBRID_APP/$APP_EXECUTABLE"
 chmod 0755 "$HYBRID_APP/$APP_EXECUTABLE"
 for ui_resource in Assets.car default.metallib; do
@@ -190,7 +191,7 @@ if grep -Eq "^Payload/$APP_NAME/(_CodeSignature/|embedded[.]mobileprovision$)" \
 fi
 mv -f "$TEMPORARY_TIPA" "$OUTPUT_TIPA"
 
-echo "Packaged Relaxin 0.4.8 core with custom UI: $OUTPUT_TIPA"
+echo "Packaged Relaxin $EXPECTED_RELAXIN_VERSION core with custom UI: $OUTPUT_TIPA"
 echo "Pinned upstream core preserved:"
 echo "  RelaxinEngine $EXPECTED_ENGINE_SHA256"
 echo "  basebin.tar   $EXPECTED_BASEBIN_SHA256"

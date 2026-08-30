@@ -195,7 +195,7 @@ extension PostJailbreakSession {
 
     struct RuntimeOptions: Equatable {
         var tweakInjectionEnabled = true
-        var appJITEnabled = true
+        var appJITEnabled = false
         var iDownloadEnabled = false
     }
 }
