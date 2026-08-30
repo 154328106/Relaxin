@@ -1,10 +1,10 @@
 import SwiftUI
 
 /// Home-screen hero (flat variant): a centered oversized Relaxin title, then
-/// two labelled sections in the iOS-Settings idiom — 系统信息 (适用设备 /
-/// 软件版本 / 当前设备 / 越狱状态或运行时间) and 控制中心 (the menu rows) —
-/// each a single grouped glass card whose rows are badge + label +
-/// right-aligned value, hairline-separated. Closed by a gradient primary
+/// two labelled sections — 系统信息 (适用设备 / 软件版本 / 当前设备 / 越狱状态
+/// 或运行时间) as one grouped glass card whose rows are badge + label +
+/// right-aligned value, hairline-separated; and 控制中心, where every menu row
+/// is its own glass card so the list breathes. Closed by a gradient primary
 /// button.
 ///
 /// Uses only the primitives already confirmed to render on-device — no
@@ -41,8 +41,8 @@ struct DopamineHeroContent: View {
     let isPrimaryButtonEnabled: Bool
     let onPrimaryAction: () -> Void
 
-    /// Badge size shared by both cards so the two icon columns line up.
-    private static let badgeSize: CGFloat = 28
+    private static let infoBadgeSize: CGFloat = 28
+    private static let menuBadgeSize: CGFloat = 30
 
     /// Left/right inset used by row content and by the hairline separators,
     /// so the separators run the full width of the card content.
@@ -54,7 +54,7 @@ struct DopamineHeroContent: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 title
-                    .padding(.bottom, 22)
+                    .padding(.bottom, 26)
 
                 if !infoRows.isEmpty {
                     sectionHeader(infoSectionTitle)
@@ -63,11 +63,11 @@ struct DopamineHeroContent: View {
 
                 if !menuRows.isEmpty {
                     sectionHeader(menuSectionTitle)
-                        .padding(.top, infoRows.isEmpty ? 0 : 22)
-                    menuCard
+                        .padding(.top, infoRows.isEmpty ? 0 : 26)
+                    menuStack
                 }
 
-                Spacer(minLength: 16)
+                Spacer(minLength: 12)
 
                 primaryButton
             }
@@ -98,16 +98,8 @@ struct DopamineHeroContent: View {
             .font(Theme.sectionTitleFont)
             .foregroundStyle(SwiftUI.Color.white.opacity(0.55))
             .padding(.leading, 6)
-            .padding(.bottom, 8)
+            .padding(.bottom, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    /// Hairline between rows. 0.5pt at low opacity washes out completely
-    /// against the blue ramp on a 3x screen, so this is a full point.
-    private var rowSeparator: some View {
-        SwiftUI.Color.white.opacity(0.22)
-            .frame(height: 1)
-            .padding(.horizontal, Self.rowInset)
     }
 
     // MARK: - 系统信息 card
@@ -118,12 +110,16 @@ struct DopamineHeroContent: View {
                 infoRowView(row)
 
                 if index != infoRows.count - 1 {
-                    rowSeparator
+                    // 0.5pt at low opacity washes out completely against the
+                    // blue ramp on a 3x screen, so this is a full point.
+                    SwiftUI.Color.white.opacity(0.22)
+                        .frame(height: 1)
+                        .padding(.horizontal, Self.rowInset)
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard(cornerRadius: Theme.cardCornerRadius)
+        .glassCard(cornerRadius: 20)
     }
 
     @ViewBuilder
@@ -139,7 +135,7 @@ struct DopamineHeroContent: View {
 
     private func infoRowBody(row: InfoRow, value: String) -> some View {
         HStack(spacing: 12) {
-            IconBadge(systemImage: row.systemImage, tint: row.tint, size: Self.badgeSize)
+            IconBadge(systemImage: row.systemImage, tint: row.tint, size: Self.infoBadgeSize)
             Text(row.label)
                 .font(.system(size: 16, weight: .medium, design: .rounded))
                 .foregroundStyle(Theme.foreground)
@@ -157,13 +153,13 @@ struct DopamineHeroContent: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // MARK: - 控制中心 card
+    // MARK: - 控制中心 (one glass card per row)
 
-    private var menuCard: some View {
-        VStack(spacing: 0) {
-            ForEach(Array(menuRows.enumerated()), id: \.element.id) { index, row in
+    private var menuStack: some View {
+        VStack(spacing: 11) {
+            ForEach(menuRows) { row in
                 HStack(spacing: 12) {
-                    IconBadge(systemImage: row.systemImage, tint: row.tint, size: Self.badgeSize)
+                    IconBadge(systemImage: row.systemImage, tint: row.tint, size: Self.menuBadgeSize)
                     Text(row.title)
                         .font(.system(size: 16, weight: .medium, design: .rounded))
                         .foregroundStyle(Theme.foreground)
@@ -176,7 +172,7 @@ struct DopamineHeroContent: View {
                     }
                 }
                 .padding(.horizontal, Self.rowInset)
-                .padding(.vertical, 13)
+                .padding(.vertical, 8)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
                 .opacity(row.isEnabled ? 1 : 0.45)
@@ -187,14 +183,9 @@ struct DopamineHeroContent: View {
                     guard row.isEnabled else { return }
                     row.action()
                 }
-
-                if index != menuRows.count - 1 {
-                    rowSeparator
-                }
+                .glassCard(cornerRadius: 18)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard(cornerRadius: Theme.cardCornerRadius)
     }
 
     // MARK: - Primary button (gradient pill)
