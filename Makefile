@@ -32,6 +32,9 @@ UPSTREAM_048_APP ?=
 HYBRID_049_PACKAGER := $(ROOT_DIR)/DevKit/Helpers/package-hybrid-049.sh
 HYBRID_049_OUTPUT ?= $(ROOT_DIR)/build/Artifacts/Relaxin-0.4.9-FlatGlass-RootHide-TrueCore.tipa
 UPSTREAM_049_APP ?=
+HYBRID_050_PACKAGER := $(ROOT_DIR)/DevKit/Helpers/package-hybrid-050.sh
+HYBRID_050_OUTPUT ?= $(ROOT_DIR)/build/Artifacts/Relaxin-0.5.0-FlatGlass-RootHide-TrueCore.tipa
+UPSTREAM_050_APP ?=
 LITE_DEB_OUTPUT ?= $(ROOT_DIR)/build/Artifacts/relaxin-lite.deb
 LITE_DEB_PACKAGER := $(ROOT_DIR)/DevKit/Packaging/RelaxinLite/package-deb.sh
 
@@ -75,7 +78,7 @@ XCODEBUILD := $(XCODEBUILD_WRAPPER) \
     ASSETCATALOG_COMPILER_APPICON_NAME="$(APPICON_NAME)"
 
 .PHONY: all help print-version \
-        build build-ios lite-deb tipa ipa hybrid-048-tipa hybrid-049-tipa bootstrap-resources scan-license check test-host \
+        build build-ios lite-deb tipa ipa hybrid-048-tipa hybrid-049-tipa hybrid-050-tipa bootstrap-resources scan-license check test-host \
         kernel-offsets \
         format format-lint \
         clean \
@@ -102,6 +105,7 @@ help:
 	@echo "  tipa                  Build and package a no-sandbox TIPA"
 	@echo "  hybrid-048-tipa       Put this UI over an audited upstream 0.4.8 core"
 	@echo "  hybrid-049-tipa       Put FlatGlass over an audited upstream 0.4.9 core"
+	@echo "  hybrid-050-tipa       Put FlatGlass over an audited upstream 0.5.0 core"
 	@echo "  bootstrap-resources   Download, ad-hoc sign, and stage the RootHide bootstrap"
 	@echo "  kernel-offsets        Regenerate the bundled kernelcache offset table"
 	@echo "  scan-license          Refresh Licenses.txt from Vendor"
@@ -248,6 +252,17 @@ hybrid-049-tipa: _check-tipa-tools build-ios
 	    "$(UPSTREAM_049_APP)" \
 	    "$(TIPA_ENTITLEMENTS)" \
 	    "$(HYBRID_049_OUTPUT)"
+
+hybrid-050-tipa: _check-tipa-tools build-ios
+	@test -n "$(UPSTREAM_050_APP)" || { \
+	    echo "error: set UPSTREAM_050_APP=/path/to/Payload/Relaxin.app" >&2; \
+	    exit 64; \
+	}
+	/bin/bash "$(HYBRID_050_PACKAGER)" \
+	    "$(APP_BUNDLE)" \
+	    "$(UPSTREAM_050_APP)" \
+	    "$(TIPA_ENTITLEMENTS)" \
+	    "$(HYBRID_050_OUTPUT)"
 
 ipa: build-ios
 	"$(IPA_PACKAGER)" "$(APP_BUNDLE)" "$(IPA_OUTPUT)"

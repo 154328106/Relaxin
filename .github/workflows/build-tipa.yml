@@ -16,6 +16,7 @@ on:
         - source
         - hybrid-048
         - hybrid-049
+        - hybrid-050
       upstream_url:
         description: Direct URL for the audited upstream IPA/TIPA (hybrid mode only)
         required: false
@@ -100,6 +101,16 @@ jobs:
           HYBRID_049_OUTPUT=build/Artifacts/Relaxin-0.4.9-FlatGlass-RootHide-TrueCore.tipa
         cp build/Artifacts/Relaxin-0.4.9-FlatGlass-RootHide-TrueCore.tipa \
           build/Artifacts/Relaxin-0.4.9-FlatGlass-RootHide-TrueCore.ipa
+
+    - name: Build FlatGlass TIPA over audited 0.5.0 core
+      if: github.event_name == 'workflow_dispatch' && inputs.build_mode == 'hybrid-050'
+      run: |
+        make hybrid-050-tipa \
+          APPICON_NAME=AppIcon \
+          UPSTREAM_050_APP=/tmp/relaxin-upstream/Payload/Relaxin.app \
+          HYBRID_050_OUTPUT=build/Artifacts/Relaxin-0.5.0-FlatGlass-RootHide-TrueCore.tipa
+        cp build/Artifacts/Relaxin-0.5.0-FlatGlass-RootHide-TrueCore.tipa \
+          build/Artifacts/Relaxin-0.5.0-FlatGlass-RootHide-TrueCore.ipa
 
     - name: Upload IPA and TIPA artifacts
       uses: actions/upload-artifact@v4

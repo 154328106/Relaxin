@@ -16,6 +16,7 @@ make ipa                 # Build and package an unsigned IPA
 make tipa                # Build and package a no-sandbox TIPA
 make hybrid-048-tipa     # Use this UI with an audited upstream 0.4.8 app
 make hybrid-049-tipa     # Put FlatGlass over the audited upstream 0.4.9 core
+make hybrid-050-tipa     # Put FlatGlass over the audited upstream 0.5.0 core
 make bootstrap-resources # Download, ad-hoc sign, and stage the RootHide bootstrap
 make check               # Validate the zstd integration contract
 make test-host           # Run the host-side trust-cache model and fault-injection tests
@@ -25,9 +26,9 @@ make scan-license        # Refresh Relaxin/Resources/Licenses.txt from Vendor
 make clean               # Remove derived data and generated BaseBin resources
 ```
 
-### Relaxin 0.4.8 or 0.4.9 core with this UI
+### Relaxin 0.4.8, 0.4.9, or 0.5.0 core with this UI
 
-The repository does not redistribute the closed-source 0.4.8 or 0.4.9 binaries. If you
+The repository does not redistribute the closed-source upstream binaries. If you
 have the upstream app bundle, the hybrid packager starts from that bundle and
 replaces only the main executable, optional Xcode Debug support dylibs,
 compiled asset catalog, Metal library, and icons. The upstream localizations
@@ -39,6 +40,9 @@ make hybrid-048-tipa \
 
 make hybrid-049-tipa \
     UPSTREAM_049_APP=/path/to/Relaxin-v0.4.9/Payload/Relaxin.app
+
+make hybrid-050-tipa \
+    UPSTREAM_050_APP=/path/to/Relaxin-v0.5.0/Payload/Relaxin.app
 ```
 
 Each version-specific packager pins the audited `RelaxinEngine`, `basebin.tar`, and `basebin.tc`
