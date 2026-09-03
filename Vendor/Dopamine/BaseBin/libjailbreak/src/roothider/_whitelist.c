@@ -88,6 +88,25 @@ static bool pathHasComponent(const char *path, const char *key) {
     return false;
 }
 
+// The audited Relaxin 0.5.0 engine predates the whitelist configuration
+// writer. Keep the essential system-process allowlist available until Inject
+// Manager creates cn.zqbb.inject.system.plist.
+static bool pathIsInDefaultSystemWhitelist(const char *path) {
+    static const char *const keys[] = {
+        "/.jbroot",      "/xpcproxy",          "/Relaxin",
+        "/SpringBoard",  "/Preferences",       "/amfid",
+        "/cfprefsd",     "/lsd",               "/transitd",
+        "/watchdogd",    "/SafariViewService", "/iconservicesagent",
+        "/mobileassetd", "/MobileGestaltHelper", "/useractivityd",
+    };
+
+    for (size_t index = 0; index < sizeof(keys) / sizeof(keys[0]); index++) {
+        if (pathHasComponent(path, keys[index]))
+            return true;
+    }
+    return false;
+}
+
 bool zqbb_wantsInject(const char *execName, const char *injectPath) {
     if (!execName || !injectPath)
         return false;
@@ -107,7 +126,7 @@ bool zqbb_isWhiteListForSystem(const char *path, const char *injectSystemPath) {
 
     xpc_object_t plist = copyPlist(&gSystemCache, injectSystemPath);
     if (!plist)
-        return false;
+        return pathIsInDefaultSystemWhitelist(path);
 
     __block bool found = false;
     xpc_dictionary_apply(plist, ^bool(const char *key, xpc_object_t value) {
