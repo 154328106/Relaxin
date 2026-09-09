@@ -32,12 +32,12 @@ extension HomeView {
                 items[.exportKernelcache] = kernelcacheExportURL
             }
             return items
-        case .credits:
+        case .advancedOptions:
             guard runtime.interfaceMode.allowsExternalNavigation else {
                 return [:]
             }
             return softwareLicenseURL.map { [.showSoftwareLicense: $0] } ?? [:]
-        case .home, .advancedOptions, .jetsamMultiplier, .confirmation,
+        case .home, .credits, .jetsamMultiplier, .confirmation,
              .engine:
             return [:]
         }

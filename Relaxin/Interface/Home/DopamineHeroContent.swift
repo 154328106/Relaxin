@@ -261,13 +261,13 @@ struct DopamineHeroContent: View {
         infoItems: [
             .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue, label: "当前设备", value: "iPhone15,3 iOS 16.6.1"),
             .init(id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal, label: "运行时间", value: "0天 09:00:13", liveUptime: true),
-            .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green, label: "兼容版本", value: "iOS 16.5.1-17.3.1"),
+            .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green, label: "兼容版本", value: "16.5.1–18.7.1/26.0–26.0.1"),
             .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange, label: "软件版本", value: "0.4.6 · RootHide Jailbreak"),
         ],
         menuRows: [
             .init(id: "advancedOptions", systemImage: "slider.horizontal.3", title: "高级选项", showsChevron: true, tint: Theme.Accents.blue) {},
             .init(id: "maintenance", systemImage: "wrench.and.screwdriver.fill", title: "维护工具", showsChevron: true, tint: Theme.Accents.orange) {},
-            .init(id: "credits", systemImage: "heart.fill", title: "特别鸣谢", showsChevron: true, tint: Theme.Accents.pink) {},
+            .init(id: "credits", systemImage: "doc.text.fill", title: "更新日志", showsChevron: true, tint: Theme.Accents.teal) {},
         ],
         primaryButtonTitle: "开始越狱",
         primaryButtonSystemImage: "lock.fill",

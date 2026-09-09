@@ -57,18 +57,14 @@ struct PostJailbreakHomeView: View {
                 resourceBundle: environment.resourceBundle
             )
         case .credits:
-            return RelaxinTerminalContent.credits(
-                visibleCharacterCount: visibleCreditCharacterCount,
-                linksEnabled: environment.interfaceMode.allowsExternalNavigation
+            return RelaxinTerminalContent.changelog(
+                visibleCharacterCount: visibleCreditCharacterCount
             )
         }
     }
 
     private var terminalAccessibleLinks: [TerminalPresenter.AccessibleLink] {
-        guard screen == .credits else { return [] }
-        return RelaxinCredits.accessibleLinks(
-            linksEnabled: environment.interfaceMode.allowsExternalNavigation
-        )
+        []
     }
 
     private var menuItems: [OptionListItem<MenuAction>] {
@@ -87,7 +83,7 @@ struct PostJailbreakHomeView: View {
 
     private var menuShareItems: [MenuAction: URL] {
         guard environment.interfaceMode.allowsExternalNavigation,
-              screen == .credits
+              screen == .advancedOptions
         else {
             return [:]
         }
@@ -167,11 +163,11 @@ struct PostJailbreakHomeView: View {
             },
             .init(
                 id: "credits",
-                systemImage: "heart.fill",
-                title: String(localized: "Credits", bundle: environment.resourceBundle),
+                systemImage: "doc.text.fill",
+                title: "更新日志",
                 showsChevron: true,
                 isEnabled: !session.isPerformingAction,
-                tint: Theme.Accents.pink
+                tint: Theme.Accents.teal
             ) {
                 navigate(to: .credits)
             },
@@ -182,7 +178,7 @@ struct PostJailbreakHomeView: View {
         let version = AppInfo.version(in: .main)
         return [
             .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green,
-                  label: "兼容版本", value: "iOS 16.5.1-17.3.1"),
+                  label: "兼容版本", value: "16.5.1–18.7.1/26.0–26.0.1"),
             .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange,
                   label: "软件版本",
                   value: "\(version)·RootHide"),
@@ -275,7 +271,8 @@ struct PostJailbreakHomeView: View {
             subtitle: homeStatusSubtitle,
             backAction: backAction,
             rows: rows,
-            shareItems: menuShareItems
+            shareItems: menuShareItems,
+            bodyLines: screen == .credits ? RelaxinChangelog.lines : []
         )
     }
 
@@ -472,7 +469,7 @@ struct PostJailbreakHomeView: View {
         guard screen == .credits else { return }
 
         var characterCount = 0
-        while characterCount < RelaxinCredits.characterCount {
+        while characterCount < RelaxinChangelog.characterCount {
             do {
                 try await Task.sleep(
                     for: .milliseconds(.random(in: 15 ... 35))
@@ -483,7 +480,7 @@ struct PostJailbreakHomeView: View {
             guard !Task.isCancelled else { return }
             characterCount = min(
                 characterCount + .random(in: 1 ... 4),
-                RelaxinCredits.characterCount
+                RelaxinChangelog.characterCount
             )
             visibleCreditCharacterCount = characterCount
         }

@@ -2,7 +2,7 @@ name: Build Relaxin TIPA
 
 on:
   push:
-    branches: [ main, liquid-glass-ui, liquid-glass-ui-clean ]
+    branches: [ main, liquid-glass-ui, liquid-glass-ui-clean, liquid-glass-ui-clean-051-redo ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -17,6 +17,7 @@ on:
         - hybrid-048
         - hybrid-049
         - hybrid-050
+        - hybrid-051
       upstream_url:
         description: Direct URL for the audited upstream IPA/TIPA (hybrid mode only)
         required: false
@@ -111,6 +112,16 @@ jobs:
           HYBRID_050_OUTPUT=build/Artifacts/Relaxin-0.5.0-GroupedGlass-RootHide-TrueCore.tipa
         cp build/Artifacts/Relaxin-0.5.0-GroupedGlass-RootHide-TrueCore.tipa \
           build/Artifacts/Relaxin-0.5.0-GroupedGlass-RootHide-TrueCore.ipa
+
+    - name: Build GroupedGlass TIPA over audited 0.5.1 core
+      if: github.event_name == 'workflow_dispatch' && inputs.build_mode == 'hybrid-051'
+      run: |
+        make hybrid-051-tipa \
+          APPICON_NAME=AppIcon \
+          UPSTREAM_051_APP=/tmp/relaxin-upstream/Payload/Relaxin.app \
+          HYBRID_051_OUTPUT=build/Artifacts/Relaxin-0.5.1-GroupedGlass-RootHide-TrueCore.tipa
+        cp build/Artifacts/Relaxin-0.5.1-GroupedGlass-RootHide-TrueCore.tipa \
+          build/Artifacts/Relaxin-0.5.1-GroupedGlass-RootHide-TrueCore.ipa
 
     - name: Upload IPA and TIPA artifacts
       uses: actions/upload-artifact@v4

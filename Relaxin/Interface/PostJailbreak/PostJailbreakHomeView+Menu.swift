@@ -95,7 +95,7 @@ extension PostJailbreakHomeView {
                         .advancedOptions,
                         String(localized: "Advanced Options", bundle: resourceBundle)
                     ),
-                    (.credits, String(localized: "Credits", bundle: resourceBundle)),
+                    (.credits, "更新日志"),
                 ]
             case .advancedOptions:
                 var entries: [(MenuAction, String)] = [
@@ -147,6 +147,24 @@ extension PostJailbreakHomeView {
                         String(localized: "Reset & Remove", bundle: resourceBundle)
                     )
                 )
+                if allowsExternalNavigation {
+                    entries.append(contentsOf: [
+                        (
+                            .openOwnGoalStudioPicks,
+                            String(
+                                localized: "OwnGoal Studio's Best",
+                                bundle: resourceBundle
+                            )
+                        ),
+                        (
+                            .showSoftwareLicense,
+                            String(
+                                localized: "Software License",
+                                bundle: resourceBundle
+                            )
+                        ),
+                    ])
+                }
                 return entries
             case .resetAndRemoval:
                 var entries: [(MenuAction, String)] = [
@@ -174,26 +192,7 @@ extension PostJailbreakHomeView {
                 ])
                 return entries
             case .credits:
-                var entries: [(MenuAction, String)] = []
-                if allowsExternalNavigation {
-                    entries.append(contentsOf: [
-                        (
-                            .openOwnGoalStudioPicks,
-                            String(
-                                localized: "OwnGoal Studio's Best",
-                                bundle: resourceBundle
-                            )
-                        ),
-                        (
-                            .showSoftwareLicense,
-                            String(
-                                localized: "Software License",
-                                bundle: resourceBundle
-                            )
-                        ),
-                    ])
-                }
-                return entries
+                return []
             case let .confirmation(action):
                 return [
                     (
