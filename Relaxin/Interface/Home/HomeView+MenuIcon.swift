@@ -18,7 +18,7 @@ extension HomeView {
         case .maintenance:
             return .init(systemImage: "wrench.and.screwdriver.fill", tint: Theme.Accents.orange)
         case .credits:
-            return .init(systemImage: "heart.fill", tint: Theme.Accents.pink)
+            return .init(systemImage: "doc.text.fill", tint: Theme.Accents.teal)
         case .openOwnGoalStudioPicks:
             return .init(systemImage: "star.fill", tint: Theme.Accents.orange)
         case .showSoftwareLicense:

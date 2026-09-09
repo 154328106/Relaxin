@@ -72,9 +72,8 @@ struct HomeView: View {
                 resourceBundle: runtime.resourceBundle
             )
         case .credits:
-            RelaxinTerminalContent.credits(
-                visibleCharacterCount: visibleCreditCharacterCount,
-                linksEnabled: runtime.interfaceMode.allowsExternalNavigation
+            RelaxinTerminalContent.changelog(
+                visibleCharacterCount: visibleCreditCharacterCount
             )
         case .engine:
             if case .idle = engineSession.phase {
@@ -94,10 +93,7 @@ struct HomeView: View {
     }
 
     private var terminalAccessibleLinks: [TerminalPresenter.AccessibleLink] {
-        guard screen == .credits else { return [] }
-        return RelaxinCredits.accessibleLinks(
-            linksEnabled: runtime.interfaceMode.allowsExternalNavigation
-        )
+        []
     }
 
     private var rendersTerminalBackgroundActively: Bool {
@@ -162,10 +158,10 @@ struct HomeView: View {
         rows.append(
             .init(
                 id: "credits",
-                systemImage: "heart.fill",
-                title: String(localized: "Credits", bundle: runtime.resourceBundle),
+                systemImage: "doc.text.fill",
+                title: "更新日志",
                 showsChevron: true,
-                tint: Theme.Accents.pink
+                tint: Theme.Accents.teal
             ) {
                 screen = .credits
             }
@@ -177,7 +173,7 @@ struct HomeView: View {
         let version = AppInfo.version(in: .main)
         return [
             .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green,
-                  label: "适用设备", value: "iOS 16.5.1-17.3.1"),
+                  label: "适用设备", value: "16.5.1–18.7.1/26.0–26.0.1"),
             .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange,
                   label: "软件版本", value: "\(version)·RootHide"),
             .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue,
@@ -283,7 +279,8 @@ struct HomeView: View {
             backAction: backAction,
             rows: rows,
             selectedID: preferredMenuAction,
-            shareItems: menuShareItems
+            shareItems: menuShareItems,
+            bodyLines: screen == .credits ? RelaxinChangelog.lines : []
         )
     }
 
@@ -389,7 +386,7 @@ struct HomeView: View {
                 guard screen == .credits else { return }
 
                 var characterCount = 0
-                while characterCount < RelaxinCredits.characterCount {
+                while characterCount < RelaxinChangelog.characterCount {
                     do {
                         try await Task.sleep(
                             for: .milliseconds(.random(in: 15 ... 35))
@@ -400,7 +397,7 @@ struct HomeView: View {
                     guard !Task.isCancelled else { return }
                     characterCount = min(
                         characterCount + .random(in: 1 ... 4),
-                        RelaxinCredits.characterCount
+                        RelaxinChangelog.characterCount
                     )
                     visibleCreditCharacterCount = characterCount
                 }

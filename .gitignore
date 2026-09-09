@@ -94,3 +94,6 @@ venv/
 
 # Per-developer signing overrides (never commit)
 Configuration/_Local.xcconfig
+
+# Upstream release packages are CI inputs, never source files.
+*.tipa

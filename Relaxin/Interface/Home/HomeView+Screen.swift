@@ -103,7 +103,7 @@ extension HomeView {
                     )
                 }
                 entries.append(
-                    (.credits, String(localized: "Credits", bundle: resourceBundle))
+                    (.credits, "更新日志")
                 )
                 return entries
             case .advancedOptions:
@@ -159,6 +159,18 @@ extension HomeView {
                         )
                     )
                 }
+                if interfaceMode.allowsExternalNavigation {
+                    entries.append(contentsOf: [
+                        (
+                            .openOwnGoalStudioPicks,
+                            String(localized: "OwnGoal Studio's Best", bundle: resourceBundle)
+                        ),
+                        (
+                            .showSoftwareLicense,
+                            String(localized: "Software License", bundle: resourceBundle)
+                        ),
+                    ])
+                }
                 return entries
             case .maintenance:
                 var entries: [(MenuAction, String)] = []
@@ -183,20 +195,7 @@ extension HomeView {
                 )
                 return entries
             case .credits:
-                var entries: [(MenuAction, String)] = []
-                if interfaceMode.allowsExternalNavigation {
-                    entries.append(contentsOf: [
-                        (
-                            .openOwnGoalStudioPicks,
-                            String(localized: "OwnGoal Studio's Best", bundle: resourceBundle)
-                        ),
-                        (
-                            .showSoftwareLicense,
-                            String(localized: "Software License", bundle: resourceBundle)
-                        ),
-                    ])
-                }
-                return entries
+                return []
             case .jetsamMultiplier:
                 return JailbreakConfiguration.JetsamMultiplier.allCases.map {
                     (.setJetsamMultiplier($0), $0.title(in: resourceBundle))

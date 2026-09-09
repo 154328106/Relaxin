@@ -82,6 +82,17 @@ enum RelaxinTerminalContent {
             ).joined(separator: "\r\n")
     }
 
+    static func changelog(visibleCharacterCount: Int) -> String {
+        let cursorVisibility = visibleCharacterCount < RelaxinChangelog.characterCount
+            ? TerminalStyle.showCursor
+            : TerminalStyle.hideCursor
+        return TerminalStyle.clearAndHome
+            + cursorVisibility
+            + RelaxinChangelog.terminalLines(
+                visibleCharacterCount: visibleCharacterCount
+            ).joined(separator: "\r\n")
+    }
+
     static func unavailable(resourceBundle: Bundle) -> String {
         var lines = baseLines(
             isJailbroken: false,

@@ -17,6 +17,10 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
     /// with the paired URL instead of relying on the caller to present it.
     var shareItems: [ActionID: URL] = [:]
 
+    /// Read-only paragraphs shown above the action rows (for example the
+    /// release notes page). An empty array keeps the original layout.
+    var bodyLines: [String] = []
+
     struct Row: Identifiable {
         let id: ActionID
         let icon: HomeView.MenuIcon
@@ -37,6 +41,9 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
 
                 ScrollView {
                     VStack(spacing: 12) {
+                        if !bodyLines.isEmpty {
+                            bodyCard
+                        }
                         ForEach(rows) { row in
                             rowView(row, isSelected: row.id == selectedID)
                         }
@@ -65,6 +72,28 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
                     }
                 }
         )
+    }
+
+    private var bodyCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ForEach(Array(bodyLines.enumerated()), id: \.offset) { index, line in
+                Text(line)
+                    .font(
+                        .system(
+                            size: index == 0 ? 17 : 14,
+                            weight: index == 0 ? .bold : .regular,
+                            design: .rounded
+                        )
+                    )
+                    .foregroundStyle(index == 0 ? Theme.foreground : Theme.secondaryForeground)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassCard()
     }
 
     @ViewBuilder

@@ -11,7 +11,7 @@ extension HomeView.Screen {
         case .maintenance:
             return String(localized: "Maintenance Tools", bundle: resourceBundle)
         case .credits:
-            return String(localized: "Credits", bundle: resourceBundle)
+            return "更新日志"
         case .jetsamMultiplier:
             return String(localized: "Jetsam Multiplier", bundle: resourceBundle)
         case .confirmation(let action):

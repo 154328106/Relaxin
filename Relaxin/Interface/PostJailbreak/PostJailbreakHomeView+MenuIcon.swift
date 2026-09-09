@@ -8,7 +8,7 @@ extension PostJailbreakHomeView {
         case .resetAndRemoval:
             return .init(systemImage: "arrow.counterclockwise.circle.fill", tint: Theme.Accents.orange)
         case .credits:
-            return .init(systemImage: "heart.fill", tint: Theme.Accents.pink)
+            return .init(systemImage: "doc.text.fill", tint: Theme.Accents.teal)
         case .openOwnGoalStudioPicks:
             return .init(systemImage: "star.fill", tint: Theme.Accents.orange)
         case .showSoftwareLicense:
@@ -56,7 +56,7 @@ extension PostJailbreakHomeView.Screen {
         case .resetAndRemoval:
             return String(localized: "Reset & Remove", bundle: resourceBundle)
         case .credits:
-            return String(localized: "Credits", bundle: resourceBundle)
+            return "更新日志"
         case let .confirmation(action):
             return action.title(in: resourceBundle)
         }
