@@ -18,6 +18,7 @@ make hybrid-048-tipa     # Use this UI with an audited upstream 0.4.8 app
 make hybrid-049-tipa     # Put GroupedGlass over the audited upstream 0.4.9 core
 make hybrid-050-tipa     # Put GroupedGlass over the audited upstream 0.5.0 core
 make hybrid-051-tipa     # Put GroupedGlass over the audited upstream 0.5.1 core
+make hybrid-052-tipa     # Put GroupedGlass over the audited upstream 0.5.2 core
 make bootstrap-resources # Download, ad-hoc sign, and stage the RootHide bootstrap
 make check               # Validate the zstd integration contract
 make test-host           # Run the host-side trust-cache model and fault-injection tests
@@ -47,6 +48,9 @@ make hybrid-050-tipa \
 
 make hybrid-051-tipa \
     UPSTREAM_051_APP=/path/to/Relaxin-v0.5.1/Payload/Relaxin.app
+
+make hybrid-052-tipa \
+    UPSTREAM_052_APP=/path/to/Relaxin-v0.5.2/Payload/Relaxin.app
 ```
 
 Each version-specific packager pins the audited `RelaxinEngine`, `basebin.tar`, and `basebin.tc`
