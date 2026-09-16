@@ -173,7 +173,7 @@ struct HomeView: View {
         let version = AppInfo.version(in: .main)
         return [
             .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green,
-                  label: "适用设备", value: "16.5.1–18.7.1/26.0–26.0.1"),
+                  label: "适用设备", value: "16.5–18.7.1/26.0–26.0.1"),
             .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange,
                   label: "软件版本", value: "\(version)·RootHide"),
             .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue,
