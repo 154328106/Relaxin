@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+SCRIPT_DIRECTORY="$(cd "$(dirname "$0")" && pwd -P)"
+
+export EXPECTED_RELAXIN_VERSION="0.5.3"
+export EXPECTED_ENGINE_SHA256="879f078aab756553b9270cc419a0da1382c2e8111187f849ea093400c9959d5e"
+export EXPECTED_BASEBIN_SHA256="c0ad70478da047388b91b293b2fadcb6ac1f05f2f2ca14afc3175190a8d78eaf"
+export EXPECTED_BASEBIN_TC_SHA256="ad2b4125f71cd8307a99d97f112663344fab46a77f58d02a3a4f3fdaf696949b"
+
+exec /bin/bash "$SCRIPT_DIRECTORY/package-hybrid-048.sh" "$@"
