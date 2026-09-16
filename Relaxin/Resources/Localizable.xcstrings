@@ -871,60 +871,60 @@
         }
       }
     },
-    "For iOS 16.5.1-17.3.1 devices" : {
+    "For iOS 16.5-18.7.1 devices" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "للأجهزة التي تعمل بنظام iOS 16.5.1–17.3.1"
+            "value" : "للأجهزة التي تعمل بنظام iOS 16.5–18.7.1"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für Geräte mit iOS 16.5.1–17.3.1"
+            "value" : "Für Geräte mit iOS 16.5–18.7.1"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "For iOS 16.5.1-17.3.1 devices"
+            "value" : "For iOS 16.5-18.7.1 devices"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para dispositivos con iOS 16.5.1–17.3.1"
+            "value" : "Para dispositivos con iOS 16.5–18.7.1"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour les appareils sous iOS 16.5.1–17.3.1"
+            "value" : "Pour les appareils sous iOS 16.5–18.7.1"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "iOS 16.5.1〜17.3.1搭載デバイスに対応"
+            "value" : "iOS 16.5〜18.7.1搭載デバイスに対応"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Для устройств с iOS 16.5.1–17.3.1"
+            "value" : "Для устройств с iOS 16.5–18.7.1"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dành cho thiết bị chạy iOS 16.5.1–17.3.1"
+            "value" : "Dành cho thiết bị chạy iOS 16.5–18.7.1"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "适用于装有 iOS 16.5.1-17.3.1 的设备"
+            "value" : "适用于装有 iOS 16.5-18.7.1 的设备"
           }
         }
       }

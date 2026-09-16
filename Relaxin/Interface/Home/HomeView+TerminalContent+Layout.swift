@@ -142,7 +142,7 @@ extension RelaxinTerminalContent {
             "",
             TerminalStyle.dim(
                 String(
-                    localized: "For iOS 16.5.1-17.3.1 devices",
+                    localized: "For iOS 16.5-18.7.1 devices",
                     bundle: resourceBundle
                 )
             ),
