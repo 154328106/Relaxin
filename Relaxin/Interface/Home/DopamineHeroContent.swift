@@ -261,7 +261,7 @@ struct DopamineHeroContent: View {
         infoItems: [
             .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue, label: "当前设备", value: "iPhone15,3 iOS 16.6.1"),
             .init(id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal, label: "运行时间", value: "0天 09:00:13", liveUptime: true),
-            .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green, label: "兼容版本", value: "16.5.1–18.7.1/26.0–26.0.1"),
+            .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green, label: "兼容版本", value: "16.5–18.7.1/26.0–26.0.1"),
             .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange, label: "软件版本", value: "0.4.6 · RootHide Jailbreak"),
         ],
         menuRows: [
