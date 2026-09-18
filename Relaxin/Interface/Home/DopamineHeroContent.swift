@@ -163,10 +163,10 @@ struct DopamineHeroContent: View {
                     .fill(
                         LinearGradient(
                             colors: [
-                                // 整体提亮，底部不再压深，是明亮天蓝（对齐 Dopamine RH）
-                                SwiftUI.Color(red: 0.42, green: 0.72, blue: 1.00),
-                                SwiftUI.Color(red: 0.26, green: 0.60, blue: 0.99),
-                                SwiftUI.Color(red: 0.34, green: 0.58, blue: 0.98),
+                                // 比上一版降一档，不再那么艳/刺，是柔和的中天蓝
+                                SwiftUI.Color(red: 0.30, green: 0.58, blue: 0.94),
+                                SwiftUI.Color(red: 0.18, green: 0.48, blue: 0.90),
+                                SwiftUI.Color(red: 0.24, green: 0.46, blue: 0.87),
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing

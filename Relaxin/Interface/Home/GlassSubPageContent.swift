@@ -40,12 +40,12 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
                 PageNavigationBar(title: title, subtitle: subtitle, backAction: backAction)
 
                 ScrollView {
-                    VStack(spacing: 12) {
+                    VStack(spacing: 22) {
                         if !bodyLines.isEmpty {
                             bodyCard
                         }
-                        ForEach(rows) { row in
-                            rowView(row, isSelected: row.id == selectedID)
+                        if !rows.isEmpty {
+                            rowsCard
                         }
                     }
                     .padding(.top, 8)
@@ -74,6 +74,7 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
         )
     }
 
+    // 更新日志等只读内容：做成和首页一样的大框套小框
     private var bodyCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             ForEach(Array(bodyLines.enumerated()), id: \.offset) { index, line in
@@ -90,10 +91,29 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 16)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard()
+        // 内框
+        .glassCard(cornerRadius: 18)
+        // 外框（大框套小框）
+        .padding(.horizontal, 18)
+        .padding(.vertical, 20)
+        .frame(maxWidth: .infinity)
+        .glassCard(cornerRadius: 26)
+    }
+
+    // 设置行等菜单：整组套进一个大外框，每行仍是独立小框 → 大框套小框
+    private var rowsCard: some View {
+        VStack(spacing: 12) {
+            ForEach(rows) { row in
+                rowView(row, isSelected: row.id == selectedID)
+            }
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 22)
+        .frame(maxWidth: .infinity)
+        .glassCard(cornerRadius: 26)
     }
 
     @ViewBuilder
