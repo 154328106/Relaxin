@@ -19,13 +19,11 @@ NSError *_Nullable RLXPostJailbreakRestartUserspace(NSBundle *resourceBundle, BO
         ^int {
             return RLXPostJailbreakRunUnsandboxed(
                 ^int {
-                    NSError *bootLogoError = [RLXBootLogoWriter writeBootLogoForDarkAppearance:darkAppearance
-                                                                                resourceBundle:resourceBundle];
-                    if (bootLogoError) {
-                        underlyingError = bootLogoError;
-                        NSString *phase = bootLogoError.userInfo[RLXBootLogoWriterFailurePhaseErrorKey] ?: @"update";
-                        RLXPostJailbreakSetFailurePhase(&failurePhase, [@"boot_logo_" stringByAppendingString:phase]);
-                        return (int)(bootLogoError.code ?: EIO);
+                    // 走苹果原生开机 logo：不写自定义 boot logo，清掉已有的
+                    // /basebin/bootlogo.jp2（不存在时越狱启动即用苹果原生 logo）。
+                    const char *bootLogoPath = JBROOT_PATH("/basebin/bootlogo.jp2");
+                    if (bootLogoPath) {
+                        unlink(bootLogoPath);
                     }
 
                     const char *jbctlPath = JBROOT_PATH("/basebin/jbctl");
