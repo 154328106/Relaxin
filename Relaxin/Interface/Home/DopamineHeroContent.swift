@@ -18,6 +18,8 @@ struct DopamineHeroContent: View {
 
     let headerTitle: String
     var subtitle: String = ""
+    // 越狱后在副标题下面再显示一行实时运行时间
+    var showsUptime: Bool = false
     var toolsSectionTitle: String = "设置与工具"
     let menuRows: [MenuRow]
     let primaryButtonTitle: String
@@ -42,9 +44,10 @@ struct DopamineHeroContent: View {
 
                 // 底部按钮外面也包一个大框，和顶部/菜单三段统一（对齐 Dopamine RH）
                 primaryButton
-                    .padding(14)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
                     .frame(maxWidth: .infinity)
-                    .glassCard(cornerRadius: 24)
+                    .glassCard(cornerRadius: 26)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 18)
@@ -65,31 +68,43 @@ struct DopamineHeroContent: View {
                     .foregroundStyle(Theme.secondaryForeground)
                     .frame(maxWidth: .infinity, alignment: .center)
             }
+            if showsUptime {
+                TimelineView(.periodic(from: .now, by: 1)) { _ in
+                    Text("已运行：\(DeviceInfo.uptimeChinese)")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(Theme.secondaryForeground)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .padding(.top, 2)
+            }
         }
+        // 内框：加高(vertical 34)、左右内容收窄(horizontal 20)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 34)
+        .frame(maxWidth: .infinity)
+        .glassCard(cornerRadius: 20)
+        // 内缩加大 → 内框明显比外框窄(左右留白 24)、外框比内框高(上下 18)，
+        // 对齐 Dopamine RH 那种宽松的"大框套小框"，不再紧凑
         .padding(.horizontal, 24)
-        .padding(.vertical, 26)
+        .padding(.vertical, 18)
         .frame(maxWidth: .infinity)
-        // 内框：两层半透明白叠加，天然比外框亮一点
-        .glassCard(cornerRadius: 18)
-        // 这层内缩把"一个框"变成"大框套小框"，对齐 RootHide DOHeaderView 的双层框
-        .padding(12)
-        .frame(maxWidth: .infinity)
-        // 外框
-        .glassCard(cornerRadius: 24)
+        .glassCard(cornerRadius: 26)
     }
 
     // MARK: - 菜单卡（一比一 Dopamine RH）：外框里每项一个独立小框，
     // 图标+文字整体居中，线框单色图标，禁用项灰掉点不了、不显示 chevron。
 
     private var toolsCard: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             ForEach(menuRows) { row in
                 menuButton(row)
             }
         }
-        .padding(14)
+        // 外框内边距加大 → 每个小框左右缩窄、更宽松
+        .padding(.horizontal, 20)
+        .padding(.vertical, 18)
         .frame(maxWidth: .infinity)
-        .glassCard(cornerRadius: 24)
+        .glassCard(cornerRadius: 26)
     }
 
     private func menuButton(_ row: MenuRow) -> some View {
@@ -110,11 +125,11 @@ struct DopamineHeroContent: View {
                     .foregroundStyle(Theme.secondaryForeground.opacity(0.7))
             }
         }
-        .padding(.vertical, 14)
+        .padding(.vertical, 18)
         .padding(.horizontal, 16)
         .frame(maxWidth: .infinity)
-        // 每项一个独立小框
-        .glassCard(cornerRadius: 14)
+        // 每项一个独立小框（加高）
+        .glassCard(cornerRadius: 15)
         // 禁用项灰掉（未越狱时的重启项就是这个效果）
         .opacity(row.isEnabled ? 1 : 0.4)
         .contentShape(Rectangle())
@@ -168,7 +183,7 @@ struct DopamineHeroContent: View {
 #Preview {
     DopamineHeroContent(
         headerTitle: "Relaxin",
-        subtitle: "iOS 16 专用",
+        subtitle: "16.5-18.7.1/26.0-26.0.1",
         menuRows: [
             .init(id: "advancedOptions", systemImage: "slider.horizontal.3", title: "高级选项", showsChevron: true, tint: Theme.Accents.blue) {},
             .init(id: "maintenance", systemImage: "wrench.and.screwdriver.fill", title: "维护工具", showsChevron: true, tint: Theme.Accents.orange) {},

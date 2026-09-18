@@ -152,7 +152,8 @@ struct PostJailbreakHomeView: View {
     @ViewBuilder private var homeContent: some View {
         DopamineHeroContent(
             headerTitle: "Relaxin",
-            subtitle: "iOS 16 专用",
+            subtitle: "16.5-18.7.1/26.0-26.0.1",
+            showsUptime: true,
             menuRows: homeMenuRows,
             primaryButtonTitle: "已经自由咯",
             // Post-jailbreak: open lock (already unlocked).

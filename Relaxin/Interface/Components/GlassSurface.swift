@@ -15,15 +15,15 @@ struct GlassCard: ViewModifier {
         content
             .background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(SwiftUI.Color.white.opacity(isEmphasized ? 0.22 : 0.14))
+                    .fill(SwiftUI.Color.white.opacity(isEmphasized ? 0.26 : 0.17))
             }
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(
                         isEmphasized
                             ? Theme.accent.opacity(0.9)
-                            : SwiftUI.Color.white.opacity(0.30),
-                        lineWidth: isEmphasized ? 1.4 : 0.8
+                            : SwiftUI.Color.white.opacity(0.40),
+                        lineWidth: isEmphasized ? 1.4 : 0.9
                     )
                     // A Shape overlay hit-tests across its bounding box on
                     // iOS 16 and can swallow taps meant for the button

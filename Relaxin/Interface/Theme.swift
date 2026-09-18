@@ -40,11 +40,12 @@ enum Theme {
     /// sub-pages, engine terminal) so the whole app reads as a single
     /// gradient. Plain LinearGradient stops on purpose: gradients render
     /// reliably on-device, blend modes and image washes historically don't.
+    // 通透蓝：整体提亮，底部不再压到近黑，对齐 Dopamine RH 那种透亮风。
     static let backgroundGradient: [SwiftUI.Color] = [
-        SwiftUI.Color(red: 0.20, green: 0.47, blue: 0.98),
-        SwiftUI.Color(red: 0.10, green: 0.29, blue: 0.76),
-        SwiftUI.Color(red: 0.05, green: 0.16, blue: 0.47),
-        SwiftUI.Color(red: 0.02, green: 0.07, blue: 0.24),
+        SwiftUI.Color(red: 0.28, green: 0.57, blue: 0.98),
+        SwiftUI.Color(red: 0.20, green: 0.46, blue: 0.92),
+        SwiftUI.Color(red: 0.14, green: 0.37, blue: 0.83),
+        SwiftUI.Color(red: 0.11, green: 0.30, blue: 0.72),
     ]
 
     /// Terminal console surface — near-black so monospaced output keeps the
