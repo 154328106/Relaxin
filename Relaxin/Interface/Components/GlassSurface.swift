@@ -15,9 +15,8 @@ struct GlassCard: ViewModifier {
         content
             .background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    // 大幅降低白色填充：之前 0.17 显得"雾蒙蒙"，透不出背景蓝。
-                    // 降到 0.09 让框变通透，能透出后面的渐变（对齐 Dopamine RH）。
-                    .fill(SwiftUI.Color.white.opacity(isEmphasized ? 0.16 : 0.09))
+                    // 再透一档去掉残留雾感：普通框 0.09→0.07。
+                    .fill(SwiftUI.Color.white.opacity(isEmphasized ? 0.14 : 0.07))
             }
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)

@@ -54,11 +54,17 @@ static void rlx_discard_suspended_process(pid_t pid) {
 }
 
 - (nullable NSError *)execute {
-    // 走苹果原生开机 logo：不再写自定义 boot logo，并清掉已有的
-    // /basebin/bootlogo.jp2 —— 该文件不存在时越狱启动就用苹果原生 logo。
-    const char *bootLogoPath = JBROOT_PATH("/basebin/bootlogo.jp2");
-    if (bootLogoPath) {
-        unlink(bootLogoPath); // 不存在会失败，忽略即可
+    // 保留自定义开机 logo：去掉后 RootHide 环境开机中间是黑屏（不是苹果 logo），
+    // 容易被误以为没开机，所以还是写上 Relaxin 的 boot logo。
+    BOOL darkAppearance = self.context.manifest[RLXEngineManifestBootLogoDarkAppearanceKey].boolValue;
+    NSError *bootLogoError = [RLXBootLogoWriter
+        writeBootLogoForDarkAppearance:darkAppearance
+                        resourceBundle:self.context.runtimeEnvironment.resourceBundle];
+    if (bootLogoError) {
+        NSString *phase = bootLogoError.userInfo[RLXBootLogoWriterFailurePhaseErrorKey] ?: @"update";
+        return rlx_userspace_reboot_error([@"boot_logo_" stringByAppendingString:phase],
+                                          (int)(bootLogoError.code ?: EIO),
+                                          bootLogoError.localizedDescription);
     }
 
     const char *jbctlPath = JBROOT_PATH("/basebin/jbctl");
