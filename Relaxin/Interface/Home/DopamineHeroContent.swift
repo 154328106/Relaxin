@@ -16,19 +16,9 @@ struct DopamineHeroContent: View {
         let action: () -> Void
     }
 
-    /// One cell inside the System Overview 2×2 info grid.
-    struct InfoItem: Identifiable {
-        let id: String
-        let systemImage: String
-        let tint: SwiftUI.Color
-        let label: String
-        let value: String
-        var liveUptime: Bool = false
-    }
-
     let headerTitle: String
+    var subtitle: String = ""
     var toolsSectionTitle: String = "设置与工具"
-    var infoItems: [InfoItem] = []
     let menuRows: [MenuRow]
     let primaryButtonTitle: String
     let primaryButtonSystemImage: String
@@ -40,12 +30,7 @@ struct DopamineHeroContent: View {
             LiquidBackground()
 
             VStack(alignment: .leading, spacing: 20) {
-                if infoItems.isEmpty {
-                    // No grid to host the title — fall back to a bare header.
-                    title
-                } else {
-                    systemOverviewCard
-                }
+                heroHeaderCard
 
                 Spacer(minLength: 0)
 
@@ -60,102 +45,31 @@ struct DopamineHeroContent: View {
         }
     }
 
-    // MARK: - Title
+    // MARK: - Header (大框套小框：外框内套一个更亮的小框，装标题+副标题)
 
-    private var title: some View {
-        Text(headerTitle)
-            .font(Theme.pageTitleFont)
-            .foregroundStyle(Theme.foreground)
-            .frame(maxWidth: .infinity, alignment: .center)
-            .padding(.top, 4)
-    }
-
-    // MARK: - System Overview card
-
-    private var systemOverviewCard: some View {
-        VStack(alignment: .center, spacing: 14) {
-            // The page title lives inside the card now — the standalone
-            // "系统概览" heading is gone, the title does that job.
+    private var heroHeaderCard: some View {
+        VStack(spacing: 6) {
             Text(headerTitle)
                 .font(Theme.pageTitleFont)
                 .foregroundStyle(Theme.foreground)
                 .frame(maxWidth: .infinity, alignment: .center)
-
-            // 0.14 @ 0.5pt washed out completely against the brighter blue
-            // ramp — a hairline that thin doesn't survive on a 3x screen.
-            SwiftUI.Color.white.opacity(0.30)
-                .frame(height: 1)
-
-            infoGrid
-        }
-        .padding(.horizontal, 18)
-        .padding(.top, 18)
-        .padding(.bottom, 16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard(cornerRadius: 22)
-    }
-
-    private var infoGrid: some View {
-        // Two-column grid — pairs items 0/1 in the first row, 2/3 in the
-        // second. We avoid LazyVGrid here to keep the layout stack simple.
-        VStack(spacing: 16) {
-            ForEach(0 ..< pairedRows.count, id: \.self) { rowIndex in
-                let pair = pairedRows[rowIndex]
-                HStack(alignment: .top, spacing: 12) {
-                    infoCell(pair.0)
-                    if let second = pair.1 {
-                        infoCell(second)
-                    } else {
-                        SwiftUI.Color.clear.frame(maxWidth: .infinity)
-                    }
-                }
-            }
-        }
-    }
-
-    private var pairedRows: [(InfoItem, InfoItem?)] {
-        var out: [(InfoItem, InfoItem?)] = []
-        var index = 0
-        while index < infoItems.count {
-            let first = infoItems[index]
-            let second = (index + 1 < infoItems.count) ? infoItems[index + 1] : nil
-            out.append((first, second))
-            index += 2
-        }
-        return out
-    }
-
-    @ViewBuilder
-    private func infoCell(_ item: InfoItem) -> some View {
-        if item.liveUptime {
-            TimelineView(.periodic(from: .now, by: 1)) { _ in
-                infoCellBody(item: item, value: DeviceInfo.uptimeChinese)
-            }
-        } else {
-            infoCellBody(item: item, value: item.value)
-        }
-    }
-
-    private func infoCellBody(item: InfoItem, value: String) -> some View {
-        // Icon stacked above the text and centred in its half of the grid.
-        // The badge is deliberately kept well under the column width so the
-        // longest value ("iPhone15,3 iOS 16.6.1") still gets a full line.
-        VStack(spacing: 8) {
-            IconBadge(systemImage: item.systemImage, tint: item.tint, size: 42)
-            VStack(spacing: 3) {
-                Text(item.label)
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
+            if !subtitle.isEmpty {
+                Text(subtitle)
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundStyle(Theme.secondaryForeground)
-                    .lineLimit(1)
-                Text(value)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                    .foregroundStyle(Theme.foreground)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
-            .multilineTextAlignment(.center)
         }
-        .frame(maxWidth: .infinity, alignment: .center)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 26)
+        .frame(maxWidth: .infinity)
+        // 内框：两层半透明白叠加，天然比外框亮一点
+        .glassCard(cornerRadius: 18)
+        // 这层内缩把"一个框"变成"大框套小框"，对齐 RootHide DOHeaderView 的双层框
+        .padding(12)
+        .frame(maxWidth: .infinity)
+        // 外框
+        .glassCard(cornerRadius: 24)
     }
 
     // MARK: - Tools & Settings card
@@ -258,12 +172,7 @@ struct DopamineHeroContent: View {
 #Preview {
     DopamineHeroContent(
         headerTitle: "Relaxin",
-        infoItems: [
-            .init(id: "current", systemImage: "iphone", tint: Theme.Accents.blue, label: "当前设备", value: "iPhone15,3 iOS 16.6.1"),
-            .init(id: "uptime", systemImage: "stopwatch.fill", tint: Theme.Accents.teal, label: "运行时间", value: "0天 09:00:13", liveUptime: true),
-            .init(id: "supported", systemImage: "checkmark.seal.fill", tint: Theme.Accents.green, label: "兼容版本", value: "16.5–18.7.1/26.0–26.0.1"),
-            .init(id: "version", systemImage: "shippingbox.fill", tint: Theme.Accents.orange, label: "软件版本", value: "0.4.6 · RootHide Jailbreak"),
-        ],
+        subtitle: "iOS 16 专用",
         menuRows: [
             .init(id: "advancedOptions", systemImage: "slider.horizontal.3", title: "高级选项", showsChevron: true, tint: Theme.Accents.blue) {},
             .init(id: "maintenance", systemImage: "wrench.and.screwdriver.fill", title: "维护工具", showsChevron: true, tint: Theme.Accents.orange) {},
