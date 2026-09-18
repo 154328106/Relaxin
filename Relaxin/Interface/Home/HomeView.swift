@@ -117,42 +117,32 @@ struct HomeView: View {
     }
 
     private var homeMenuRows: [DopamineHeroContent.MenuRow] {
-        var rows: [DopamineHeroContent.MenuRow] = [
+        // 一比一 Dopamine RH（未越狱）：设置在最上、重启三项灰色占位在中间、
+        // 开发详情在最下。重启项只有越狱后才可点，这里未越狱恒灰。
+        [
             .init(
-                id: "advancedOptions",
-                systemImage: "slider.horizontal.3",
-                title: String(localized: "Advanced Options", bundle: runtime.resourceBundle),
-                showsChevron: true,
-                tint: Theme.Accents.blue
+                id: "settings",
+                systemImage: "gearshape",
+                title: "设置详情管理",
+                showsChevron: true
             ) {
                 screen = .advancedOptions
             },
-        ]
-        if runtime.interfaceMode.showsMaintenance {
-            rows.append(
-                .init(
-                    id: "maintenance",
-                    systemImage: "wrench.and.screwdriver.fill",
-                    title: String(localized: "Maintenance Tools", bundle: runtime.resourceBundle),
-                    showsChevron: true,
-                    tint: Theme.Accents.orange
-                ) {
-                    screen = .maintenance
-                }
-            )
-        }
-        rows.append(
+            .init(id: "restartSpringBoard", systemImage: "arrow.clockwise",
+                  title: "重启桌面总控", isEnabled: false) {},
+            .init(id: "restartUserspace", systemImage: "arrow.triangle.2.circlepath",
+                  title: "重启用户空间", isEnabled: false) {},
+            .init(id: "restartDevice", systemImage: "power",
+                  title: "重启本机设备", isEnabled: false) {},
             .init(
                 id: "credits",
-                systemImage: "doc.text.fill",
-                title: "更新日志",
-                showsChevron: true,
-                tint: Theme.Accents.teal
+                systemImage: "info.circle",
+                title: "开发详情总览",
+                showsChevron: true
             ) {
                 screen = .credits
-            }
-        )
-        return rows
+            },
+        ]
     }
 
     /// Re-probes the device: a live RootHide runtime, else a finished

@@ -123,52 +123,27 @@ struct PostJailbreakHomeView: View {
     }
 
     private var homeMenuRows: [DopamineHeroContent.MenuRow] {
+        // 一比一 Dopamine RH（越狱后）：与未越狱同款菜单，重启三项此时可点。
         [
-            .init(
-                id: "advancedOptions",
-                systemImage: "slider.horizontal.3",
-                title: String(localized: "Advanced Options", bundle: environment.resourceBundle),
-                showsChevron: true,
-                isEnabled: !session.isPerformingAction,
-                tint: Theme.Accents.blue
-            ) {
+            .init(id: "settings", systemImage: "gearshape", title: "设置详情管理",
+                  showsChevron: true, isEnabled: !session.isPerformingAction) {
                 navigate(to: .advancedOptions, refreshRuntimeOptions: true)
             },
-            .init(
-                id: "restartSpringBoard",
-                systemImage: "house.fill",
-                title: Self.restartSpringBoardTitle(in: environment.resourceBundle),
-                isEnabled: !session.isPerformingAction,
-                tint: Theme.Accents.teal
-            ) {
+            .init(id: "restartSpringBoard", systemImage: "arrow.clockwise",
+                  title: "重启桌面总控", isEnabled: !session.isPerformingAction) {
                 navigate(to: .confirmation(.restartSpringBoard))
             },
-            .init(
-                id: "restartUserspace",
-                systemImage: "bolt.horizontal.circle.fill",
-                title: Self.restartUserspaceTitle(in: environment.resourceBundle),
-                isEnabled: !session.isPerformingAction,
-                tint: Theme.Accents.orange
-            ) {
+            .init(id: "restartUserspace", systemImage: "arrow.triangle.2.circlepath",
+                  title: "重启用户空间", isEnabled: !session.isPerformingAction) {
                 navigate(to: .confirmation(.restartUserspace))
             },
-            .init(
-                id: "rebootDevice",
-                systemImage: "power",
-                title: String(localized: "Restart Device", bundle: environment.resourceBundle),
-                isEnabled: !session.isPerformingAction,
-                tint: Theme.Accents.red
-            ) {
+            .init(id: "rebootDevice", systemImage: "power",
+                  title: "重启本机设备", isEnabled: !session.isPerformingAction) {
                 navigate(to: .confirmation(.rebootDevice))
             },
-            .init(
-                id: "credits",
-                systemImage: "doc.text.fill",
-                title: "更新日志",
-                showsChevron: true,
-                isEnabled: !session.isPerformingAction,
-                tint: Theme.Accents.teal
-            ) {
+            .init(id: "credits", systemImage: "info.circle",
+                  title: "开发详情总览", showsChevron: true,
+                  isEnabled: !session.isPerformingAction) {
                 navigate(to: .credits)
             },
         ]

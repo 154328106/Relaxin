@@ -29,16 +29,22 @@ struct DopamineHeroContent: View {
         ZStack {
             LiquidBackground()
 
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(spacing: 0) {
                 heroHeaderCard
 
-                Spacer(minLength: 0)
+                Spacer(minLength: 16)
 
                 if !menuRows.isEmpty {
                     toolsCard
                 }
 
+                Spacer(minLength: 16)
+
+                // 底部按钮外面也包一个大框，和顶部/菜单三段统一（对齐 Dopamine RH）
                 primaryButton
+                    .padding(14)
+                    .frame(maxWidth: .infinity)
+                    .glassCard(cornerRadius: 24)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 18)
@@ -72,61 +78,51 @@ struct DopamineHeroContent: View {
         .glassCard(cornerRadius: 24)
     }
 
-    // MARK: - Tools & Settings card
+    // MARK: - 菜单卡（一比一 Dopamine RH）：外框里每项一个独立小框，
+    // 图标+文字整体居中，线框单色图标，禁用项灰掉点不了、不显示 chevron。
 
     private var toolsCard: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(toolsSectionTitle)
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                .foregroundStyle(Theme.foreground)
-                .padding(.horizontal, 18)
-                .padding(.top, 14)
-                .padding(.bottom, 8)
-
-            SwiftUI.Color.white.opacity(0.30)
-                .frame(height: 1)
-                .padding(.horizontal, 18)
-
-            VStack(spacing: 0) {
-                ForEach(Array(menuRows.enumerated()), id: \.element.id) { index, row in
-                    HStack(spacing: 14) {
-                        IconBadge(systemImage: row.systemImage, tint: row.tint)
-                        Text(row.title)
-                            .font(.system(size: 17, weight: .regular, design: .rounded))
-                            .foregroundStyle(Theme.foreground)
-                            .lineLimit(1)
-                        Spacer()
-                        if row.showsChevron {
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(Theme.secondaryForeground.opacity(0.6))
-                        }
-                    }
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 12)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
-                    .opacity(row.isEnabled ? 1 : 0.45)
-                    // Bug: SwiftUI Button.action closures were silently
-                    // dropped for the post-jailbreak home rows on iOS 16.6.1.
-                    // .onTapGesture is dispatched directly by the gesture
-                    // recognizer and doesn't hit that path.
-                    .onTapGesture {
-                        guard row.isEnabled else { return }
-                        row.action()
-                    }
-
-                    if index != menuRows.count - 1 {
-                        SwiftUI.Color.white.opacity(0.10)
-                            .frame(height: 0.5)
-                            .padding(.leading, 18 + 34 + 14)
-                    }
-                }
+        VStack(spacing: 10) {
+            ForEach(menuRows) { row in
+                menuButton(row)
             }
-            .padding(.bottom, 8)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard(cornerRadius: 22)
+        .padding(14)
+        .frame(maxWidth: .infinity)
+        .glassCard(cornerRadius: 24)
+    }
+
+    private func menuButton(_ row: MenuRow) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: row.systemImage)
+                .font(.system(size: 18, weight: .regular))
+            Text(row.title)
+                .font(.system(size: 17, weight: .regular, design: .rounded))
+                .lineLimit(1)
+        }
+        .foregroundStyle(Theme.foreground)
+        // 图标+文字整体居中；chevron 用 overlay 贴右边，不打乱居中
+        .frame(maxWidth: .infinity)
+        .overlay(alignment: .trailing) {
+            if row.showsChevron {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Theme.secondaryForeground.opacity(0.7))
+            }
+        }
+        .padding(.vertical, 14)
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity)
+        // 每项一个独立小框
+        .glassCard(cornerRadius: 14)
+        // 禁用项灰掉（未越狱时的重启项就是这个效果）
+        .opacity(row.isEnabled ? 1 : 0.4)
+        .contentShape(Rectangle())
+        // Button.action 在 iOS 16.6.1 会被静默吞掉，用 onTapGesture 直接派发
+        .onTapGesture {
+            guard row.isEnabled else { return }
+            row.action()
+        }
     }
 
     // MARK: - Primary button (gradient rounded rect)
