@@ -15,14 +15,16 @@ struct GlassCard: ViewModifier {
         content
             .background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(SwiftUI.Color.white.opacity(isEmphasized ? 0.26 : 0.17))
+                    // 大幅降低白色填充：之前 0.17 显得"雾蒙蒙"，透不出背景蓝。
+                    // 降到 0.09 让框变通透，能透出后面的渐变（对齐 Dopamine RH）。
+                    .fill(SwiftUI.Color.white.opacity(isEmphasized ? 0.16 : 0.09))
             }
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(
                         isEmphasized
                             ? Theme.accent.opacity(0.9)
-                            : SwiftUI.Color.white.opacity(0.40),
+                            : SwiftUI.Color.white.opacity(0.38),
                         lineWidth: isEmphasized ? 1.4 : 0.9
                     )
                     // A Shape overlay hit-tests across its bounding box on

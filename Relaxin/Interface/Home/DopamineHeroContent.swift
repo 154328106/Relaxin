@@ -32,15 +32,18 @@ struct DopamineHeroContent: View {
             LiquidBackground()
 
             VStack(spacing: 0) {
+                // 顶部留白：把整个三段往下挪，顶部框不再贴顶（对齐 Dopamine RH）
+                Spacer(minLength: 44)
+
                 heroHeaderCard
 
-                Spacer(minLength: 16)
+                Spacer(minLength: 26)
 
                 if !menuRows.isEmpty {
                     toolsCard
                 }
 
-                Spacer(minLength: 16)
+                Spacer(minLength: 26)
 
                 // 底部按钮外面也包一个大框，和顶部/菜单三段统一（对齐 Dopamine RH）
                 primaryButton
@@ -48,9 +51,11 @@ struct DopamineHeroContent: View {
                     .padding(.vertical, 16)
                     .frame(maxWidth: .infinity)
                     .glassCard(cornerRadius: 26)
+
+                Spacer(minLength: 6)
             }
             .padding(.horizontal, 20)
-            .padding(.vertical, 18)
+            .padding(.vertical, 12)
         }
     }
 
@@ -78,15 +83,14 @@ struct DopamineHeroContent: View {
                 .padding(.top, 2)
             }
         }
-        // 内框：加高(vertical 34)、左右内容收窄(horizontal 20)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 34)
+        // 内框
+        .padding(.horizontal, 18)
+        .padding(.vertical, 30)
         .frame(maxWidth: .infinity)
         .glassCard(cornerRadius: 20)
-        // 内缩加大 → 内框明显比外框窄(左右留白 24)、外框比内框高(上下 18)，
-        // 对齐 Dopamine RH 那种宽松的"大框套小框"，不再紧凑
-        .padding(.horizontal, 24)
-        .padding(.vertical, 18)
+        // 内缩再加大：左右 34(内框更窄/更短)、上下 28(外框上边到内框上边留白更大，去挤)
+        .padding(.horizontal, 34)
+        .padding(.vertical, 28)
         .frame(maxWidth: .infinity)
         .glassCard(cornerRadius: 26)
     }
