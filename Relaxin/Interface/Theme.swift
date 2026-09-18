@@ -42,11 +42,13 @@ enum Theme {
     /// reliably on-device, blend modes and image washes historically don't.
     // 通透青蓝：左上偏青(green 拉高)、往右下转深蓝，降掉刺眼的高亮蓝，
     // 整体更有层次也更透，对齐 Dopamine RH。
+    // 一比一 Dopamine RH：用户 PS 吸取的首页四角颜色（斜向渐变，跨度很小、
+    // 整体是均匀中青蓝，不像之前底部压太深）。亮→暗对角排布。
     static let backgroundGradient: [SwiftUI.Color] = [
-        SwiftUI.Color(red: 0.15, green: 0.58, blue: 0.84),
-        SwiftUI.Color(red: 0.11, green: 0.46, blue: 0.77),
-        SwiftUI.Color(red: 0.09, green: 0.35, blue: 0.67),
-        SwiftUI.Color(red: 0.07, green: 0.27, blue: 0.57),
+        SwiftUI.Color(red: 0.173, green: 0.494, blue: 0.722), // 2c7eb8 最亮(左上)
+        SwiftUI.Color(red: 0.153, green: 0.475, blue: 0.702), // 2779b3
+        SwiftUI.Color(red: 0.125, green: 0.361, blue: 0.596), // 205c98
+        SwiftUI.Color(red: 0.110, green: 0.325, blue: 0.537), // 1c5389 最暗(右下)
     ]
 
     /// Terminal console surface — near-black so monospaced output keeps the
