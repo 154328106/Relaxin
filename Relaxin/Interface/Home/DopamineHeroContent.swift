@@ -45,10 +45,10 @@ struct DopamineHeroContent: View {
 
                 Spacer(minLength: 26)
 
-                // 底部按钮外面也包一个大框，和顶部/菜单三段统一（对齐 Dopamine RH）
+                // 底部按钮外框：留白和上面两个框完全一致（左右 34、上下 28）
                 primaryButton
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
+                    .padding(.horizontal, 34)
+                    .padding(.vertical, 28)
                     .frame(maxWidth: .infinity)
                     .glassCard(cornerRadius: 26)
 
@@ -104,9 +104,10 @@ struct DopamineHeroContent: View {
                 menuButton(row)
             }
         }
-        // 外框内边距加大 → 每个小框左右缩窄、更宽松
-        .padding(.horizontal, 20)
-        .padding(.vertical, 18)
+        // 统一留白：左右 34(菜单小框宽 == 顶部内框宽)、上下 28(外框上边到
+        // 第一个小框上边的间距 == 顶部框那样)
+        .padding(.horizontal, 34)
+        .padding(.vertical, 28)
         .frame(maxWidth: .infinity)
         .glassCard(cornerRadius: 26)
     }
@@ -162,9 +163,10 @@ struct DopamineHeroContent: View {
                     .fill(
                         LinearGradient(
                             colors: [
-                                SwiftUI.Color(red: 0.32, green: 0.62, blue: 1.00),
-                                SwiftUI.Color(red: 0.08, green: 0.42, blue: 0.94),
-                                SwiftUI.Color(red: 0.24, green: 0.38, blue: 0.90),
+                                // 整体提亮，底部不再压深，是明亮天蓝（对齐 Dopamine RH）
+                                SwiftUI.Color(red: 0.42, green: 0.72, blue: 1.00),
+                                SwiftUI.Color(red: 0.26, green: 0.60, blue: 0.99),
+                                SwiftUI.Color(red: 0.34, green: 0.58, blue: 0.98),
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing

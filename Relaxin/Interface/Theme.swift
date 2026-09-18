@@ -43,10 +43,10 @@ enum Theme {
     // 通透青蓝：左上偏青(green 拉高)、往右下转深蓝，降掉刺眼的高亮蓝，
     // 整体更有层次也更透，对齐 Dopamine RH。
     static let backgroundGradient: [SwiftUI.Color] = [
-        SwiftUI.Color(red: 0.19, green: 0.55, blue: 0.90),
-        SwiftUI.Color(red: 0.13, green: 0.43, blue: 0.82),
-        SwiftUI.Color(red: 0.10, green: 0.33, blue: 0.72),
-        SwiftUI.Color(red: 0.07, green: 0.25, blue: 0.62),
+        SwiftUI.Color(red: 0.15, green: 0.58, blue: 0.84),
+        SwiftUI.Color(red: 0.11, green: 0.46, blue: 0.77),
+        SwiftUI.Color(red: 0.09, green: 0.35, blue: 0.67),
+        SwiftUI.Color(red: 0.07, green: 0.27, blue: 0.57),
     ]
 
     /// Terminal console surface — near-black so monospaced output keeps the
