@@ -156,6 +156,7 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
         .buttonStyle(.plain)
         .disabled(row.isDisabled || row.isLoading)
         .opacity(row.isDisabled ? 0.45 : 1)
-        .glassCard(isEmphasized: isSelected)
+        // 小框圆角跟首页菜单小框一致(15)，别用默认 22 那种又圆又长的胶囊
+        .glassCard(cornerRadius: 15, isEmphasized: isSelected)
     }
 }
