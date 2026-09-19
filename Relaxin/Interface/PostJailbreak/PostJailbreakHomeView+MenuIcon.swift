@@ -8,7 +8,7 @@ extension PostJailbreakHomeView {
         case .resetAndRemoval:
             return .init(systemImage: "arrow.counterclockwise.circle.fill", tint: Theme.Accents.orange)
         case .credits:
-            return .init(systemImage: "doc.text.fill", tint: Theme.Accents.teal)
+            return .init(systemImage: "list.bullet.rectangle", tint: Theme.Accents.teal)
         case .openOwnGoalStudioPicks:
             return .init(systemImage: "star.fill", tint: Theme.Accents.orange)
         case .showSoftwareLicense:

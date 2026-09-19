@@ -19,6 +19,7 @@ final class HealthSession: ObservableObject {
     @Published private(set) var isScanning = false
     @Published private(set) var repairingID: String?
     @Published var notice: String?
+    @Published private(set) var lastScanAt: Date?
 
     // nonisolated(unsafe): assigned once from the nonisolated init and only
     // ever used from the detached scan/repair tasks.
@@ -41,6 +42,7 @@ final class HealthSession: ObservableObject {
             let scanned = manager.scanHealth().map { Item($0) }
             await MainActor.run {
                 self.items = scanned
+                self.lastScanAt = Date()
                 self.isScanning = false
             }
         }
@@ -55,6 +57,7 @@ final class HealthSession: ObservableObject {
             let rescanned = manager.scanHealth().map { Item($0) }
             await MainActor.run {
                 self.items = rescanned
+                self.lastScanAt = Date()
                 self.repairingID = nil
                 self.notice = error?.localizedDescription ?? "修复完成"
             }

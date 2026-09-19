@@ -72,8 +72,8 @@ static NSString *const RLXHealthSileoPackageResource = @"sileo";
 - (NSArray<RLXHealthItem *> *)unknownHealthItems {
     NSArray<NSArray<NSString *> *> *definitions = @[
         @[ RLXHealthIdentifierBootstrap, @"越狱环境" ],
-        @[ RLXHealthIdentifierJailbreakApps, @"越狱应用注册" ],
-        @[ RLXHealthIdentifierSileo, @"Sileo 软件源" ],
+        @[ RLXHealthIdentifierJailbreakApps, @"应用注册" ],
+        @[ RLXHealthIdentifierSileo, @"Sileo商店" ],
         @[ RLXHealthIdentifierInjection, @"插件注入" ],
     ];
     NSMutableArray<RLXHealthItem *> *items = [NSMutableArray new];
@@ -331,7 +331,7 @@ static Class RLXHealthApplicationProxyClass(void) {
 
     if (duplicateCount || conflictCount) {
         return [self itemWithIdentifier:RLXHealthIdentifierJailbreakApps
-                                  title:@"越狱应用注册"
+                                  title:@"应用注册"
                                  detail:[NSString stringWithFormat:@"重复 %lu 个、与非越狱应用冲突 %lu 个，需手动处理",
                                                                    (unsigned long)duplicateCount,
                                                                    (unsigned long)conflictCount]
@@ -340,7 +340,7 @@ static Class RLXHealthApplicationProxyClass(void) {
     }
     if (invalidCount) {
         return [self itemWithIdentifier:RLXHealthIdentifierJailbreakApps
-                                  title:@"越狱应用注册"
+                                  title:@"应用注册"
                                  detail:[NSString stringWithFormat:@"%lu 个应用缺少有效的 Info.plist",
                                                                    (unsigned long)invalidCount]
                                   state:RLXHealthStateWarning
@@ -348,7 +348,7 @@ static Class RLXHealthApplicationProxyClass(void) {
     }
     if (missingCount || staleCount) {
         return [self itemWithIdentifier:RLXHealthIdentifierJailbreakApps
-                                  title:@"越狱应用注册"
+                                  title:@"应用注册"
                                  detail:[NSString stringWithFormat:@"未注册 %lu 个、注册路径过期 %lu 个，可修复",
                                                                    (unsigned long)missingCount,
                                                                    (unsigned long)staleCount]
@@ -358,13 +358,13 @@ static Class RLXHealthApplicationProxyClass(void) {
 
     if (records.count == 0) {
         return [self itemWithIdentifier:RLXHealthIdentifierJailbreakApps
-                                  title:@"越狱应用注册"
+                                  title:@"应用注册"
                                  detail:@"未找到任何越狱应用"
                                   state:RLXHealthStateWarning
                               canRepair:NO];
     }
     return [self itemWithIdentifier:RLXHealthIdentifierJailbreakApps
-                              title:@"越狱应用注册"
+                              title:@"应用注册"
                              detail:[NSString stringWithFormat:@"%lu 个越狱应用均已正确注册",
                                                                (unsigned long)records.count]
                               state:RLXHealthStateHealthy
@@ -399,7 +399,7 @@ static Class RLXHealthApplicationProxyClass(void) {
         (registeredPath.length && ![self path:registeredPath equalsPath:expectedPath] &&
          ![self isRootHideManagedApplicationPath:registeredPath])) {
         return [self itemWithIdentifier:key
-                                  title:@"Sileo 软件源"
+                                  title:@"Sileo商店"
                                  detail:@"检测到重复或冲突的 Sileo 安装，需手动处理"
                                   state:RLXHealthStateConflict
                               canRepair:NO];
@@ -420,14 +420,14 @@ static Class RLXHealthApplicationProxyClass(void) {
 
     if (problems.count) {
         return [self itemWithIdentifier:key
-                                  title:@"Sileo 软件源"
+                                  title:@"Sileo商店"
                                  detail:[problems componentsJoinedByString:@" · "]
                                   state:RLXHealthStateRepairable
                               canRepair:YES];
     }
 
     return [self itemWithIdentifier:key
-                              title:@"Sileo 软件源"
+                              title:@"Sileo商店"
                              detail:[NSString stringWithFormat:@"已安装 %@", packageInfo[@"Version"] ?: @"?"]
                               state:RLXHealthStateHealthy
                           canRepair:NO];

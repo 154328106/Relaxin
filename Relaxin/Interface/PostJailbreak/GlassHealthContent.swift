@@ -12,6 +12,7 @@ struct GlassHealthContent: View {
     let backAction: (() -> Void)?
     let items: [HealthSession.Item]
     let isScanning: Bool
+    let lastScanAt: Date?
     let repairingID: String?
     let onRescan: () -> Void
     let onRepair: (String) -> Void
@@ -45,6 +46,8 @@ struct GlassHealthContent: View {
             .padding(.horizontal, Theme.pagePadding)
             .padding(.top, 8)
         }
+        // 扫描太快，肉眼看不出变化 —— 用震动+时间戳给出明确反馈。
+        .modifier(LightImpactFeedbackModifier(trigger: lastScanAt))
         .gesture(
             DragGesture(minimumDistance: 30, coordinateSpace: .local)
                 .onEnded { value in
@@ -150,6 +153,21 @@ struct GlassHealthContent: View {
     }
 
     private var rescanCard: some View {
+        VStack(spacing: 10) {
+            rescanButton
+            // A scan finishes in well under a frame, so without this the
+            // tap looks like it did nothing at all.
+            Text(lastScanAt.map { "上次检测 " + $0.formatted(date: .omitted, time: .standard) } ?? "尚未检测")
+                .font(.system(size: 12, weight: .regular, design: .rounded))
+                .foregroundStyle(Theme.secondaryForeground)
+        }
+        .padding(.horizontal, 34)
+        .padding(.vertical, 28)
+        .frame(maxWidth: .infinity)
+        .glassCard(cornerRadius: 26)
+    }
+
+    private var rescanButton: some View {
         HStack(spacing: 8) {
             if isScanning {
                 ProgressView().controlSize(.small)
@@ -171,10 +189,6 @@ struct GlassHealthContent: View {
             guard !isBusy else { return }
             onRescan()
         }
-        .padding(.horizontal, 34)
-        .padding(.vertical, 28)
-        .frame(maxWidth: .infinity)
-        .glassCard(cornerRadius: 26)
     }
 
     /// iOS 16.5 is the floor, so every symbol here predates iOS 17 — a newer
@@ -183,8 +197,8 @@ struct GlassHealthContent: View {
         switch identifier {
         case RLXHealthIdentifierBootstrap: "internaldrive.fill"
         case RLXHealthIdentifierJailbreakApps: "square.grid.2x2.fill"
-        case RLXHealthIdentifierSileo: "arrow.down.app.fill"
-        case RLXHealthIdentifierInjection: "shippingbox.fill"
+        case RLXHealthIdentifierSileo: "shippingbox.fill"
+        case RLXHealthIdentifierInjection: "arrow.down.app.fill"
         default: "checkmark.seal.fill"
         }
     }

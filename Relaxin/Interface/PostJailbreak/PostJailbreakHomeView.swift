@@ -257,6 +257,7 @@ struct PostJailbreakHomeView: View {
             },
             items: healthSession.items,
             isScanning: healthSession.isScanning,
+            lastScanAt: healthSession.lastScanAt,
             repairingID: healthSession.repairingID,
             onRescan: { healthSession.scan() },
             onRepair: { healthSession.repair($0) }
