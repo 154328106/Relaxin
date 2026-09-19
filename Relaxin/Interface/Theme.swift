@@ -66,19 +66,23 @@ enum Theme {
 
     // MARK: - Motion
 
-    /// Screen-to-screen animation. 0.2s of plain cross-fade read as a hard
-    /// cut; this is long enough to register as a move between layers.
+    /// Matches Dopamine RH's DOModalTransitionPush: a 0.6s spring at 0.9
+    /// damping. An easeInOut of half that length reads as a hard "whoosh";
+    /// the spring is what makes it feel soft.
     /// Computed rather than stored so it stays clear of global-state
     /// concurrency diagnostics.
-    static var screenAnimation: Animation { .easeInOut(duration: 0.32) }
-
-    /// Sub-pages push in from the trailing edge and leave the same way.
-    static var subPageTransition: AnyTransition {
-        .asymmetric(
-            insertion: .move(edge: .trailing).combined(with: .opacity),
-            removal: .move(edge: .trailing).combined(with: .opacity)
-        )
+    static var screenAnimation: Animation {
+        .spring(response: 0.6, dampingFraction: 0.9, blendDuration: 0)
     }
+
+    /// Deeper pages enter from the trailing edge and leave the same way.
+    /// Pure translation, no fade — Dopamine only moves the transform, and
+    /// the added opacity was part of why ours looked abrupt.
+    static var subPageTransition: AnyTransition { .move(edge: .trailing) }
+
+    /// The page being pushed away slides out to the leading edge, so both
+    /// sides move at once instead of one sliding over a static page.
+    static var rootTransition: AnyTransition { .move(edge: .leading) }
 
     // MARK: - Typography
 
