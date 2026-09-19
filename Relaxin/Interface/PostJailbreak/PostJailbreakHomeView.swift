@@ -183,6 +183,9 @@ struct PostJailbreakHomeView: View {
         // this conditional, so taps looked dead. Wrapping in a stable outer
         // container (ZStack) makes SwiftUI reliably re-render the branch.
         ZStack {
+            // 常驻背景：不参与转场，页面只负责内容。
+            LiquidBackground()
+
             Group {
                 if session.isAvailable, screen == .home {
                     homeContent

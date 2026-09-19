@@ -188,14 +188,24 @@ struct HomeView: View {
         )
     }
 
-    @ViewBuilder private var primaryContent: some View {
-        switch screen {
-        case .home:
-            homeContent
-        case .engine:
-            engineContent
-        default:
-            glassSubPageContent
+    private var primaryContent: some View {
+        ZStack {
+            // 常驻背景：不参与转场，页面只负责内容。
+            LiquidBackground()
+
+            Group {
+                switch screen {
+                case .home:
+                    homeContent
+                        .transition(.opacity)
+                case .engine:
+                    engineContent
+                        .transition(.opacity)
+                default:
+                    glassSubPageContent
+                        .transition(Theme.subPageTransition)
+                }
+            }
         }
     }
 

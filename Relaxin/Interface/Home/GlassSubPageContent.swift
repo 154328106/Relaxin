@@ -33,9 +33,9 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
     @State private var sharePresentation: GlassSharePresentation?
 
     var body: some View {
+        // 背景由宿主视图常驻提供 —— 页面自带背景会在转场淡出时把背景一起带走，
+        // 中途透出系统白底。
         ZStack {
-            LiquidBackground()
-
             VStack(alignment: .leading, spacing: 0) {
                 PageNavigationBar(title: title, subtitle: subtitle, backAction: backAction)
 
@@ -57,6 +57,8 @@ struct GlassSubPageContent<ActionID: Hashable>: View {
             .padding(.horizontal, Theme.pagePadding)
             .padding(.top, 8)
         }
+        // 背景不在这层了，显式撑满，否则 ZStack 会缩到内容大小、连带转场的几何一起跑偏。
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(item: $sharePresentation) { presentation in
             GlassShareSheet(url: presentation.url)
         }

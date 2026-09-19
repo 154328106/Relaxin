@@ -28,9 +28,9 @@ struct DopamineHeroContent: View {
     let onPrimaryAction: () -> Void
 
     var body: some View {
+        // 背景由宿主视图常驻提供 —— 页面自带背景会在转场淡出时把背景一起带走，
+        // 中途透出系统白底。
         ZStack {
-            LiquidBackground()
-
             VStack(spacing: 0) {
                 // 顶部留白：把整个三段往下挪，顶部框不再贴顶（对齐 Dopamine RH）
                 Spacer(minLength: 44)
@@ -57,6 +57,8 @@ struct DopamineHeroContent: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
         }
+        // 背景不在这层了，显式撑满，否则 ZStack 会缩到内容大小、连带转场的几何一起跑偏。
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - Header (大框套小框：外框内套一个更亮的小框，装标题+副标题)
