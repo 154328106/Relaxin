@@ -135,9 +135,23 @@ static NSString *const RLXHealthSileoPackageResource = @"sileo";
 
 #pragma mark - LaunchServices
 
+// LSApplicationProxy is private: the header declares it but the SDK exports
+// no linkable class symbol, so referencing it directly fails to link. Resolve
+// the class at runtime instead.
+static Class RLXHealthApplicationProxyClass(void) {
+    static Class proxyClass;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        proxyClass = NSClassFromString(@"LSApplicationProxy");
+    });
+    return proxyClass;
+}
+
 - (NSString *)registeredPathForBundleIdentifier:(NSString *)bundleIdentifier {
     if (bundleIdentifier.length == 0) return nil;
-    LSApplicationProxy *proxy = [LSApplicationProxy applicationProxyForIdentifier:bundleIdentifier];
+    Class proxyClass = RLXHealthApplicationProxyClass();
+    if (!proxyClass) return nil;
+    LSApplicationProxy *proxy = [proxyClass applicationProxyForIdentifier:bundleIdentifier];
     if (!proxy || !proxy.installed || proxy.bundleURL.path.length == 0) return nil;
     return proxy.bundleURL.path;
 }

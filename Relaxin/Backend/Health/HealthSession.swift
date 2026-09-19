@@ -20,7 +20,9 @@ final class HealthSession: ObservableObject {
     @Published private(set) var repairingID: String?
     @Published var notice: String?
 
-    private let manager: RLXHealthManager
+    // nonisolated(unsafe): assigned once from the nonisolated init and only
+    // ever used from the detached scan/repair tasks.
+    private nonisolated(unsafe) let manager: RLXHealthManager
 
     // nonisolated so SwiftUI can build it inside a View initializer.
     nonisolated init(resourceBundle: Bundle) {
