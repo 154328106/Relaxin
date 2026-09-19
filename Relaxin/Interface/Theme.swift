@@ -64,6 +64,22 @@ enum Theme {
     static let cardCornerRadius: CGFloat = 22
     static let iconBadgeSize: CGFloat = 34
 
+    // MARK: - Motion
+
+    /// Screen-to-screen animation. 0.2s of plain cross-fade read as a hard
+    /// cut; this is long enough to register as a move between layers.
+    /// Computed rather than stored so it stays clear of global-state
+    /// concurrency diagnostics.
+    static var screenAnimation: Animation { .easeInOut(duration: 0.32) }
+
+    /// Sub-pages push in from the trailing edge and leave the same way.
+    static var subPageTransition: AnyTransition {
+        .asymmetric(
+            insertion: .move(edge: .trailing).combined(with: .opacity),
+            removal: .move(edge: .trailing).combined(with: .opacity)
+        )
+    }
+
     // MARK: - Typography
 
     static let fontSize: CGFloat = 15

@@ -153,16 +153,20 @@ struct GlassHealthContent: View {
     }
 
     private var rescanCard: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             rescanButton
             // A scan finishes in well under a frame, so without this the
             // tap looks like it did nothing at all.
             Text(lastScanAt.map { "上次检测 " + $0.formatted(date: .omitted, time: .standard) } ?? "尚未检测")
-                .font(.system(size: 12, weight: .regular, design: .rounded))
+                .font(.system(size: 13, weight: .regular, design: .rounded))
                 .foregroundStyle(Theme.secondaryForeground)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .padding(.horizontal, 16)
+                .glassCard(cornerRadius: 15)
         }
-        .padding(.horizontal, 34)
-        .padding(.vertical, 28)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 22)
         .frame(maxWidth: .infinity)
         .glassCard(cornerRadius: 26)
     }

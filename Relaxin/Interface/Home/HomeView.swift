@@ -126,7 +126,9 @@ struct HomeView: View {
                 title: "设置详情管理",
                 showsChevron: true
             ) {
-                screen = .advancedOptions
+                withAnimation(Theme.screenAnimation) {
+                    screen = .advancedOptions
+                }
             },
             .init(id: "restartSpringBoard", systemImage: "arrow.clockwise",
                   title: "重启桌面总控", isEnabled: false) {},
@@ -259,7 +261,7 @@ struct HomeView: View {
     private var glassSubPageContent: some View {
         let backAction: (() -> Void)? = screen.backDestination.map { destination in
             {
-                withAnimation(.easeInOut(duration: 0.25)) {
+                withAnimation(Theme.screenAnimation) {
                     screen = destination
                 }
             }

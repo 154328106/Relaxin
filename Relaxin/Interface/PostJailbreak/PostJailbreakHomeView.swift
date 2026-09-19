@@ -128,7 +128,7 @@ struct PostJailbreakHomeView: View {
         if refreshRuntimeOptions {
             session.refreshRuntimeOptions()
         }
-        withAnimation(.easeInOut(duration: 0.2)) {
+        withAnimation(Theme.screenAnimation) {
             screen = target
         }
     }
@@ -186,12 +186,16 @@ struct PostJailbreakHomeView: View {
             Group {
                 if session.isAvailable, screen == .home {
                     homeContent
+                        .transition(.opacity)
                 } else if !session.isAvailable {
                     unavailableContent
+                        .transition(.opacity)
                 } else if screen == .health {
                     healthContent
+                        .transition(Theme.subPageTransition)
                 } else {
                     glassSubPageContent
+                        .transition(Theme.subPageTransition)
                 }
             }
         }
@@ -219,7 +223,7 @@ struct PostJailbreakHomeView: View {
     private var glassSubPageContent: some View {
         let backAction: (() -> Void)? = screen.backDestination.map { destination in
             {
-                withAnimation(.easeInOut(duration: 0.25)) {
+                withAnimation(Theme.screenAnimation) {
                     screen = destination
                 }
             }
@@ -251,7 +255,7 @@ struct PostJailbreakHomeView: View {
         GlassHealthContent(
             subtitle: homeStatusSubtitle,
             backAction: {
-                withAnimation(.easeInOut(duration: 0.25)) {
+                withAnimation(Theme.screenAnimation) {
                     screen = .home
                 }
             },
