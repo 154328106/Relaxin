@@ -118,7 +118,7 @@ struct HomeView: View {
 
     private var homeMenuRows: [DopamineHeroContent.MenuRow] {
         // 一比一 Dopamine RH（未越狱）：设置在最上、重启三项灰色占位在中间、
-        // 开发详情在最下。重启项只有越狱后才可点，这里未越狱恒灰。
+        // 健康检测在最下。重启与健康检测都要越狱后才可点，这里未越狱恒灰。
         [
             .init(
                 id: "settings",
@@ -134,14 +134,9 @@ struct HomeView: View {
                   title: "重启用户空间", isEnabled: false) {},
             .init(id: "restartDevice", systemImage: "power",
                   title: "重启本机设备", isEnabled: false) {},
-            .init(
-                id: "credits",
-                systemImage: "info.circle",
-                title: "开发详情总览",
-                showsChevron: true
-            ) {
-                screen = .credits
-            },
+            // 健康检测要读 jbroot，未越狱无从查起 —— 和上面三项一样恒灰。
+            .init(id: "health", systemImage: "heart.text.square",
+                  title: "健康状态检测", isEnabled: false) {},
         ]
     }
 

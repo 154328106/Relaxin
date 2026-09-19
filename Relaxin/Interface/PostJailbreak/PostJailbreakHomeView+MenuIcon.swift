@@ -57,6 +57,8 @@ extension PostJailbreakHomeView.Screen {
             return String(localized: "Reset & Remove", bundle: resourceBundle)
         case .credits:
             return "更新日志"
+        case .health:
+            return "健康状态检测"
         case let .confirmation(action):
             return action.title(in: resourceBundle)
         }

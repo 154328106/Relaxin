@@ -12,8 +12,19 @@ struct PostJailbreakHomeView: View {
 
     @State private var screen = Screen.home
     @State private var alert: Alert?
+    @StateObject private var healthSession: HealthSession
     @State private var visibleCreditCharacterCount = 0
     @State private var terminalColumnCount = 32
+
+    // A private @StateObject suppresses the memberwise initializer, so the
+    // three call sites keep working through this explicit one.
+    init(session: PostJailbreakSession, environment: PostJailbreakEnvironment) {
+        _session = ObservedObject(wrappedValue: session)
+        self.environment = environment
+        _healthSession = StateObject(
+            wrappedValue: HealthSession(resourceBundle: environment.resourceBundle)
+        )
+    }
 
     private var bootLogoUsesDarkAppearance: Bool {
         colorScheme == .dark
@@ -123,7 +134,7 @@ struct PostJailbreakHomeView: View {
     }
 
     private var homeMenuRows: [DopamineHeroContent.MenuRow] {
-        // 一比一 Dopamine RH（越狱后）：与未越狱同款菜单，重启三项此时可点。
+        // 一比一 Dopamine RH（越狱后）：与未越狱同款菜单，重启三项与健康检测此时可点。
         [
             .init(id: "settings", systemImage: "gearshape", title: "设置详情管理",
                   showsChevron: true, isEnabled: !session.isPerformingAction) {
@@ -141,10 +152,10 @@ struct PostJailbreakHomeView: View {
                   title: "重启本机设备", isEnabled: !session.isPerformingAction) {
                 navigate(to: .confirmation(.rebootDevice))
             },
-            .init(id: "credits", systemImage: "info.circle",
-                  title: "开发详情总览", showsChevron: true,
+            .init(id: "health", systemImage: "heart.text.square",
+                  title: "健康状态检测", showsChevron: true,
                   isEnabled: !session.isPerformingAction) {
-                navigate(to: .credits)
+                navigate(to: .health)
             },
         ]
     }
@@ -177,6 +188,8 @@ struct PostJailbreakHomeView: View {
                     homeContent
                 } else if !session.isAvailable {
                     unavailableContent
+                } else if screen == .health {
+                    healthContent
                 } else {
                     glassSubPageContent
                 }
@@ -232,6 +245,30 @@ struct PostJailbreakHomeView: View {
             shareItems: menuShareItems,
             bodyLines: screen == .credits ? RelaxinChangelog.lines : []
         )
+    }
+
+    private var healthContent: some View {
+        GlassHealthContent(
+            subtitle: homeStatusSubtitle,
+            backAction: {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    screen = .home
+                }
+            },
+            items: healthSession.items,
+            isScanning: healthSession.isScanning,
+            repairingID: healthSession.repairingID,
+            onRescan: { healthSession.scan() },
+            onRepair: { healthSession.repair($0) }
+        )
+        // Health is a point-in-time read, so re-scan on every entry rather
+        // than showing whatever the last visit left behind.
+        .onAppear { healthSession.scan() }
+        .onChange(of: healthSession.notice) { notice in
+            guard let notice else { return }
+            alert = Alert(title: "健康状态检测", message: notice)
+            healthSession.notice = nil
+        }
     }
 
     var body: some View {

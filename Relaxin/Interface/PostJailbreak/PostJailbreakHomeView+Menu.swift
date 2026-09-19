@@ -21,6 +21,7 @@ extension PostJailbreakHomeView {
         case advancedOptions
         case resetAndRemoval
         case credits
+        case health
         case confirmation(ConfirmationAction)
 
         enum TerminalSurface {
@@ -45,6 +46,8 @@ extension PostJailbreakHomeView {
                 .command("relaxin/advanced-options/reset-and-remove")
             case .credits:
                 .credits
+            case .health:
+                .command("relaxin/health")
             case .confirmation:
                 .command("relaxin/confirm")
             }
@@ -52,9 +55,10 @@ extension PostJailbreakHomeView {
 
         var backDestination: Screen? {
             switch self {
-            case .advancedOptions, .credits:
+            case .advancedOptions, .health:
                 .home
-            case .resetAndRemoval:
+            // 更新日志现在挂在高级选项下，返回要回到那一层。
+            case .resetAndRemoval, .credits:
                 .advancedOptions
             case let .confirmation(action):
                 switch action {
@@ -95,7 +99,6 @@ extension PostJailbreakHomeView {
                         .advancedOptions,
                         String(localized: "Advanced Options", bundle: resourceBundle)
                     ),
-                    (.credits, "更新日志"),
                 ]
             case .advancedOptions:
                 var entries: [(MenuAction, String)] = [
@@ -165,6 +168,8 @@ extension PostJailbreakHomeView {
                         ),
                     ])
                 }
+                // 更新日志收在最末尾，归到"关于"那一类。
+                entries.append((.credits, "更新日志"))
                 return entries
             case .resetAndRemoval:
                 var entries: [(MenuAction, String)] = [
@@ -191,7 +196,7 @@ extension PostJailbreakHomeView {
                     ),
                 ])
                 return entries
-            case .credits:
+            case .credits, .health:
                 return []
             case let .confirmation(action):
                 return [

@@ -100,6 +100,7 @@
 			publicHeaders = (
 				Controller/RLXPostJailbreakController.h,
 				Controller/RLXPostJailbreakLog.h,
+				Health/RLXHealthManager.h,
 				RelaxinPostJailbreak.h,
 			);
 			target = B18000000000000000000017 /* RelaxinPostJailbreak */;

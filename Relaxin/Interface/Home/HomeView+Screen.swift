@@ -49,9 +49,10 @@ extension HomeView {
 
         var backDestination: Screen? {
             switch self {
-            case .advancedOptions, .maintenance, .credits:
+            case .advancedOptions, .maintenance:
                 .home
-            case .jetsamMultiplier:
+            // 更新日志现在挂在高级选项下，返回要回到那一层。
+            case .jetsamMultiplier, .credits:
                 .advancedOptions
             case let .confirmation(action):
                 switch action {
@@ -102,9 +103,6 @@ extension HomeView {
                         )
                     )
                 }
-                entries.append(
-                    (.credits, "更新日志")
-                )
                 return entries
             case .advancedOptions:
                 // No trailing `.back` — the liquid-glass nav bar owns the
@@ -171,6 +169,8 @@ extension HomeView {
                         ),
                     ])
                 }
+                // 更新日志收在最末尾，归到"关于"那一类。
+                entries.append((.credits, "更新日志"))
                 return entries
             case .maintenance:
                 var entries: [(MenuAction, String)] = []
