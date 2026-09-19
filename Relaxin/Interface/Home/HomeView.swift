@@ -197,10 +197,10 @@ struct HomeView: View {
                 switch screen {
                 case .home:
                     homeContent
-                        .transition(Theme.rootTransition)
+                        .transition(.opacity)
                 case .engine:
                     engineContent
-                        .transition(Theme.subPageTransition)
+                        .transition(.opacity)
                 default:
                     glassSubPageContent
                         .transition(Theme.subPageTransition)

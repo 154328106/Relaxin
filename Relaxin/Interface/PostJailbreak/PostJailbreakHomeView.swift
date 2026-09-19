@@ -189,7 +189,7 @@ struct PostJailbreakHomeView: View {
             Group {
                 if session.isAvailable, screen == .home {
                     homeContent
-                        .transition(Theme.rootTransition)
+                        .transition(.opacity)
                 } else if !session.isAvailable {
                     unavailableContent
                         .transition(.opacity)
