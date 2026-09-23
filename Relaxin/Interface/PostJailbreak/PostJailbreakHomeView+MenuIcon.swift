@@ -34,6 +34,8 @@ extension PostJailbreakHomeView {
             return .init(systemImage: "key.fill", tint: Theme.Accents.indigo, chevron: nil)
         case .reinstallSileo:
             return .init(systemImage: "arrow.down.app.fill", tint: Theme.Accents.blue, chevron: nil)
+        case .reinstallIrisin:
+            return .init(systemImage: "square.and.arrow.down.fill", tint: Theme.Accents.indigo, chevron: nil)
         case .updateBaseBin:
             return .init(systemImage: "arrow.triangle.2.circlepath.circle.fill", tint: Theme.Accents.orange, chevron: nil)
         case .removeJailbreak:

@@ -4,7 +4,18 @@ import RelaxinPostJailbreak
 
 @MainActor
 final class PostJailbreakSession: ObservableObject {
-    typealias ReinstallSileoAction = @MainActor (
+    /// 0.5.4 起可选包管理器：Sileo 和 Irisin 都能单独重装。
+    enum PackageManager: Hashable {
+        case sileo
+        case irisin
+    }
+
+    typealias AsyncOperation = @MainActor (
+        _ output: @escaping (String) -> Void
+    ) async throws -> Void
+
+    typealias ReinstallPackageManagerAction = @MainActor (
+        _ packageManager: PackageManager,
         _ output: @escaping (String) -> Void
     ) async throws -> Void
 
@@ -17,7 +28,7 @@ final class PostJailbreakSession: ObservableObject {
 
     let environment: PostJailbreakEnvironment
     private let controller: RLXPostJailbreakController
-    private let reinstallSileoAction: ReinstallSileoAction?
+    private let reinstallPackageManagerAction: ReinstallPackageManagerAction?
     #if DEBUG
         private var debugAvailableOverride: Bool?
     #endif
@@ -25,11 +36,11 @@ final class PostJailbreakSession: ObservableObject {
     init(
         environment: PostJailbreakEnvironment,
         controller: RLXPostJailbreakController,
-        reinstallSileo: ReinstallSileoAction? = nil
+        reinstallPackageManager: ReinstallPackageManagerAction? = nil
     ) {
         self.environment = environment
         self.controller = controller
-        reinstallSileoAction = reinstallSileo
+        reinstallPackageManagerAction = reinstallPackageManager
         switch environment.interfaceMode {
         case .full:
             isAvailable = controller.hasActiveRootHideRuntime()
@@ -49,9 +60,9 @@ final class PostJailbreakSession: ObservableObject {
         )
     }
 
-    var canReinstallSileo: Bool {
+    var canReinstallPackageManagers: Bool {
         environment.interfaceMode.allowsSileoReinstallation
-            && reinstallSileoAction != nil
+            && reinstallPackageManagerAction != nil
     }
 
     var supportsIDownload: Bool {
@@ -124,9 +135,11 @@ final class PostJailbreakSession: ObservableObject {
         }
     }
 
-    func reinstallSileo() {
-        guard canReinstallSileo, let reinstallSileoAction else { return }
-        performOperation(reinstallSileoAction)
+    func reinstall(_ packageManager: PackageManager) {
+        guard canReinstallPackageManagers, let reinstallPackageManagerAction else { return }
+        performOperation { outputHandler in
+            try await reinstallPackageManagerAction(packageManager, outputHandler)
+        }
     }
 
     func consumeLastCompletedAction() {
@@ -135,7 +148,7 @@ final class PostJailbreakSession: ObservableObject {
 
     private func performOperation(
         completedAction: Action? = nil,
-        _ operation: @escaping ReinstallSileoAction
+        _ operation: @escaping AsyncOperation
     ) {
         guard isAvailable, !isPerformingAction else { return }
         isPerformingAction = true

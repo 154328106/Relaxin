@@ -64,7 +64,7 @@ extension PostJailbreakHomeView {
                 switch action {
                 case .restartSpringBoard, .restartUserspace, .rebootDevice:
                     .home
-                case .reinstallSileo, .removeJailbreak:
+                case .reinstallSileo, .reinstallIrisin, .removeJailbreak:
                     .resetAndRemoval
                 }
             case .home:
@@ -74,7 +74,7 @@ extension PostJailbreakHomeView {
 
         func menuEntries(
             runtimeOptions: PostJailbreakSession.RuntimeOptions,
-            canReinstallSileo: Bool,
+            canReinstallPackageManagers: Bool,
             supportsIDownload: Bool,
             needsBaseBinUpdate: Bool,
             allowsExternalNavigation: Bool,
@@ -181,13 +181,17 @@ extension PostJailbreakHomeView {
                         )
                     ),
                 ]
-                if canReinstallSileo {
-                    entries.append(
+                if canReinstallPackageManagers {
+                    entries.append(contentsOf: [
                         (
                             .confirm(.reinstallSileo),
                             String(localized: "Reinstall Sileo", bundle: resourceBundle)
-                        )
-                    )
+                        ),
+                        (
+                            .confirm(.reinstallIrisin),
+                            String(localized: "Reinstall Irisin", bundle: resourceBundle)
+                        ),
+                    ])
                 }
                 entries.append(contentsOf: [
                     (
@@ -251,6 +255,7 @@ extension PostJailbreakHomeView {
         case restartUserspace
         case rebootDevice
         case reinstallSileo
+        case reinstallIrisin
         case removeJailbreak
 
         func title(in resourceBundle: Bundle) -> String {
@@ -263,6 +268,8 @@ extension PostJailbreakHomeView {
                 String(localized: "Restart Device", bundle: resourceBundle)
             case .reinstallSileo:
                 String(localized: "Reinstall Sileo", bundle: resourceBundle)
+            case .reinstallIrisin:
+                String(localized: "Reinstall Irisin", bundle: resourceBundle)
             case .removeJailbreak:
                 String(localized: "Remove Jailbreak", bundle: resourceBundle)
             }
@@ -278,6 +285,8 @@ extension PostJailbreakHomeView {
                 .rebootDevice
             case .reinstallSileo:
                 .reinstallSileo
+            case .reinstallIrisin:
+                .reinstallIrisin
             case .removeJailbreak:
                 .removeJailbreak
             }
@@ -297,6 +306,7 @@ extension PostJailbreakHomeView {
         case refreshJailbreakApps
         case resetMobilePassword
         case reinstallSileo
+        case reinstallIrisin
         case updateBaseBin
         case removeJailbreak
         case confirm(ConfirmationAction)

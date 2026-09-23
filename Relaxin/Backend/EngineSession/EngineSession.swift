@@ -98,9 +98,11 @@ final class EngineSession: ObservableObject {
         postJailbreakSession = PostJailbreakSession(
             environment: runtime.postJailbreakEnvironment,
             controller: engine.postJailbreakController,
-            reinstallSileo: { outputHandler in
+            reinstallPackageManager: { packageManager, outputHandler in
                 try await engine.perform(
-                    action: .reinstallSileo,
+                    action: packageManager == .irisin
+                        ? .reinstallIrisin
+                        : .reinstallSileo,
                     arguments: nil,
                     output: outputHandler
                 )

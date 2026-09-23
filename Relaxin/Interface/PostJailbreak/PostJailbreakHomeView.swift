@@ -82,7 +82,7 @@ struct PostJailbreakHomeView: View {
         guard session.isAvailable else { return [] }
         return screen.menuEntries(
             runtimeOptions: session.runtimeOptions,
-            canReinstallSileo: session.canReinstallSileo,
+            canReinstallPackageManagers: session.canReinstallPackageManagers,
             supportsIDownload: session.supportsIDownload,
             needsBaseBinUpdate: session.needsBaseBinUpdate,
             allowsExternalNavigation: environment.interfaceMode.allowsExternalNavigation,
@@ -394,8 +394,11 @@ struct PostJailbreakHomeView: View {
         case .resetMobilePassword:
             authenticateForPasswordReset()
         case .reinstallSileo:
-            guard session.canReinstallSileo else { return }
-            session.reinstallSileo()
+            guard session.canReinstallPackageManagers else { return }
+            session.reinstall(.sileo)
+        case .reinstallIrisin:
+            guard session.canReinstallPackageManagers else { return }
+            session.reinstall(.irisin)
         case .updateBaseBin:
             session.perform(.updateBaseBin)
         case .removeJailbreak:

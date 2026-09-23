@@ -44,6 +44,9 @@ UPSTREAM_052_APP ?=
 HYBRID_053_PACKAGER := $(ROOT_DIR)/DevKit/Helpers/package-hybrid-053.sh
 HYBRID_053_OUTPUT ?= $(ROOT_DIR)/build/Artifacts/Relaxin-0.5.3-GroupedGlass-RootHide-TrueCore.tipa
 UPSTREAM_053_APP ?=
+HYBRID_054_PACKAGER := $(ROOT_DIR)/DevKit/Helpers/package-hybrid-054.sh
+HYBRID_054_OUTPUT ?= $(ROOT_DIR)/build/Artifacts/Relaxin-0.5.4-GroupedGlass-RootHide-TrueCore.tipa
+UPSTREAM_054_APP ?=
 LITE_DEB_OUTPUT ?= $(ROOT_DIR)/build/Artifacts/relaxin-lite.deb
 LITE_DEB_PACKAGER := $(ROOT_DIR)/DevKit/Packaging/RelaxinLite/package-deb.sh
 
@@ -87,7 +90,7 @@ XCODEBUILD := $(XCODEBUILD_WRAPPER) \
     ASSETCATALOG_COMPILER_APPICON_NAME="$(APPICON_NAME)"
 
 .PHONY: all help print-version \
-        build build-ios lite-deb tipa ipa hybrid-048-tipa hybrid-049-tipa hybrid-050-tipa hybrid-051-tipa hybrid-052-tipa hybrid-053-tipa bootstrap-resources scan-license check test-host \
+        build build-ios lite-deb tipa ipa hybrid-048-tipa hybrid-049-tipa hybrid-050-tipa hybrid-051-tipa hybrid-052-tipa hybrid-053-tipa hybrid-054-tipa bootstrap-resources scan-license check test-host \
         kernel-offsets \
         format format-lint \
         clean \
@@ -118,6 +121,7 @@ help:
 	@echo "  hybrid-051-tipa       Put GroupedGlass over an audited upstream 0.5.1 core"
 	@echo "  hybrid-052-tipa       Put GroupedGlass over an audited upstream 0.5.2 core"
 	@echo "  hybrid-053-tipa       Put GroupedGlass over an audited upstream 0.5.3 core"
+	@echo "  hybrid-054-tipa       Put GroupedGlass over an audited upstream 0.5.4 core"
 	@echo "  bootstrap-resources   Download, ad-hoc sign, and stage the RootHide bootstrap"
 	@echo "  kernel-offsets        Regenerate the bundled kernelcache offset table"
 	@echo "  scan-license          Refresh Licenses.txt from Vendor"
@@ -308,6 +312,17 @@ hybrid-053-tipa: _check-tipa-tools build-ios
 	    "$(UPSTREAM_053_APP)" \
 	    "$(TIPA_ENTITLEMENTS)" \
 	    "$(HYBRID_053_OUTPUT)"
+
+hybrid-054-tipa: _check-tipa-tools build-ios
+	@test -n "$(UPSTREAM_054_APP)" || { \
+	    echo "error: set UPSTREAM_054_APP=/path/to/Payload/Relaxin.app" >&2; \
+	    exit 64; \
+	}
+	/bin/bash "$(HYBRID_054_PACKAGER)" \
+	    "$(APP_BUNDLE)" \
+	    "$(UPSTREAM_054_APP)" \
+	    "$(TIPA_ENTITLEMENTS)" \
+	    "$(HYBRID_054_OUTPUT)"
 
 ipa: build-ios
 	"$(IPA_PACKAGER)" "$(APP_BUNDLE)" "$(IPA_OUTPUT)"
