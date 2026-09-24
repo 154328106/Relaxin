@@ -35,13 +35,15 @@ extension PostJailbreakHomeView {
         case .reinstallSileo:
             return .init(systemImage: "arrow.down.app.fill", tint: Theme.Accents.blue, chevron: nil)
         case .reinstallIrisin:
-            return .init(systemImage: "square.and.arrow.down.fill", tint: Theme.Accents.indigo, chevron: nil)
+            return .init(systemImage: "tray.and.arrow.down.fill", tint: Theme.Accents.purple, chevron: nil)
         case .updateBaseBin:
             return .init(systemImage: "arrow.triangle.2.circlepath.circle.fill", tint: Theme.Accents.orange, chevron: nil)
         case .removeJailbreak:
             return .init(systemImage: "trash.fill", tint: Theme.Accents.red, chevron: nil)
-        case .confirm:
-            return .init(systemImage: "exclamationmark.triangle.fill", tint: Theme.Accents.red, chevron: nil)
+        case let .confirm(action):
+            // 确认项复用被确认动作的图标：否则整页全是同一个红三角。
+            // `ConfirmationAction.menuAction` 不会映回 .confirm，不存在递归。
+            return icon(for: action.menuAction)
         case .back:
             return .init(systemImage: "chevron.backward", tint: Theme.Accents.blue, chevron: nil)
         }
