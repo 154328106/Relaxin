@@ -17,6 +17,8 @@ struct DopamineHeroContent: View {
     }
 
     let headerTitle: String
+    // 大标题正下方那行版本号，跟着 Info.plist 走（hybrid 包里就是官方那版号）
+    var versionLabel: String = AppInfo.homeVersionLabel
     var subtitle: String = ""
     // 越狱后在副标题下面再显示一行实时运行时间
     var showsUptime: Bool = false
@@ -69,6 +71,12 @@ struct DopamineHeroContent: View {
                 .font(Theme.pageTitleFont)
                 .foregroundStyle(Theme.foreground)
                 .frame(maxWidth: .infinity, alignment: .center)
+            if !versionLabel.isEmpty {
+                Text(versionLabel)
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundStyle(Theme.secondaryForeground)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
             if !subtitle.isEmpty {
                 Text(subtitle)
                     .font(.system(size: 14, weight: .medium, design: .rounded))

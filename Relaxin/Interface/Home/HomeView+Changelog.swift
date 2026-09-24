@@ -2,13 +2,15 @@ import Foundation
 
 enum RelaxinChangelog {
     static let lines = [
-        "Relaxin 0.5.3",
-        "1、扩展了对 iOS 和 iPadOS 16.5 的支持",
-        "2、提升了越狱在受支持设备和系统版本上的可靠性与兼容性",
-        "3、修复了在内存压力较大时越狱功能失效的问题",
-        "4、改善了在受支持系统版本中请求提升权限的进程的兼容性",
-        "5、优化了越狱后侧载版 Relaxin 中的特权操作",
-        "6、改进了在非默认系统应用可见时的越狱移除功能",
+        "Relaxin 0.5.4",
+        "1、将内置的 RootHide Manager 替换为 Umbra 2.0",
+        "2、新增 Irisin 4.4.1 作为可选的软件包管理器，首次设置时可选择，越狱后重新安装时也可选择",
+        "3、新增自定义 URL Scheme 替换功能，同时继续对排除的 App 隐藏仅限越狱环境使用的链接",
+        "4、在 iOS 和 iPadOS 16 上进一步隐藏越狱痕迹，避免被排除的 App 检测到",
+        "5、提升 A12 设备的越狱成功率",
+        "6、修复部分基于 PPL 的设备越狱失败问题",
+        "7、修复部分设备上 Sileo 图标无法显示的问题",
+        "8、改进 iOS 和 iPadOS 17 及更高版本中系统进程和辅助进程的崩溃报告收集",
     ]
 
     static let characterCount = lines.reduce(0) { $0 + $1.count }

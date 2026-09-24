@@ -12,6 +12,12 @@ enum AppInfo {
             as? String ?? "0"
     }
 
+    /// 首页大标题正下方那行。**必须读 `Bundle.main`** —— 读
+    /// `RelaxinRuntime.resourceBundle`（指向 RelaxinEngine.framework）会拿到 0.0.0。
+    static var homeVersionLabel: String {
+        "Version " + version(in: .main)
+    }
+
     static func displayVersion(in resourceBundle: Bundle) -> String {
         "v\(version(in: resourceBundle))(\(build(in: resourceBundle)))"
     }
