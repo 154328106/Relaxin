@@ -2,15 +2,16 @@ import Foundation
 
 enum RelaxinChangelog {
     static let lines = [
-        "Relaxin 0.5.4",
-        "1、将内置的 RootHide Manager 替换为 Umbra 2.0",
-        "2、新增 Irisin 4.4.1 作为可选的软件包管理器，首次设置时可选择，越狱后重新安装时也可选择",
-        "3、新增自定义 URL Scheme 替换功能，同时继续对排除的 App 隐藏仅限越狱环境使用的链接",
-        "4、在 iOS 和 iPadOS 16 上进一步隐藏越狱痕迹，避免被排除的 App 检测到",
-        "5、提升 A12 设备的越狱成功率",
-        "6、修复部分基于 PPL 的设备越狱失败问题",
-        "7、修复部分设备上 Sileo 图标无法显示的问题",
-        "8、改进 iOS 和 iPadOS 17 及更高版本中系统进程和辅助进程的崩溃报告收集",
+        "Relaxin 0.5.5",
+        "1、新增主屏幕快捷操作，可直接启动越狱",
+        "2、新增自动运行选项，启动应用后 30 秒自动开始越狱",
+        "3、修复音量键导航问题",
+        "4、改进与通过 TrollStore Lite 安装的应用的兼容性",
+        "5、为 iOS 和 iPadOS 26 上兼容的 Frida 构建版本新增内存访问接口",
+        "6、修复 iOS 和 iPadOS 18.4 及更高版本中，移除越狱后通过 IPA 安装的应用图标残留问题",
+        "7、修复 iOS 和 iPadOS 17 及更高版本在用户空间重启后无法进行 Xcode 调试的问题",
+        "8、提升 iOS 和 iPadOS 16 隐藏越狱痕迹时的稳定性",
+        "9、内置 Irisin 软件包管理器更新至 4.5.21",
     ]
 
     static let characterCount = lines.reduce(0) { $0 + $1.count }
